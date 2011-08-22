@@ -21,7 +21,7 @@ module SproutCoreRails
       template.gsub!(/"/, '\\"')
       template.gsub!(/\r?\n/, '\\n')
       template.gsub!(/\t/, '\\t')
-      "SC.TEMPLATES[\"#{scope.logical_path.downcase.gsub(/[^a-z0-9]/, '_')}\"] = SC.Handlebars.compile(\"#{template}\");\n"
+      "SC.TEMPLATES[\"#{scope.logical_path}\"] = SC.Handlebars.compile(\"#{template}\");\n"
     end
   end
 end
