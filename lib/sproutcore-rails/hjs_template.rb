@@ -20,7 +20,7 @@ module SproutCoreRails
     # The SC template name is derived from the lowercase logical asset path
     # by replacing non-alphanum characheters by underscores.
     def evaluate(scope, locals, &block)
-      "SC.TEMPLATES[\"#{scope.logical_path}\"] = #{precompile(data.dup)};\n"
+      "SC.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile(data)});\n"
     end
 
     private
@@ -34,7 +34,7 @@ module SproutCoreRails
       end
 
       def sproutcore
-        [ "precompiler.js", "sproutcore.js" ].map do |name|
+        [ "sproutcore-precompiler.js", "sproutcore-core.js" ].map do |name|
           File.read(File.expand_path(File.join(__FILE__, "..", "..", "..", "vendor/assets/javascripts/#{name}")))
         end.join("\n")
       end
