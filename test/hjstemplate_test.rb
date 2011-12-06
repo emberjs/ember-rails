@@ -15,7 +15,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
     assert_response :success
-    assert @response.body == "SC.TEMPLATES[\"templates/test\"] = Handlebars.template(function (context, options, $depth) { try { options = options || {}; var args = [Handlebars, context, options.helpers, options.partials, options.data]; var depth = Array.prototype.slice.call(arguments, 2); args = args.concat(depth); return container.render.apply(container, args); } catch(e) { throw e; } });\n"
+    assert @response.body == "SC.TEMPLATES[\"templates/test\"] = function (b,c,d){try{c=c||{};var e=[Handlebars,b,c.helpers,c.partials,c.data],f=Array.prototype.slice.call(arguments,2);e=e.concat(f);return a.render.apply(a,e)}catch(g){throw g}};\n"
   end
 
 end
