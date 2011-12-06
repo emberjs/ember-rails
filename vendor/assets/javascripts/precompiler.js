@@ -1,6 +1,10 @@
+// Console
+var console = {};
+console.log = console.info = console.warn = console.error = function(){};
+
 // DOM
-var window = {};
 var document = {};
+var window = { console: console };
 
 // jQuery
 var jQuery = function() { return jQuery };
