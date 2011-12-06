@@ -26,7 +26,7 @@ module SproutCoreRails
     private
 
       def precompile(template)
-        runtime.call("SproutCoreRails.precompile", template).gsub(/\s+/, " ")
+        runtime.call("SproutCoreRails.precompile", template)
       end
 
       def runtime
