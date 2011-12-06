@@ -26,10 +26,6 @@ module SproutCoreRails
     private
 
       def precompile(template)
-        template = data.dup
-        template.gsub!(/"/, '\\"')
-        template.gsub!(/\r?\n/, '\\n')
-        template.gsub!(/\t/, '\\t')
         runtime.call("SproutCoreRails.precompile", template).gsub(/\s+/, " ")
       end
 
