@@ -1,8 +1,11 @@
 require 'tilt/template'
+require "execjs"
 
 module SproutCoreRails
+
   # = Sprockets engine for HandlebarsJS templates
   class HjsTemplate < Tilt::Template
+
     def self.default_mime_type
       'application/javascript'
     end
@@ -17,11 +20,25 @@ module SproutCoreRails
     # The SC template name is derived from the lowercase logical asset path
     # by replacing non-alphanum characheters by underscores.
     def evaluate(scope, locals, &block)
-      template = data.dup
-      template.gsub!(/"/, '\\"')
-      template.gsub!(/\r?\n/, '\\n')
-      template.gsub!(/\t/, '\\t')
-      "SC.TEMPLATES[\"#{scope.logical_path}\"] = SC.Handlebars.compile(\"#{template}\");\n"
+      "SC.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile(data.dup)});\n"
     end
+
+    private
+
+      def precompile(template)
+        runtime.call("SC.Handlebars.precompile", template).gsub(/\s+/, " ")
+      end
+
+      def runtime
+        Thread.current[:hjs_runtime] ||= ExecJS.compile source
+      end
+
+      def source
+        [ "handlebars.js", "sproutcore.js" ].map do |name|
+          File.read(File.expand_path(File.join(__FILE__, "..", "hjs", name)))
+        end.join
+      end
+
   end
+
 end

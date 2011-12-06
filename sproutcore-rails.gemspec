@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/kiskolabs/sproutcore-rails"
   s.summary     = "SproutCore 2 for Rails 3.1."
 
+  s.add_development_dependency "execjs", ["~> 1.2.11"]
   s.add_development_dependency "rails", ["~> 3.1"]
 
   s.files = %w(README.md) + Dir["lib/**/*", "vendor/**/*"]
