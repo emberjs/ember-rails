@@ -15,6 +15,17 @@ Run `bundle install` and add the following line to
 
     //= require ember
 
+If you want to include the new date-time helpers provided by ember, you
+can use:
+
+    //= require ember-datetime
+
+Ember-rails also provides a way to run Ember in development mode, you
+can switch out your require statements to use the dev copies like so:
+
+    //= require ember-dev
+    //= require ember-datetime-dev
+
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs" file
 (e.g. `app/assets/javascripts/templates/admin_panel.js.hjs`)
