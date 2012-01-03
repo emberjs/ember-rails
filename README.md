@@ -1,6 +1,6 @@
 # ember-rails
 
-ember-rails allows you to include (Ember)[http://emberjs.com/] into your Rails 3.1 application and have it integrate with the Asset Pipeline. It includes development and production copies of Ember.
+ember-rails allows you to include [Ember.JS](http://emberjs.com/) into your Rails 3.1 application and have it integrate with the Asset Pipeline. It includes development and production copies of Ember.
 
 The gem will also pre-compile your handlebars templates when building your asset pipeline.
 
