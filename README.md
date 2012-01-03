@@ -6,7 +6,7 @@ The gem will also pre-compile your handlebars templates when building your asset
 
 You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example)
 
-### Getting started
+## Getting started
 
 Add the gem to your application Gemfile:
 
@@ -43,3 +43,15 @@ e.g create `app/assets/javascripts/templates/all.js` with:
 Now a single line in the layout loads everything:
 
     <%= javascript_include_tag "templates/all" %>
+
+## History
+
+ember-rails is based on https://github.com/kiskolabs/sproutcore-rails.
+
+## Note on Patches/Pull Requests
+
+1. Fork the project.
+2. Make your feature addition or bug fix.
+3. Add tests for it. This is important so I don't break it in a future version unintentionally.
+4. Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
+5. Send me a pull request. Bonus points for topic branches.
