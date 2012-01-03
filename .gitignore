@@ -5,3 +5,4 @@ pkg/*
 *.rbc
 *.log
 test/dummy/tmp
+.DS_Store

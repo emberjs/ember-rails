@@ -17,10 +17,10 @@ module EmberRails
     end
 
     # Generates Javascript code from a HandlebarsJS template.
-    # The SC template name is derived from the lowercase logical asset path
+    # The Ember template name is derived from the lowercase logical asset path
     # by replacing non-alphanum characheters by underscores.
     def evaluate(scope, locals, &block)
-      "SC.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile(data)});\n"
+      "Ember.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile(data)});\n"
     end
 
     private
@@ -34,7 +34,7 @@ module EmberRails
       end
 
       def ember
-        [ "sproutcore-precompiler.js", "sproutcore-core.js" ].map do |name|
+        [ "ember-precompiler.js", "ember.min.js" ].map do |name|
           File.read(File.expand_path(File.join(__FILE__, "..", "..", "..", "vendor/assets/javascripts/#{name}")))
         end.join("\n")
       end
