@@ -1,7 +1,7 @@
 require 'tilt/template'
 require "execjs"
 
-module SproutCoreRails
+module EmberRails
 
   # = Sprockets engine for HandlebarsJS templates
   class HjsTemplate < Tilt::Template
@@ -26,14 +26,14 @@ module SproutCoreRails
     private
 
       def precompile(template)
-        runtime.call("SproutCoreRails.precompile", template)
+        runtime.call("EmberRails.precompile", template)
       end
 
       def runtime
-        Thread.current[:hjs_runtime] ||= ExecJS.compile(sproutcore)
+        Thread.current[:hjs_runtime] ||= ExecJS.compile(ember)
       end
 
-      def sproutcore
+      def ember
         [ "sproutcore-precompiler.js", "sproutcore-core.js" ].map do |name|
           File.read(File.expand_path(File.join(__FILE__, "..", "..", "..", "vendor/assets/javascripts/#{name}")))
         end.join("\n")

@@ -12,7 +12,7 @@ jQuery.ready = function() { return jQuery };
 var $ = jQuery;
 
 // Precompiler
-var SproutCoreRails = {
+var EmberRails = {
   precompile: function(string) {
     // Copied from the SC codebase. This will need to be updated as SC updates...
     var ast = Handlebars.parse(string);

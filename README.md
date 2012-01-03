@@ -1,7 +1,7 @@
-SproutCore-Rails
+Ember-Rails
 ================
 
-SproutCore 2.0 for Rails 3.1.
+Ember 2.0 for Rails 3.1.
 
 
 Getting started
@@ -9,14 +9,14 @@ Getting started
 
 Add the gem to your application Gemfile:
 
-    gem "sproutcore-rails"
+    gem "ember-rails"
 
 Run `bundle install` and add the following line to 
 `app/assets/javascripts/application.js`:
 
-    //= require sproutcore
+    //= require ember
 
-Ask Rails to serve HandlebarsJS templates to SproutCore
+Ask Rails to serve HandlebarsJS templates to Ember
 by putting each template in a dedicated ".js.hjs" file
 (e.g. `app/assets/javascripts/templates/admin_panel.js.hjs`)
 and including the assets in your layout:
