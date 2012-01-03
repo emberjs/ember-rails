@@ -1,8 +1,7 @@
 Ember-Rails
 ================
 
-Ember 2.0 for Rails 3.1.
-
+Ember for Rails 3.1.
 
 Getting started
 ---------------
@@ -16,7 +15,7 @@ Run `bundle install` and add the following line to
 
     //= require ember
 
-Ask Rails to serve HandlebarsJS templates to Ember
+Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs" file
 (e.g. `app/assets/javascripts/templates/admin_panel.js.hjs`)
 and including the assets in your layout:
