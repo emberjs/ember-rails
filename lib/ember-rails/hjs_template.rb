@@ -34,7 +34,7 @@ module EmberRails
       end
 
       def ember
-        [ "ember-precompiler.js", "ember.min.js" ].map do |name|
+        [ "ember-precompiler.js", "ember.js" ].map do |name|
           File.read(File.expand_path(File.join(__FILE__, "..", "..", "..", "vendor/assets/javascripts/#{name}")))
         end.join("\n")
       end
