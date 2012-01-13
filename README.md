@@ -29,8 +29,8 @@ can switch out your require statements to use the dev copies like so:
     //= require ember-datetime-dev
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
-by putting each template in a dedicated ".js.hjs" file
-(e.g. `app/assets/javascripts/templates/admin_panel.js.hjs`)
+by putting each template in a dedicated ".js.hjs" or ".handlebars" file
+(e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
 and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
