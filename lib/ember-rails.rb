@@ -9,4 +9,5 @@ module EmberRails
   # an asset file having the extension ".hjs" is processed
   # by the asset pipeline and converted to javascript code.
   Sprockets.register_engine '.hjs', HjsTemplate
+  Sprockets.register_engine '.handlebars', HjsTemplate
 end
