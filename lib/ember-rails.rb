@@ -1,3 +1,4 @@
+require 'sprockets'
 require 'sprockets/engines'
 require 'ember-rails/hjs_template'
 
