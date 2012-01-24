@@ -13,8 +13,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency "execjs", [">= 1.2"]
   s.add_dependency "railties", [">= 3.0"]
-  s.add_dependency "activesupport", [">= 3.0"]
-  s.add_dependency "actionpack", [">= 3.0"]
 
   s.add_development_dependency "rails", [">= 3.0"]
 
