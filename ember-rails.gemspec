@@ -11,8 +11,8 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/keithpitt/ember-rails"
   s.summary     = "Ember for Rails 3.1"
 
-  s.add_dependency "execjs", ["~> 1.2", "~> 1.3"]
-  s.add_dependency "rails", ["~> 3.1", "~> 3.2"]
+  s.add_dependency "execjs", [">= 1.2"]
+  s.add_dependency "railties", [">= 3.0"]
 
   s.files = %w(README.md) + Dir["lib/**/*", "vendor/assets/**/*"]
 
