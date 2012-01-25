@@ -1,6 +1,6 @@
 require 'sprockets'
 require 'sprockets/engines'
-require 'ember_rails/hjs_template'
+require 'ember-rails/hjs_template'
 
 module EmberRails
   class Engine < Rails::Engine
