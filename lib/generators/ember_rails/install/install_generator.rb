@@ -18,21 +18,33 @@ module EmberRails
 
       def copy_ember
         if options.head?
-          git_root = File.expand_path "../../../../../vendor/ember", __FILE__
+          git_root = File.expand_path "~/.ember"
           gem_file = File.join git_root, "Gemfile"
-          self.class.source_root git_root
+
+          # If it doesn't exist yet
+          unless File.exist?(git_root)
+            command = %{git clone git://github.com/emberjs/ember.js.git "#{git_root}"}
+            say_status("downloading", command, :green)
+
+            cmd command
+          else
+            Dir.chdir git_root do
+              command = "git fetch --force --quiet --tags && git reset --hard"
+              say_status("updating", command, :green)
+
+              cmd command
+            end
+          end
 
           Dir.chdir git_root do
-            say_status("downloading", "Ember.js (HEAD)", :green)
-            cmd "git fetch --force --quiet --tags"
-            cmd "git reset --hard"
-            say_status("building", "", :green)
-
+            say_status("building", "bundle && bundle exec rake", :green)
             Bundler.with_clean_env do
               cmd "bundle --gemfile #{gem_file}"
               cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake}
             end
           end
+
+          self.class.source_root git_root
 
           Dir[File.join(git_root, "dist", "*.js")].each do |file|
             name = File.basename file
@@ -57,7 +69,7 @@ module EmberRails
       private
 
         def cmd(command)
-          out = %x{#{command}}
+          out = `#{command}`
 
           if $?.exitstatus != 0
             raise "Command error: command `#{command}` in directory #{Dir.pwd} has failed."
