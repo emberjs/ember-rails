@@ -10,42 +10,66 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 Add the gem to your application Gemfile:
 
-    gem "ember-rails"
+```ruby
+gem "ember-rails"
+```
 
-Run `bundle install` and add the following line to 
+Run `bundle install` and add the following line to
 `app/assets/javascripts/application.js`:
 
-    //= require ember
+```javascript
+//= require ember
+```
 
 If yopu just want to use Ember Metal (no View or Handlebars support)
 you can use:
 
-    //= require ember-runtime
+```javascript
+//= require ember-runtime
+```
 
 Ember-rails also provides a way to run Ember in development mode, you
 can switch out your require statements to use the dev copies like so:
 
-    //= require ember-dev
+```javascript
+//= require ember-dev
+```
+
+If you want to copy ember to your own project, you can use the inbuilt
+generator
+
+```bash
+rails g ember_rails:install
+```
+
+If you want to use the latest and greatest Ember, you can use the
+generator to download and compile the latest version for you.
+
+```bash
+rails g ember_rails:install --head
+```
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs" or ".handlebars" file
 (e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
 and including the assets in your layout:
 
-    <%= javascript_include_tag "templates/admin_panel" %>
+```ruby
+<%= javascript_include_tag "templates/admin_panel" %>
+```
 
 Bundle all templates together thanks to Sprockets,
 e.g create `app/assets/javascripts/templates/all.js` with:
 
-    //= require_tree .
+```javascript
+//= require_tree .
+```
 
 Now a single line in the layout loads everything:
 
-    <%= javascript_include_tag "templates/all" %>
-
-## History
-
-ember-rails is based on https://github.com/kiskolabs/sproutcore-rails.
+```ruby
+<%= javascript_include_tag "templates/all" %>
+```
 
 ## Note on Patches/Pull Requests
 
