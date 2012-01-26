@@ -21,12 +21,6 @@ var $ = jQuery;
 // Precompiler
 var EmberRails = {
   precompile: function(string) {
-    // Copied from the Ember codebase. This will need to be updated as Ember updates...
-    var ast = Handlebars.parse(string);
-    var options = { data: true, stringParams: true };
-    var environment = new Ember.Handlebars.Compiler().compile(ast, options);
-    var templateSpec = new Ember.Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
-
-    return templateSpec.toString();
+    return Ember.Handlebars.precompile(string).toString();
   }
 };
