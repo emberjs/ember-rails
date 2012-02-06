@@ -1,4 +1,4 @@
-module Ember
+module EmberRails
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
