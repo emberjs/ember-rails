@@ -12,13 +12,52 @@ Add the gem to your application Gemfile:
 
     gem "ember-rails"
 
-Run `bundle install` and add the following line to 
+Run the following commands:
+
+    bundle install
+    rails g ember:install
+
+Running `rails g ember:install` creates the following directory 
+structure under `app/assets/javascripts/ember`:
+
+    controllers/
+    helpers/
+    models/
+    templates/
+    views/
+
+Additionally, it will add the following lines to 
 `app/assets/javascripts/application.js`:
 
     //= require ember
+    //= require ember/app
+
+*Example:*
+
+    rails g ember:install
+      insert  app/assets/javascripts/application.js
+      create  app/assets/javascripts/ember/models
+      create  app/assets/javascripts/ember/models/.gitkeep
+      create  app/assets/javascripts/ember/controllers
+      create  app/assets/javascripts/ember/controllers/.gitkeep
+      create  app/assets/javascripts/ember/views
+      create  app/assets/javascripts/ember/views/.gitkeep
+      create  app/assets/javascripts/ember/helpers
+      create  app/assets/javascripts/ember/helpers/.gitkeep
+      create  app/assets/javascripts/ember/templates
+      create  app/assets/javascripts/ember/templates/.gitkeep
+      create  app/assets/javascripts/ember/app.js.coffee
+
+By default, it creates an `app.js.coffee` file to setup application
+namespace and initial requires. If you want to use another name for
+your application, you can use: `rails g ember:install app_name`.
+
+If you want to avoid `.gitkeep` files, use `skip git` option like
+this: `rails g ember:install -g`.
 
 Ember-rails also provides a way to run Ember in development mode, you
-can switch out your require statements to use the dev copies like so:
+can switch out your require statement `//= require ember` to use the
+dev copies like so:
 
     //= require ember-dev
 

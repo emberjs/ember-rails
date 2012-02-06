@@ -7,7 +7,7 @@ module Ember
       desc "Installs ember.js with a default folder layout in app/assets/javascripts/ember"
 
       class_option :skip_git, type: :boolean, aliases: "-g",
-                   default: false,  desc: "Skip Git keeps"
+                   default: false,  desc: "Skip .gitkeep files"
 
       def inject_ember
         inject_into_file("app/assets/javascripts/application.js", 
