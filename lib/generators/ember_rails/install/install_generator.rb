@@ -31,7 +31,7 @@ module EmberRails
             cmd command
           else
             Dir.chdir git_root do
-              command = "git fetch --force --quiet --tags && git reset --hard"
+              command = "git fetch --force --quiet --tags && git reset HEAD --hard"
               say_status("updating", command, :green)
 
               cmd command
