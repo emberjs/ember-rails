@@ -54,8 +54,6 @@ module EmberRails
             else
               name.gsub /.js/, '.min.js'
             end
-            puts source_file
-            puts source_file
 
             copy_file source_file, "vendor/assets/javascripts/#{name}"
           end
