@@ -15,12 +15,18 @@ console.log = console.info = console.warn = console.error = function(){};
 var jQuery = window.jQuery = function() { return jQuery };
 jQuery.ready = function() { return jQuery };
 jQuery.inArray = function() { return jQuery };
-jQuery.jquery = "1.7.1";
+jQuery.jquery = "1.7";
 var $ = jQuery;
 
 // Precompiler
 var EmberRails = {
   precompile: function(string) {
-    return Ember.Handlebars.precompile(string).toString();
+    // Copied from the Ember codebase. This will need to be updated as Ember updates...
+    var ast = Handlebars.parse(string);
+    var options = { data: true, stringParams: true };
+    var environment = new Ember.Handlebars.Compiler().compile(ast, options);
+    var templateSpec = new Ember.Handlebars.JavaScriptCompiler().compile(environment, options, undefined, true);
+
+    return templateSpec.toString();
   }
 };
