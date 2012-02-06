@@ -2,47 +2,24 @@ module EmberRails
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
-      FILES = [ "ember.js", "ember-dev.js", "ember-runtime.js", "ember-runtime-dev.js" ]
+      EMBER_FILES = [ "ember.js", "ember-dev.js" ]
+      RUNTIME_FILES = [ "ember-runtime.js", "ember-runtime-dev.js" ]
+      ALL_FILES = [ *EMBER_FILES, *RUNTIME_FILES ]
 
-      source_root File.expand_path("../templates", __FILE__)
-      argument :application_name, type: :string, default: "app"
-      argument :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
-
-      desc "Installs ember.js with a default folder layout in app/assets/javascripts/ember"
-
-      class_option :skip_git, type: :boolean, aliases: "-g",
-                   default: false,  desc: "Skip Git keeps"
-
-      def inject_ember
-        inject_into_file("app/assets/javascripts/application.js", 
-                         before: "//= require_tree") do
-          dependencies = [
-            "//= require ember",
-            "//= require ember/#{application_name.underscore}"
-          ]
-          dependencies.join("\n").concat("\n")
-        end
-      end
-
-      def create_dir_layout
-        %W{models controllers views helpers templates}.each do |dir|
-          empty_directory "app/assets/javascripts/ember/#{dir}"
-          create_file "app/assets/javascripts/ember/#{dir}/.gitkeep" unless options[:skip_git]
-        end
-      end
-
-      def create_app_file
-        template "app.coffee", "app/assets/javascripts/ember/#{application_name.underscore}.js.coffee"
-      end
+      desc "Install Ember.js into your vendor folder"
+      class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
+      class_option :runtime, :type => :boolean, :default => false, :desc => "Include the Ember.js runtime only"
 
       def remove_ember
-        FILES.each do |name|
-          remove_file "vendor/assets/javascripts/#{name}"
+        ALL_FILES.each do |name|
+          file = "vendor/assets/javascripts/#{name}"
+          remove_file file if File.exist?(file)
         end
       end
 
       def copy_ember
         if options.head?
+
           git_root = File.expand_path "~/.ember"
           gem_file = File.join git_root, "Gemfile"
 
@@ -69,29 +46,37 @@ module EmberRails
             end
           end
 
-          self.class.source_root git_root
+          self.class.source_root File.join(git_root, "dist")
 
-          Dir[File.join(git_root, "dist", "*.js")].each do |file|
-            name = File.basename file
-            if name.match /\.min/
-              name.gsub! /\.min/, ''
+          ember_files.each do |name|
+            source_file = if name.match /-dev/
+              name.gsub /-dev/, ''
             else
-              name.gsub! /\.js/, '-dev.js'
+              name.gsub /.js/, '.min.js'
             end
-            copy_file file, "vendor/assets/javascripts/#{name}"
-          end
-        else
-          self.class.source_root File.expand_path('../../../../../vendor/assets/javascripts', __FILE__)
+            puts source_file
+            puts source_file
 
+            copy_file source_file, "vendor/assets/javascripts/#{name}"
+          end
+
+        else
+
+          self.class.source_root File.expand_path('../../../../../vendor/assets/javascripts', __FILE__)
           say_status("copying", "Ember.js (#{EmberRails::EMBER_VERSION})", :green)
 
-          FILES.each do |name|
+          ember_files.each do |name|
             copy_file name, "vendor/assets/javascripts/#{name}"
           end
+
         end
       end
 
       private
+
+        def ember_files
+          options.runtime? ? RUNTIME_FILES : EMBER_FILES
+        end
 
         def cmd(command)
           out = `#{command}`
