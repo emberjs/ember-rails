@@ -14,6 +14,18 @@ module EmberRails
         end
       end
 
+      def app_namespace
+        application_name.camelize
+      end
+
+      def default_value(type)
+        if type == :boolean
+          "false"
+        else
+          "null"
+        end
+      end
+
     end
   end
 end

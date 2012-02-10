@@ -5,4 +5,4 @@
 #= require_tree ./helpers
 #= require_tree ./templates
 
-window.<%= application_name.camelize %> = Ember.Application.create()
+window.<%= app_namespace %> = Ember.Application.create()
