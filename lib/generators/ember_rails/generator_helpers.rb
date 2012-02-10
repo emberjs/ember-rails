@@ -14,6 +14,20 @@ module EmberRails
         end
       end
 
+      def app_namespace
+        application_name.camelize
+      end
+
+      def default_value(type)
+        case type
+        when :array    then "[]"
+        when :boolean  then "false"
+        when :function then "->\n\t\treturn"
+        when :object   then "{}"
+        else "null"
+        end
+      end
+
     end
   end
 end
