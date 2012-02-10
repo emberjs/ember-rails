@@ -19,10 +19,12 @@ module EmberRails
       end
 
       def default_value(type)
-        if type == :boolean
-          "false"
-        else
-          "null"
+        case type
+        when :array    then "[]"
+        when :boolean  then "false"
+        when :function then "->\n\t\treturn"
+        when :object   then "{}"
+        else "null"
         end
       end
 
