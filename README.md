@@ -18,7 +18,7 @@ Run the following commands:
     rails g ember_rails:bootstrap
 
 Running `rails g ember_rails:bootstrap` creates the following directory 
-structure under `app/assets/javascripts/ember`.
+structure under `app/assets/javascripts/ember`:
 
     controllers/
     helpers/
@@ -27,7 +27,7 @@ structure under `app/assets/javascripts/ember`.
     views/
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
-By default, use the Rails Application's name and creates an `rails_app_name.js.coffee` 
+By default, it uses the Rails Application's name and creates an `rails_app_name.js.coffee` 
 file to setup application namespace and initial requires.
 
     //= require ember
@@ -49,7 +49,7 @@ file to setup application namespace and initial requires.
       create  app/assets/javascripts/ember/templates/.gitkeep
       create  app/assets/javascripts/ember/app.js.coffee
 
-If you want to avoid `.gitkeep` files, use `skip git` option like
+If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember_rails:bootstrap -g`.
 
 Ember-rails also provides a way to run Ember in development mode, you
