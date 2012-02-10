@@ -1,11 +1,13 @@
+require 'generators/ember_rails/generator_helpers'
+
 module EmberRails
   module Generators
     class BootstrapGenerator < Rails::Generators::Base
+      include EmberRails::Generators::GeneratorHelpers
 
       source_root File.expand_path("../templates", __FILE__)
 
       desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
-      argument :application_name, :type => :string, :default => "app"
 
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
 
@@ -24,13 +26,13 @@ module EmberRails
 
       def create_dir_layout
         %W{models controllers views helpers templates}.each do |dir|
-          empty_directory "app/assets/javascripts/ember/#{dir}"
-          create_file "app/assets/javascripts/ember/#{dir}/.gitkeep" unless options[:skip_git]
+          empty_directory "#{ember_path}/#{dir}"
+          create_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
         end
       end
 
       def create_app_file
-        template "app.coffee", "app/assets/javascripts/ember/#{application_name.underscore}.js.coffee"
+        template "app.coffee", "#{ember_path}/#{application_name.underscore}.js.coffee"
       end
 
     end
