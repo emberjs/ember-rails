@@ -24,7 +24,7 @@ dev copies like so:
 
 ## Architecture
 
-Ember does not require an organized files structure. However, ember-rails allows you 
+Ember does not require an organized file structure. However, ember-rails allows you 
 to use `rails g ember_rails:bootstrap` to create the following directory structure under `app/assets/javascripts/ember`:
 
     controllers/
