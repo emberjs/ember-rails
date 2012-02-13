@@ -12,13 +12,20 @@ Add the gem to your application Gemfile:
 
     gem "ember-rails"
 
-Run the following commands:
+Run `bundle install` and add the following line to `app/assets/javascripts/application.js`:
 
-    bundle install
-    rails g ember_rails:bootstrap
+    //= require ember
 
-Running `rails g ember_rails:bootstrap` creates the following directory 
-structure under `app/assets/javascripts/ember`:
+Ember-rails also provides a way to run Ember in development mode, you
+can switch out your require statement `//= require ember` to use the
+dev copies like so:
+
+    //= require ember-dev
+
+## Architecture
+
+Ember does not require an organized files structure. However, ember-rails allows you 
+to use `rails g ember_rails:bootstrap` to create the following directory structure under `app/assets/javascripts/ember`:
 
     controllers/
     helpers/
@@ -28,7 +35,7 @@ structure under `app/assets/javascripts/ember`:
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
 By default, it uses the Rails Application's name and creates an `rails_app_name.js.coffee` 
-file to setup application namespace and initial requires.
+file to setup application namespace and initial requires:
 
     //= require ember
     //= require ember/app
@@ -51,12 +58,6 @@ file to setup application namespace and initial requires.
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember_rails:bootstrap -g`.
-
-Ember-rails also provides a way to run Ember in development mode, you
-can switch out your require statement `//= require ember` to use the
-dev copies like so:
-
-    //= require ember-dev
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs" or ".handlebars" file
