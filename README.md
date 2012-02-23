@@ -12,15 +12,52 @@ Add the gem to your application Gemfile:
 
     gem "ember-rails"
 
-Run `bundle install` and add the following line to 
-`app/assets/javascripts/application.js`:
+Run `bundle install` and add the following line to `app/assets/javascripts/application.js`:
 
     //= require ember
 
 Ember-rails also provides a way to run Ember in development mode, you
-can switch out your require statements to use the dev copies like so:
+can switch out your require statement `//= require ember` to use the
+dev copies like so:
 
     //= require ember-dev
+
+## Architecture
+
+Ember does not require an organized file structure. However, ember-rails allows you 
+to use `rails g ember_rails:bootstrap` to create the following directory structure under `app/assets/javascripts/ember`:
+
+    controllers/
+    helpers/
+    models/
+    templates/
+    views/
+
+Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
+By default, it uses the Rails Application's name and creates an `rails_app_name.js.coffee` 
+file to setup application namespace and initial requires:
+
+    //= require ember
+    //= require ember/app
+
+*Example:*
+
+    rails g ember_rails:bootstrap
+      insert  app/assets/javascripts/application.js
+      create  app/assets/javascripts/ember/models
+      create  app/assets/javascripts/ember/models/.gitkeep
+      create  app/assets/javascripts/ember/controllers
+      create  app/assets/javascripts/ember/controllers/.gitkeep
+      create  app/assets/javascripts/ember/views
+      create  app/assets/javascripts/ember/views/.gitkeep
+      create  app/assets/javascripts/ember/helpers
+      create  app/assets/javascripts/ember/helpers/.gitkeep
+      create  app/assets/javascripts/ember/templates
+      create  app/assets/javascripts/ember/templates/.gitkeep
+      create  app/assets/javascripts/ember/app.js.coffee
+
+If you want to avoid `.gitkeep` files, use the `skip git` option like
+this: `rails g ember_rails:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs" or ".handlebars" file
