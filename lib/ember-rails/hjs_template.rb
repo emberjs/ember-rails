@@ -20,7 +20,11 @@ module EmberRails
     # The Ember template name is derived from the lowercase logical asset path
     # by replacing non-alphanum characheters by underscores.
     def evaluate(scope, locals, &block)
-      "Ember.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile(data)});\n"
+      t = data
+      if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs)/
+        t = t.gsub(/{{(\w[^\}}]+)}}/){ |x| "{{unbound #{$1}}}" }
+      end
+      "Ember.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile t});\n"
     end
 
     private
