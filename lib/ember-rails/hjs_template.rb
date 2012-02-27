@@ -22,7 +22,7 @@ module EmberRails
     def evaluate(scope, locals, &block)
       t = data
       if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs)/
-        t = t.gsub(/{{(\w[^\}}]+)}}/){ |x| "{{unbound #{$1}}}" }
+        t = t.gsub(/\{\{(\w[^\}\}]+)\}\}/){ |x| "{{unbound #{$1}}}" }
       end
       "Ember.TEMPLATES[\"#{scope.logical_path}\"] = Handlebars.template(#{precompile t});\n"
     end
