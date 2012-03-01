@@ -18,7 +18,7 @@ module EmberRails
 
     # Generates Javascript code from a HandlebarsJS template.
     # The Ember template name is derived from the lowercase logical asset path
-    # by replacing non-alphanum characheters by underscores.
+    # by replacing non-alphanumeric characters by underscores.
     def evaluate(scope, locals, &block)
       t = data
       if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs)/
