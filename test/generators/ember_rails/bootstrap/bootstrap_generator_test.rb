@@ -12,7 +12,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/assets/javascripts/ember/dummy.js.coffee",
       /window.Dummy = Ember.Application.create()/
-    assert_new_dirs_with_gitkeep_files
+    assert_new_dirs(skip_git: false)
   end
 
   test "Assert folder layout is properly created without .gitkeep files" do
@@ -20,26 +20,20 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/assets/javascripts/ember/dummy.js.coffee",
       /window.Dummy = Ember.Application.create()/
-    assert_new_dirs
+    assert_new_dirs(skip_git: true)
   end
 
   private
 
-  def assert_new_dirs
-    assert_file "app/assets/javascripts/ember/models"
-    assert_file "app/assets/javascripts/ember/controllers"
-    assert_file "app/assets/javascripts/ember/views"
-    assert_file "app/assets/javascripts/ember/helpers"
-    assert_file "app/assets/javascripts/ember/templates"
+  def assert_new_dirs(options = {})
+    %W{models controllers views helpers templates}.each do |dir|
+      assert_directory "#{ember_path}/#{dir}"
+      assert_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
+    end
   end
 
-  def assert_new_dirs_with_gitkeep_files
-    assert_new_dirs
-    assert_file "app/assets/javascripts/ember/models/.gitkeep"
-    assert_file "app/assets/javascripts/ember/controllers/.gitkeep"
-    assert_file "app/assets/javascripts/ember/views/.gitkeep"
-    assert_file "app/assets/javascripts/ember/helpers/.gitkeep"
-    assert_file "app/assets/javascripts/ember/templates/.gitkeep"
+  def ember_path
+   "app/assets/javascripts/ember"
   end
 
 end
