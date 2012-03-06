@@ -12,7 +12,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/assets/javascripts/ember/dummy.js.coffee",
       /window.Dummy = Ember.Application.create()/
-    assert_new_dirs(skip_git: false)
+    assert_new_dirs(:skip_git => false)
   end
 
   test "Assert folder layout is properly created without .gitkeep files" do
@@ -20,7 +20,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/assets/javascripts/ember/dummy.js.coffee",
       /window.Dummy = Ember.Application.create()/
-    assert_new_dirs(skip_git: true)
+    assert_new_dirs(:skip_git => true)
   end
 
   private
