@@ -1,5 +1,132 @@
 
 (function(exports) {
+/**
+  Define an assertion that will throw an exception if the condition is not 
+  met.  Ember build tools will remove any calls to ember_assert() when 
+  doing a production build.
+  
+  ## Examples
+  
+      #js:
+      
+      // pass a simple Boolean value
+      ember_assert('must pass a valid object', !!obj);
+
+      // pass a function.  If the function returns false the assertion fails
+      // any other return value (including void) will pass.
+      ember_assert('a passed record must have a firstName', function() {
+        if (obj instanceof Ember.Record) {
+          return !Ember.empty(obj.firstName);
+        }
+      });
+      
+  @static
+  @function
+  @param {String} desc
+    A description of the assertion.  This will become the text of the Error
+    thrown if the assertion fails.
+    
+  @param {Boolean} test
+    Must return true for the assertion to pass.  If you pass a function it
+    will be executed.  If the function returns false an exception will be
+    thrown.
+*/
+window.ember_assert = window.sc_assert = function ember_assert(desc, test) {
+  if ('function' === typeof test) test = test()!==false;
+  if (!test) throw new Error("assertion failed: "+desc);
+};
+
+
+/**
+  Display a warning with the provided message. Ember build tools will
+  remove any calls to ember_warn() when doing a production build.
+
+  @static
+  @function
+  @param {String} message
+    A warning to display.
+
+  @param {Boolean} test
+    An optional boolean or function. If the test returns false, the warning
+    will be displayed.
+*/
+window.ember_warn = function(message, test) {
+  if (arguments.length === 1) { test = false; }
+  if ('function' === typeof test) test = test()!==false;
+  if (!test) console.warn("WARNING: "+message);
+}
+
+
+
+/**
+  Display a deprecation warning with the provided message and a stack trace
+  (Chrome and Firefox only). Ember build tools will remove any calls to
+  ember_deprecate() when doing a production build.
+
+  @static
+  @function
+  @param {String} message
+    A description of the deprecation.
+
+  @param {Boolean} test
+    An optional boolean or function. If the test returns false, the deprecation
+    will be displayed.
+*/
+window.ember_deprecate = function(message, test) {
+  if (arguments.length === 1) { test = false; }
+  if ('function' === typeof test) { test = test()!==false; }
+  if (test) { return; }
+
+  var error, stackStr = '';
+
+  // When using new Error, we can't do the arguments check for Chrome. Alternatives are welcome
+  try { __fail__; } catch (e) { error = e; }
+
+  if (error.stack) {
+    var stack;
+
+    if (error['arguments']) {
+      // Chrome
+      stack = error.stack.replace(/^\s+at\s+/gm, '').
+                          replace(/^([^\(]+?)([\n$])/gm, '{anonymous}($1)$2').
+                          replace(/^Object.<anonymous>\s*\(([^\)]+)\)/gm, '{anonymous}($1)').split('\n');
+      stack.shift();
+    } else {
+      // Firefox
+      stack = error.stack.replace(/(?:\n@:0)?\s+$/m, '').
+                          replace(/^\(/gm, '{anonymous}(').split('\n');
+    }
+
+    stackStr = "\n    " + stack.slice(2).join("\n    ");
+  }
+
+  console.warn("DEPRECATION: "+message+stackStr);
+};
+
+
+
+/**
+  Display a deprecation warning with the provided message and a stack trace
+  (Chrome and Firefox only) when the wrapped method is called.
+
+  @static
+  @function
+  @param {String} message
+    A description of the deprecation.
+
+  @param {Function} func
+    The function to be deprecated.
+*/
+window.ember_deprecateFunc = function(message, func) {
+  return function() {
+    window.ember_deprecate(message);
+    return func.apply(this, arguments);
+  };
+};
+
+})({});
+
+(function(exports) {
 // lib/handlebars/base.js
 var Handlebars = {};
 
@@ -1608,7 +1735,7 @@ if ('undefined' === typeof Ember) {
 /**
   @namespace
   @name Ember
-  @version 0.9.4
+  @version 0.9.5
 
   All Ember methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -1640,10 +1767,10 @@ if ('undefined' !== typeof window) {
 /**
   @static
   @type String
-  @default '0.9.4'
+  @default '0.9.5'
   @constant
 */
-Ember.VERSION = '0.9.4';
+Ember.VERSION = '0.9.5';
 
 /**
   @static
@@ -1670,41 +1797,22 @@ Ember.K = function() { return this; };
   @description The global window object
 */
 
-/**
-  Define an assertion that will throw an exception if the condition is not 
-  met.  Ember build tools will remove any calls to ember_assert() when 
-  doing a production build.
-  
-  ## Examples
-  
-      #js:
-      
-      // pass a simple Boolean value
-      ember_assert('must pass a valid object', !!obj);
 
-      // pass a function.  If the function returns false the assertion fails
-      // any other return value (including void) will pass.
-      ember_assert('a passed record must have a firstName', function() {
-        if (obj instanceof Ember.Record) {
-          return !Ember.empty(obj.firstName);
-        }
-      });
-      
-  @static
-  @function
-  @param {String} desc
-    A description of the assertion.  This will become the text of the Error
-    thrown if the assertion fails.
-    
-  @param {Boolean} test
-    Must return true for the assertion to pass.  If you pass a function it
-    will be executed.  If the function returns false an exception will be
-    thrown.
-*/
-window.ember_assert = window.sc_assert = function ember_assert(desc, test) {
-  if ('function' === typeof test) test = test()!==false;
-  if (!test) throw new Error("assertion failed: "+desc);
+// Stub out the methods defined by the ember-debug package in case it's not loaded
+
+if ('undefined' === typeof ember_assert) { 
+  window.ember_assert = window.sc_assert = Ember.K;
 };
+
+if ('undefined' === typeof ember_warn) { window.ember_warn = Ember.K; }
+
+if ('undefined' === typeof ember_deprecate) { window.ember_deprecate = Ember.K; }
+
+if ('undefined' === typeof ember_deprecateFunc) {
+  window.ember_deprecateFunc = function(_, func) { return func; };
+}
+
+
 
 //if ('undefined' === typeof ember_require) ember_require = Ember.K;
 if ('undefined' === typeof require) require = Ember.K;
@@ -2031,7 +2139,7 @@ if (Object.freeze) Object.freeze(EMPTY_META);
   The meta object contains information about computed property descriptors as
   well as any watched properties and other information.  You generally will
   not access this information directly but instead work with higher level 
-  methods that manipulate this has indirectly.
+  methods that manipulate this hash indirectly.
 
   @param {Object} obj
     The object to retrieve meta for
@@ -2465,7 +2573,7 @@ Ember.normalizeTuple = function(target, path) {
 Ember.normalizeTuple.primitive = normalizeTuple;
 
 Ember.getPath = function(root, path, _checkGlobal) {
-  var hasThis, hasStar, isGlobal, ret;
+  var pathOnly, hasThis, hasStar, isGlobal, ret;
   
   // Helpers that operate with 'this' within an #each
   if (path === '') {
@@ -2475,6 +2583,7 @@ Ember.getPath = function(root, path, _checkGlobal) {
   if (!path && 'string'===typeof root) {
     path = root;
     root = null;
+    pathOnly = true;
   }
 
   hasStar = path.indexOf('*') > -1;
@@ -2489,9 +2598,7 @@ Ember.getPath = function(root, path, _checkGlobal) {
   hasThis  = HAS_THIS.test(path);
 
   if (!root || hasThis || hasStar) {
-    if (root && root !== window && IS_GLOBAL.test(path)) {
-      console.warn("Fetching globals with Ember.getPath is deprecated", root, path);
-    }
+    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
 
     var tuple = normalizeTuple(root, path);
     root = tuple[0];
@@ -2501,8 +2608,8 @@ Ember.getPath = function(root, path, _checkGlobal) {
 
   ret = getPath(root, path);
 
-  if (ret === undefined && root !== window && !hasThis && IS_GLOBAL.test(path) && _checkGlobal !== false) {
-    console.warn("Fetching globals with Ember.getPath is deprecated", root, path);
+  if (ret === undefined && !pathOnly && !hasThis && root !== window && IS_GLOBAL.test(path) && _checkGlobal !== false) {
+    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")");
     return Ember.getPath(window, path);
   } else {
     return ret;
@@ -2520,9 +2627,7 @@ Ember.setPath = function(root, path, value, tolerant) {
   
   path = normalizePath(path);
   if (path.indexOf('*')>0) {
-    if (root && root !== window && IS_GLOBAL.test(path)) {
-      console.warn("Setting globals with Ember.setPath is deprecated", path);
-    };
+    ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
 
     var tuple = normalizeTuple(root, path);
     root = tuple[0];
@@ -2537,7 +2642,7 @@ Ember.setPath = function(root, path, value, tolerant) {
       // Remove the `false` when we're done with this deprecation
       root = Ember.getPath(root, path, false);
       if (!root && IS_GLOBAL.test(path)) {
-        console.warn("Setting globals with Ember.setPath is deprecated", path);
+        ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")");
         root = Ember.getPath(window, path);
       }
     }
@@ -4374,7 +4479,7 @@ Ember.run.cancel = function(timer) {
 
   Use `#js:Ember.run.begin()` instead
 */
-Ember.RunLoop.begin = Ember.run.begin;
+Ember.RunLoop.begin = ember_deprecateFunc("Use Ember.run.begin instead of Ember.RunLoop.begin.", Ember.run.begin);
 
 /**
   @deprecated
@@ -4382,7 +4487,7 @@ Ember.RunLoop.begin = Ember.run.begin;
 
   Use `#js:Ember.run.end()` instead
 */
-Ember.RunLoop.end = Ember.run.end;
+Ember.RunLoop.end = ember_deprecateFunc("Use Ember.run.end instead of Ember.RunLoop.end.", Ember.run.end);
 
 
 
@@ -5425,6 +5530,30 @@ Cp.property = function() {
   return this;
 };
 
+/**
+  In some cases, you may want to annotate computed properties with additional
+  metadata about how they function or what values they operate on. For example,
+  computed property functions may close over variables that are then no longer
+  available for introspection.
+
+  You can pass a hash of these values to a computed property like this:
+
+      person: function() {
+        var personId = this.get('personId');
+        return App.Person.create({ id: personId });
+      }.property().meta({ type: App.Person })
+
+  The hash that you pass to the `meta()` function will be saved on the
+  computed property descriptor under the `_meta` key. Ember runtime
+  exposes a public API for retrieving these values from classes,
+  via the `metaForProperty()` function.
+*/
+
+Cp.meta = function(meta) {
+  this._meta = meta;
+  return this;
+};
+
 /** @private - impl descriptor API */
 Cp.setup = function(obj, keyName, value) {
   CP_DESC.get = mkCpGetter(keyName, this);
@@ -6170,6 +6299,8 @@ function findNamespaces() {
     //  get(window.globalStorage, 'isNamespace') would try to read the storage for domain isNamespace and cause exception in Firefox.
     // globalStorage is a storage obsoleted by the WhatWG storage specification. See https://developer.mozilla.org/en/DOM/Storage#globalStorage
     if (prop === "globalStorage" && window.StorageList && window.globalStorage instanceof window.StorageList) { continue; }
+    // Don't access properties on parent window, which will throw "Access/Permission Denied" in IE/Firefox for windows on different domains
+    if (prop === "parent" || prop === "top" || prop === "frameElement" || prop === "content") { continue; }
     // Unfortunately, some versions of IE don't support window.hasOwnProperty
     if (window.hasOwnProperty && !window.hasOwnProperty(prop)) { continue; }
 
@@ -8286,6 +8417,33 @@ var ClassMixin = Ember.Mixin.create({
 
   detectInstance: function(obj) {
     return this.PrototypeMixin.detect(obj);
+  },
+
+  /**
+    In some cases, you may want to annotate computed properties with additional
+    metadata about how they function or what values they operate on. For example,
+    computed property functions may close over variables that are then no longer
+    available for introspection.
+
+    You can pass a hash of these values to a computed property like this:
+
+        person: function() {
+          var personId = this.get('personId');
+          return App.Person.create({ id: personId });
+        }.property().meta({ type: App.Person })
+
+    Once you've done this, you can retrieve the values saved to the computed
+    property from your class like this:
+
+        MyClass.metaForProperty('person');
+
+    This will return the original hash that was passed to `meta()`.
+  */
+  metaForProperty: function(key) {
+    var desc = meta(get(this, 'proto'), false).descs[key];
+
+    ember_assert("metaForProperty() could not find a computed property with key '"+key+"'.", !!desc && desc instanceof Ember.ComputedProperty);
+    return desc._meta || {};
   }
 
 });
@@ -9428,7 +9586,7 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
 var o_create = Ember.Set.create;
 Ember.Set.create = function(items) {
   if (items && Ember.Enumerable.detect(items)) {
-    Ember.Logger.warn('Passing an enumerable to Ember.Set.create() is deprecated and will be removed in a future version of Ember.  Use new Ember.Set(items) instead');
+    ember_deprecate('Passing an enumerable to Ember.Set.create() is deprecated and will be removed in a future version of Ember.  Use new Ember.Set(items) instead.');
     return new Ember.Set(items);
   } else {
     return o_create.apply(this, arguments);
@@ -9614,9 +9772,9 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
 
   Then, create a view that binds to your new controller:
 
-    {{#collection contentBinding="MyApp.listController"}}
-      {{content.firstName}} {{content.lastName}}
-    {{/collection}}
+    {{#each MyApp.listController}}
+      {{firstName}} {{lastName}}
+    {{/each}}
 
   The advantage of using an array controller is that you only have to set up
   your view bindings once; to change what's displayed, simply swap out the
@@ -10786,7 +10944,7 @@ Ember.EventDispatcher = Ember.Object.extend(
 
     This will be called after the browser sends a DOMContentReady event. By
     default, it will set up all of the listeners on the document body. If you
-    would like to register the listeners on different element, set the event
+    would like to register the listeners on a different element, set the event
     dispatcher's `root` property.
   */
   setup: function(addedEvents) {
@@ -10828,7 +10986,7 @@ Ember.EventDispatcher = Ember.Object.extend(
 
     rootElement.addClass('ember-application');
 
-    ember_assert('Unable to add "ember-application" class to rootElement. Make sure you the body or an element in the body.', rootElement.is('.ember-application'));
+    ember_assert('Unable to add "ember-application" class to rootElement. Make sure you set rootElement to the body or an element in the body.', rootElement.is('.ember-application'));
 
     for (event in events) {
       if (events.hasOwnProperty(event)) {
@@ -11140,6 +11298,18 @@ Ember.View = Ember.Object.extend(
   templateName: null,
 
   /**
+    The name of the layout to lookup if no layout is provided.
+
+    Ember.View will look for a template with this name in this view's
+    `templates` object. By default, this will be a global object
+    shared in `Ember.TEMPLATES`.
+
+    @type String
+    @default null
+  */
+  layoutName: null,
+
+  /**
     The hash in which to look for `templateName`.
 
     @type Ember.Object
@@ -11161,25 +11331,46 @@ Ember.View = Ember.Object.extend(
   template: Ember.computed(function(key, value) {
     if (value !== undefined) { return value; }
 
-    var templateName = get(this, 'templateName'), template;
+    var templateName = get(this, 'templateName'),
+        template = this.templateForName(templateName, 'template');
 
-    if (templateName) { template = get(get(this, 'templates'), templateName); }
-
-    // If there is no template but a templateName has been specified,
-    // try to lookup as a spade module
-    if (!template && templateName) {
-      if ('undefined' !== require && require.exists) {
-        if (require.exists(templateName)) { template = require(templateName); }
-      }
-
-      if (!template) {
-        throw new Ember.Error(fmt('%@ - Unable to find template "%@".', [this, templateName]));
-      }
-    }
-
-    // return the template, or undefined if no template was found
     return template || get(this, 'defaultTemplate');
   }).property('templateName').cacheable(),
+
+  /**
+    A view may contain a layout. A layout is a regular template but
+    supercedes the `template` property during rendering. It is the
+    responsibility of the layout template to retrieve the `template`
+    property from the view and render it in the correct location.
+
+    This is useful for a view that has a shared wrapper, but which delegates
+    the rendering of the contents of the wrapper to the `template` property
+    on a subclass.
+
+    @field
+    @type Function
+  */
+  layout: Ember.computed(function(key, value) {
+    if (arguments.length === 2) { return value; }
+
+    var layoutName = get(this, 'layoutName'),
+        layout = this.templateForName(layoutName, 'layout');
+
+    return layout || get(this, 'defaultLayout');
+  }).property('layoutName').cacheable(),
+
+  templateForName: function(name, type) {
+    if (!name) { return; }
+
+    var templates = get(this, 'templates'),
+        template = get(templates, name);
+
+    if (!template) {
+     throw new Ember.Error(fmt('%@ - Unable to find %@ "%@".', [this, type, name]));
+    }
+
+    return template;
+  },
 
   /**
     The object from which templates should access properties.
@@ -11343,7 +11534,10 @@ Ember.View = Ember.Object.extend(
     @param {Ember.RenderBuffer} buffer The render buffer
   */
   render: function(buffer) {
-    var template = get(this, 'template');
+    // If this view has a layout, it is the responsibility of the
+    // the layout to render the view's template. Otherwise, render the template
+    // directly.
+    var template = get(this, 'layout') || get(this, 'template');
 
     if (template) {
       var context = get(this, 'templateContext'),
@@ -11536,7 +11730,11 @@ Ember.View = Ember.Object.extend(
         property = split[0],
         className = split[1];
 
-    var val = Ember.getPath(this, property);
+    // TODO: Remove this `false` when the `getPath` globals support is removed
+    var val = Ember.getPath(this, property, false);
+    if (val === undefined && Ember.isGlobalPath(property)) {
+      val = Ember.getPath(window, property);
+    }
 
     // If value is a Boolean and true, return the dasherized property
     // name.
@@ -12222,7 +12420,7 @@ Ember.View = Ember.Object.extend(
         childViews = get(this, '_childViews'),
         parent     = get(this, '_parentView'),
         elementId  = get(this, 'elementId'),
-        childLen   = childViews.length;
+        childLen;
 
     // destroy the element -- this will avoid each child view destroying
     // the element over and over again...
@@ -12237,6 +12435,7 @@ Ember.View = Ember.Object.extend(
 
     this._super();
 
+    childLen = get(childViews, 'length');
     for (var i=childLen-1; i>=0; i--) {
       childViews[i].removedFromDOM = true;
       childViews[i].destroy();
@@ -12446,7 +12645,7 @@ Ember.View.views = {};
 Ember.View.childViewsProperty = childViewsProperty;
 
 Ember.View.applyAttributeBindings = function(elem, name, value) {
-  var type = typeof value;
+  var type = Ember.typeOf(value);
   var currentValue = elem.attr(name);
 
   // if this changes, also change the logic in ember-handlebars/lib/helpers/binding.js
@@ -12790,29 +12989,14 @@ Ember.ContainerView = Ember.View.extend({
 
       _childViews[idx] = view;
     }, this);
-  },
 
-  /**
-    Extends Ember.View's implementation of renderToBuffer to
-    set up an array observer on the child views array. This
-    observer will detect when child views are added or removed
-    and update the DOM to reflect the mutation.
-
-    Note that we set up this array observer in the `renderToBuffer`
-    method because any views set up previously will be rendered the first
-    time the container is rendered.
-
-    @private
-  */
-  renderToBuffer: function() {
-    var ret = this._super.apply(this, arguments);
-
+    // Sets up an array observer on the child views array. This
+    // observer will detect when child views are added or removed
+    // and update the DOM to reflect the mutation.
     get(this, 'childViews').addArrayObserver(this, {
       willChange: 'childViewsWillChange',
       didChange: 'childViewsDidChange'
     });
-
-    return ret;
   },
 
   /**
@@ -12857,7 +13041,7 @@ Ember.ContainerView = Ember.View.extend({
   childViewsWillChange: function(views, start, removed) {
     if (removed === 0) { return; }
 
-    var changedViews = views.slice(start, removed);
+    var changedViews = views.slice(start, start+removed);
     this.setParentView(changedViews, null);
 
     this.invokeForState('childViewsWillChange', views, start, removed);
@@ -12884,7 +13068,7 @@ Ember.ContainerView = Ember.View.extend({
     // No new child views were added; bail out.
     if (added === 0) return;
 
-    var changedViews = views.slice(start, added);
+    var changedViews = views.slice(start, start+added);
     this.setParentView(changedViews, this);
 
     // Let the current state handle the changes
@@ -12953,7 +13137,7 @@ Ember.ContainerView.states = {
   hasElement: {
     childViewsWillChange: function(view, views, start, removed) {
       for (var i=start; i<start+removed; i++) {
-        views[i].destroyElement();
+        views[i].remove();
       }
     },
 
@@ -13194,15 +13378,27 @@ Ember.$ = window.jQuery;
 })({});
 
 (function(exports) {
-var get = Ember.get, set = Ember.set;
+var get = Ember.get, set = Ember.set, getPath = Ember.getPath;
 
 Ember.State = Ember.Object.extend({
   isState: true,
   parentState: null,
   start: null,
+  name: null,
+  path: Ember.computed(function() {
+    var parentPath = getPath(this, 'parentState.path'),
+        path = get(this, 'name');
+
+    if (parentPath) {
+      path = parentPath + '.' + path;
+    }
+
+    return path;
+  }).property().cacheable(),
 
   init: function() {
     var states = get(this, 'states'), foundStates;
+    var name;
 
     // As a convenience, loop over the properties
     // of this state and look for any that are other
@@ -13212,40 +13408,37 @@ Ember.State = Ember.Object.extend({
 
     if (!states) {
       states = {};
-      for (var name in this) {
-        if (name === "constructor") { continue; }
-        value = this.setupChild(name, this[name]);
 
-        if (value) {
-          foundStates = true;
-          states[name] = value;
-        }
+      for (name in this) {
+        if (name === "constructor") { continue; }
+        this.setupChild(states, name, this[name]);
       }
 
-      if (foundStates) { set(this, 'states', states); }
+      set(this, 'states', states);
     } else {
-      for (var name in states) {
-        this.setupChild(name, states[name]);
+      for (name in states) {
+        this.setupChild(states, name, states[name]);
       }
     }
 
     set(this, 'routes', {});
   },
 
-  setupChild: function(name, value) {
+  setupChild: function(states, name, value) {
     if (!value) { return false; }
 
     if (Ember.State.detect(value)) {
-      value = value.create();
+      value = value.create({
+        name: name
+      });
+    } else if (value.isState) {
+      set(value, 'name', name);
     }
 
     if (value.isState) {
       set(value, 'parentState', this);
-      set(value, 'name', (get(this, 'name') || '') + '.' + name);
-      return value;
+      states[name] = value;
     }
-
-    return false;
   },
 
   enter: Ember.K,
@@ -13257,8 +13450,6 @@ Ember.State = Ember.Object.extend({
 
 (function(exports) {
 var get = Ember.get, set = Ember.set, getPath = Ember.getPath, fmt = Ember.String.fmt;
-Ember.LOG_STATE_TRANSITIONS = false;
-
 /**
   @class
 */
@@ -13275,7 +13466,7 @@ Ember.StateManager = Ember.State.extend(
 
     var initialState = get(this, 'initialState');
 
-    if (!initialState && get(this, 'start')) {
+    if (!initialState && getPath(this, 'states.start')) {
       initialState = 'start';
     }
 
@@ -13285,6 +13476,15 @@ Ember.StateManager = Ember.State.extend(
   },
 
   currentState: null,
+
+  /**
+    @property
+
+    If set to true, `errorOnUnhandledEvents` will cause an exception to be
+    raised if you attempt to send an event to a state manager that is not
+    handled by the current state or any of its parent states.
+  */
+  errorOnUnhandledEvent: true,
 
   /**
     @property
@@ -13314,16 +13514,20 @@ Ember.StateManager = Ember.State.extend(
   },
 
   sendRecursively: function(event, currentState, context) {
-    var log = Ember.LOG_STATE_TRANSITIONS;
+    var log = this.enableLogging;
 
     var action = currentState[event];
 
     if (action) {
-      if (log) { console.log(fmt("STATEMANAGER: Sending event '%@' to state %@.", [event, currentState.name])); }
+      if (log) { console.log(fmt("STATEMANAGER: Sending event '%@' to state %@.", [event, get(currentState, 'path')])); }
       action.call(currentState, this, context);
     } else {
       var parentState = get(currentState, 'parentState');
-      if (parentState) { this.sendRecursively(event, parentState, context); }
+      if (parentState) {
+        this.sendRecursively(event, parentState, context);
+      } else if (get(this, 'errorOnUnhandledEvent')) {
+        throw new Ember.Error(this.toString() + " could not respond to event " + event + " in state " + getPath(this, 'currentState.path') + ".");
+      }
     }
   },
 
@@ -13430,29 +13634,38 @@ Ember.StateManager = Ember.State.extend(
   },
 
   enterState: function(exitStates, enterStates, state) {
-    var log = Ember.LOG_STATE_TRANSITIONS;
+    var log = this.enableLogging;
 
     var stateManager = this;
 
+    exitStates.reverse();
     this.asyncEach(exitStates, function(state, transition) {
       state.exit(stateManager, transition);
     }, function() {
       this.asyncEach(enterStates, function(state, transition) {
-        if (log) { console.log("STATEMANAGER: Entering " + state.name); }
+        if (log) { console.log("STATEMANAGER: Entering " + get(state, 'path')); }
         state.enter(stateManager, transition);
       }, function() {
-        var startState = state, enteredState, initialSubstate;
+        var startState = state, enteredState, initialState;
 
-        initialSubstate = get(startState, 'initialSubstate');
+        initialState = get(startState, 'initialState');
 
-        if (!initialSubstate) {
-          initialSubstate = 'start';
+        if (!initialState) {
+          initialState = 'start';
         }
 
         // right now, start states cannot be entered asynchronously
-        while (startState = get(startState, initialSubstate)) {
+        while (startState = get(get(startState, 'states'), initialState)) {
           enteredState = startState;
+
+          if (log) { console.log("STATEMANAGER: Entering " + get(startState, 'path')); }
           startState.enter(stateManager);
+
+          initialState = get(startState, 'initialState');
+
+          if (!initialState) {
+            initialState = 'start';
+          }
         }
 
         set(this, 'currentState', enteredState || state);
@@ -13588,17 +13801,6 @@ Ember.ViewState = Ember.State.extend({
 
   // If we have the W3C range API, this process is relatively straight forward.
   if (supportsRange) {
-
-    // IE 9 supports ranges but doesn't define createContextualFragment
-    if (!Range.prototype.createContextualFragment) {
-      Range.prototype.createContextualFragment = function(html) {
-        var frag = document.createDocumentFragment(),
-             div = document.createElement("div");
-        frag.appendChild(div);
-        div.outerHTML = html;
-        return frag;
-      };
-    }
 
     // Get a range for the current morph. Optionally include the starting and
     // ending placeholders.
@@ -13860,6 +14062,7 @@ Ember.ViewState = Ember.State.extend({
     afterFunc = function(html) {
       // get the real starting node. see realNode for details.
       var end = document.getElementById(this.end);
+      var insertBefore = end.nextSibling;
       var parentNode = end.parentNode;
       var nextSibling;
       var node;
@@ -13873,7 +14076,7 @@ Ember.ViewState = Ember.State.extend({
       // placeholder.
       while (node) {
         nextSibling = node.nextSibling;
-        parentNode.insertBefore(node, end.nextSibling);
+        parentNode.insertBefore(node, insertBefore);
         node = nextSibling;
       }
     };
@@ -14563,6 +14766,7 @@ Ember.Metamorph = Ember.Mixin.create({
 
       Ember.run.schedule('render', this, function() {
         if (get(view, 'isDestroyed')) { return; }
+        view.invalidateRecursively('element');
         view._notifyWillInsertElement();
         morph.replaceWith(buffer.string());
         view.transitionTo('inDOM');
@@ -15354,7 +15558,14 @@ Ember.Handlebars.registerHelper('collection', function(path, options) {
   }
 
   if (inverse && inverse !== Handlebars.VM.noop) {
-    hash.emptyView = Ember.View.extend({
+    var emptyViewClass = Ember.View;
+
+    if (hash.emptyViewClass) {
+      emptyViewClass = Ember.View.detect(emptyViewClass) ?
+                          hash.emptyViewClass : getPath(this, hash.emptyViewClass);
+    }
+
+    hash.emptyView = emptyViewClass.extend({
       template: inverse,
       tagName: itemHash.tagName
     });
@@ -15452,6 +15663,11 @@ Ember.Handlebars.EachView = Ember.CollectionView.extend(Ember.Metamorph, {
 Ember.Handlebars.registerHelper('each', function(path, options) {
   options.hash.contentBinding = path;
   options.hash.preserveContext = true;
+
+  // Set up emptyView as a metamorph with no tag
+  options.hash.itemTagName = '';
+  options.hash.emptyViewClass = Ember.View.extend(Ember.Metamorph);
+
   return Ember.Handlebars.helpers.collection.call(this, 'Ember.Handlebars.EachView', options);
 });
 
@@ -15503,28 +15719,30 @@ var EmberHandlebars = Ember.Handlebars, getPath = Ember.Handlebars.getPath;
 
 var ActionHelper = EmberHandlebars.ActionHelper = {};
 
-ActionHelper.registerAction = function(actionName, eventName, target, view) {
+ActionHelper.registerAction = function(actionName, eventName, target, view, context) {
   var actionId = (++jQuery.uuid).toString(),
-      existingHandler = view[eventName],
-      handler;
+      existingHandler = view[eventName];
+
+  function handler(event) {
+    if (Ember.$(event.target).closest('[data-ember-action]').attr('data-ember-action') === actionId) {
+      event.preventDefault();
+
+      if ('function' === typeof target.send) {
+        return target.send(actionName, { view: view, event: event, context: context });
+      } else {
+        return target[actionName].call(target, view, event, context);
+      }
+    }
+  }
 
   if (existingHandler) {
-    var handler = function(event) {
-      var ret;
-      if ($(event.target).closest('[data-ember-action]').attr('data-ember-action') === actionId) {
-        ret = target[actionName](event);
-      }
+    view[eventName] = function(event) {
+      var ret = handler.call(view, event);
       return ret !== false ? existingHandler.call(view, event) : ret;
     };
   } else {
-    var handler = function(event) {
-      if ($(event.target).closest('[data-ember-action]').attr('data-ember-action') === actionId) {
-        return target[actionName](event);
-      }
-    };
+    view[eventName] = handler;
   }
-
-  view[eventName] = handler;
 
   view.reopen({
     rerender: function() {
@@ -15544,13 +15762,35 @@ EmberHandlebars.registerHelper('action', function(actionName, options) {
   var hash = options.hash || {},
       eventName = options.hash.on || "click",
       view = options.data.view,
-      target;
+      target, context;
 
   if (view.isVirtual) { view = view.get('parentView'); }
   target = options.hash.target ? getPath(this, options.hash.target) : view;
+  context = options.contexts[0];
 
-  var actionId = ActionHelper.registerAction(actionName, eventName, target, view);
+  var actionId = ActionHelper.registerAction(actionName, eventName, target, view, context);
   return new EmberHandlebars.SafeString('data-ember-action="' + actionId + '"');
+});
+
+})({});
+
+
+(function(exports) {
+var get = Ember.get, set = Ember.set;
+
+Ember.Handlebars.registerHelper('yield', function(options) {
+  var view = options.data.view, template;
+
+  while (view && !get(view, 'layout')) {
+    view = get(view, 'parentView');
+  }
+
+  ember_assert("You called yield in a template that was not a layout", !!view);
+
+  template = get(view, 'template');
+
+  ember_assert("You called yield on " + view.toString() + " without supplying a template", !!template);
+  template(this, options);
 });
 
 })({});
@@ -15576,16 +15816,26 @@ EmberHandlebars.registerHelper('action', function(actionName, options) {
 // to Ember.CoreView in the global Ember.TEMPLATES object. This will be run as as
 // jQuery DOM-ready callback.
 //
-// Script tags with type="text/html" or "text/x-handlebars" will be compiled
+// Script tags with "text/x-handlebars" will be compiled
 // with Ember's Handlebars and are suitable for use as a view's template.
 // Those with type="text/x-raw-handlebars" will be compiled with regular
 // Handlebars and are suitable for use in views' computed properties.
 Ember.Handlebars.bootstrap = function(ctx) {
-  Ember.$('script[type="text/html"], script[type="text/x-handlebars"], script[type="text/x-raw-handlebars"]', ctx)
+  var selectors = 'script[type="text/x-handlebars"], script[type="text/x-raw-handlebars"]';
+
+  if (Ember.ENV.LEGACY_HANDLEBARS_TAGS) { selectors += ', script[type="text/html"]'; }
+
+  ember_warn("Ember no longer parses text/html script tags by default. Set ENV.LEGACY_HANDLEBARS_TAGS = true to restore this functionality.", Ember.ENV.LEGACY_HANDLEBARS_TAGS || Ember.$('script[type="text/html"]').length === 0);
+
+  Ember.$(selectors, ctx)
     .each(function() {
     // Get a reference to the script tag
     var script = Ember.$(this),
-      compile = (script.attr('type') === 'text/x-raw-handlebars') ?
+        type   = script.attr('type');
+
+    if (type === 'text/html' && !Ember.ENV.LEGACY_HANDLEBARS_TAGS) { return; }
+
+    var compile = (script.attr('type') === 'text/x-raw-handlebars') ?
                   Ember.$.proxy(Handlebars.compile, Handlebars) :
                   Ember.$.proxy(Ember.Handlebars.compile, Ember.Handlebars),
       // Get the name of the script, used by Ember.View's templateName property.
