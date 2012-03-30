@@ -1,78 +1,5 @@
 
 (function(exports) {
-// ==========================================================================
-// Project:  Ember Metal
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-/*globals ENV ember_assert */
-
-if ('undefined' === typeof Ember) {
-/**
-  @namespace
-  @name Ember
-  @version 0.9.4
-
-  All Ember methods and functions are defined inside of this namespace.
-  You generally should not add new properties to this namespace as it may be
-  overwritten by future versions of Ember.
-
-  You can also use the shorthand "Em" instead of "Ember".
-
-  Ember-Runtime is a framework that provides core functions for 
-  Ember including cross-platform functions, support for property 
-  observing and objects. Its focus is on small size and performance. You can 
-  use this in place of or along-side other cross-platform libraries such as 
-  jQuery.
-
-  The core Runtime framework is based on the jQuery API with a number of
-  performance optimizations.
-*/
-
-// Create core object. Make it act like an instance of Ember.Namespace so that
-// objects assigned to it are given a sane string representation.
-Ember = { isNamespace: true, toString: function() { return "Ember"; } };
-
-// aliases needed to keep minifiers from removing the global context
-if ('undefined' !== typeof window) {
-  window.SC = window.SproutCore = window.Em = window.Ember = SC = SproutCore = Em = Ember;
-}
-
-}
-
-/**
-  @static
-  @type String
-  @default '0.9.4'
-  @constant
-*/
-Ember.VERSION = '0.9.4';
-
-/**
-  @static
-  @type Hash
-  @constant
-  
-  Standard environmental variables.  You can define these in a global `ENV`
-  variable before loading Ember to control various configuration 
-  settings.
-*/
-Ember.ENV = 'undefined' === typeof ENV ? {} : ENV;
-
-/**
-  Empty function.  Useful for some operations.
-
-  @returns {Object}
-  @private
-*/
-Ember.K = function() { return this; };
-
-/**
-  @namespace
-  @name window
-  @description The global window object
-*/
-
 /**
   Define an assertion that will throw an exception if the condition is not 
   met.  Ember build tools will remove any calls to ember_assert() when 
@@ -108,6 +35,187 @@ window.ember_assert = window.sc_assert = function ember_assert(desc, test) {
   if ('function' === typeof test) test = test()!==false;
   if (!test) throw new Error("assertion failed: "+desc);
 };
+
+
+/**
+  Display a warning with the provided message. Ember build tools will
+  remove any calls to ember_warn() when doing a production build.
+
+  @static
+  @function
+  @param {String} message
+    A warning to display.
+
+  @param {Boolean} test
+    An optional boolean or function. If the test returns false, the warning
+    will be displayed.
+*/
+window.ember_warn = function(message, test) {
+  if (arguments.length === 1) { test = false; }
+  if ('function' === typeof test) test = test()!==false;
+  if (!test) console.warn("WARNING: "+message);
+}
+
+
+
+/**
+  Display a deprecation warning with the provided message and a stack trace
+  (Chrome and Firefox only). Ember build tools will remove any calls to
+  ember_deprecate() when doing a production build.
+
+  @static
+  @function
+  @param {String} message
+    A description of the deprecation.
+
+  @param {Boolean} test
+    An optional boolean or function. If the test returns false, the deprecation
+    will be displayed.
+*/
+window.ember_deprecate = function(message, test) {
+  if (arguments.length === 1) { test = false; }
+  if ('function' === typeof test) { test = test()!==false; }
+  if (test) { return; }
+
+  var error, stackStr = '';
+
+  // When using new Error, we can't do the arguments check for Chrome. Alternatives are welcome
+  try { __fail__; } catch (e) { error = e; }
+
+  if (error.stack) {
+    var stack;
+
+    if (error['arguments']) {
+      // Chrome
+      stack = error.stack.replace(/^\s+at\s+/gm, '').
+                          replace(/^([^\(]+?)([\n$])/gm, '{anonymous}($1)$2').
+                          replace(/^Object.<anonymous>\s*\(([^\)]+)\)/gm, '{anonymous}($1)').split('\n');
+      stack.shift();
+    } else {
+      // Firefox
+      stack = error.stack.replace(/(?:\n@:0)?\s+$/m, '').
+                          replace(/^\(/gm, '{anonymous}(').split('\n');
+    }
+
+    stackStr = "\n    " + stack.slice(2).join("\n    ");
+  }
+
+  console.warn("DEPRECATION: "+message+stackStr);
+};
+
+
+
+/**
+  Display a deprecation warning with the provided message and a stack trace
+  (Chrome and Firefox only) when the wrapped method is called.
+
+  @static
+  @function
+  @param {String} message
+    A description of the deprecation.
+
+  @param {Function} func
+    The function to be deprecated.
+*/
+window.ember_deprecateFunc = function(message, func) {
+  return function() {
+    window.ember_deprecate(message);
+    return func.apply(this, arguments);
+  };
+};
+
+})({});
+
+(function(exports) {
+// ==========================================================================
+// Project:  Ember Metal
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+/*globals ENV ember_assert */
+
+if ('undefined' === typeof Ember) {
+/**
+  @namespace
+  @name Ember
+  @version 0.9.5
+
+  All Ember methods and functions are defined inside of this namespace.
+  You generally should not add new properties to this namespace as it may be
+  overwritten by future versions of Ember.
+
+  You can also use the shorthand "Em" instead of "Ember".
+
+  Ember-Runtime is a framework that provides core functions for 
+  Ember including cross-platform functions, support for property 
+  observing and objects. Its focus is on small size and performance. You can 
+  use this in place of or along-side other cross-platform libraries such as 
+  jQuery.
+
+  The core Runtime framework is based on the jQuery API with a number of
+  performance optimizations.
+*/
+
+// Create core object. Make it act like an instance of Ember.Namespace so that
+// objects assigned to it are given a sane string representation.
+Ember = { isNamespace: true, toString: function() { return "Ember"; } };
+
+// aliases needed to keep minifiers from removing the global context
+if ('undefined' !== typeof window) {
+  window.SC = window.SproutCore = window.Em = window.Ember = SC = SproutCore = Em = Ember;
+}
+
+}
+
+/**
+  @static
+  @type String
+  @default '0.9.5'
+  @constant
+*/
+Ember.VERSION = '0.9.5';
+
+/**
+  @static
+  @type Hash
+  @constant
+  
+  Standard environmental variables.  You can define these in a global `ENV`
+  variable before loading Ember to control various configuration 
+  settings.
+*/
+Ember.ENV = 'undefined' === typeof ENV ? {} : ENV;
+
+/**
+  Empty function.  Useful for some operations.
+
+  @returns {Object}
+  @private
+*/
+Ember.K = function() { return this; };
+
+/**
+  @namespace
+  @name window
+  @description The global window object
+*/
+
+
+// Stub out the methods defined by the ember-debug package in case it's not loaded
+
+if ('undefined' === typeof ember_assert) { 
+  window.ember_assert = window.sc_assert = Ember.K;
+};
+
+if ('undefined' === typeof ember_warn) { window.ember_warn = Ember.K; }
+
+if ('undefined' === typeof ember_deprecate) { window.ember_deprecate = Ember.K; }
+
+if ('undefined' === typeof ember_deprecateFunc) {
+  window.ember_deprecateFunc = function(_, func) { return func; };
+}
+
+
 
 //if ('undefined' === typeof ember_require) ember_require = Ember.K;
 if ('undefined' === typeof require) require = Ember.K;
@@ -434,7 +542,7 @@ if (Object.freeze) Object.freeze(EMPTY_META);
   The meta object contains information about computed property descriptors as
   well as any watched properties and other information.  You generally will
   not access this information directly but instead work with higher level 
-  methods that manipulate this has indirectly.
+  methods that manipulate this hash indirectly.
 
   @param {Object} obj
     The object to retrieve meta for
@@ -868,7 +976,7 @@ Ember.normalizeTuple = function(target, path) {
 Ember.normalizeTuple.primitive = normalizeTuple;
 
 Ember.getPath = function(root, path, _checkGlobal) {
-  var hasThis, hasStar, isGlobal, ret;
+  var pathOnly, hasThis, hasStar, isGlobal, ret;
   
   // Helpers that operate with 'this' within an #each
   if (path === '') {
@@ -878,6 +986,7 @@ Ember.getPath = function(root, path, _checkGlobal) {
   if (!path && 'string'===typeof root) {
     path = root;
     root = null;
+    pathOnly = true;
   }
 
   hasStar = path.indexOf('*') > -1;
@@ -892,9 +1001,7 @@ Ember.getPath = function(root, path, _checkGlobal) {
   hasThis  = HAS_THIS.test(path);
 
   if (!root || hasThis || hasStar) {
-    if (root && root !== window && IS_GLOBAL.test(path)) {
-      console.warn("Fetching globals with Ember.getPath is deprecated", root, path);
-    }
+    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
 
     var tuple = normalizeTuple(root, path);
     root = tuple[0];
@@ -904,8 +1011,8 @@ Ember.getPath = function(root, path, _checkGlobal) {
 
   ret = getPath(root, path);
 
-  if (ret === undefined && root !== window && !hasThis && IS_GLOBAL.test(path) && _checkGlobal !== false) {
-    console.warn("Fetching globals with Ember.getPath is deprecated", root, path);
+  if (ret === undefined && !pathOnly && !hasThis && root !== window && IS_GLOBAL.test(path) && _checkGlobal !== false) {
+    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")");
     return Ember.getPath(window, path);
   } else {
     return ret;
@@ -923,9 +1030,7 @@ Ember.setPath = function(root, path, value, tolerant) {
   
   path = normalizePath(path);
   if (path.indexOf('*')>0) {
-    if (root && root !== window && IS_GLOBAL.test(path)) {
-      console.warn("Setting globals with Ember.setPath is deprecated", path);
-    };
+    ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
 
     var tuple = normalizeTuple(root, path);
     root = tuple[0];
@@ -940,7 +1045,7 @@ Ember.setPath = function(root, path, value, tolerant) {
       // Remove the `false` when we're done with this deprecation
       root = Ember.getPath(root, path, false);
       if (!root && IS_GLOBAL.test(path)) {
-        console.warn("Setting globals with Ember.setPath is deprecated", path);
+        ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")");
         root = Ember.getPath(window, path);
       }
     }
@@ -2777,7 +2882,7 @@ Ember.run.cancel = function(timer) {
 
   Use `#js:Ember.run.begin()` instead
 */
-Ember.RunLoop.begin = Ember.run.begin;
+Ember.RunLoop.begin = ember_deprecateFunc("Use Ember.run.begin instead of Ember.RunLoop.begin.", Ember.run.begin);
 
 /**
   @deprecated
@@ -2785,7 +2890,7 @@ Ember.RunLoop.begin = Ember.run.begin;
 
   Use `#js:Ember.run.end()` instead
 */
-Ember.RunLoop.end = Ember.run.end;
+Ember.RunLoop.end = ember_deprecateFunc("Use Ember.run.end instead of Ember.RunLoop.end.", Ember.run.end);
 
 
 
@@ -3828,6 +3933,30 @@ Cp.property = function() {
   return this;
 };
 
+/**
+  In some cases, you may want to annotate computed properties with additional
+  metadata about how they function or what values they operate on. For example,
+  computed property functions may close over variables that are then no longer
+  available for introspection.
+
+  You can pass a hash of these values to a computed property like this:
+
+      person: function() {
+        var personId = this.get('personId');
+        return App.Person.create({ id: personId });
+      }.property().meta({ type: App.Person })
+
+  The hash that you pass to the `meta()` function will be saved on the
+  computed property descriptor under the `_meta` key. Ember runtime
+  exposes a public API for retrieving these values from classes,
+  via the `metaForProperty()` function.
+*/
+
+Cp.meta = function(meta) {
+  this._meta = meta;
+  return this;
+};
+
 /** @private - impl descriptor API */
 Cp.setup = function(obj, keyName, value) {
   CP_DESC.get = mkCpGetter(keyName, this);
@@ -4573,6 +4702,8 @@ function findNamespaces() {
     //  get(window.globalStorage, 'isNamespace') would try to read the storage for domain isNamespace and cause exception in Firefox.
     // globalStorage is a storage obsoleted by the WhatWG storage specification. See https://developer.mozilla.org/en/DOM/Storage#globalStorage
     if (prop === "globalStorage" && window.StorageList && window.globalStorage instanceof window.StorageList) { continue; }
+    // Don't access properties on parent window, which will throw "Access/Permission Denied" in IE/Firefox for windows on different domains
+    if (prop === "parent" || prop === "top" || prop === "frameElement" || prop === "content") { continue; }
     // Unfortunately, some versions of IE don't support window.hasOwnProperty
     if (window.hasOwnProperty && !window.hasOwnProperty(prop)) { continue; }
 
@@ -6689,6 +6820,33 @@ var ClassMixin = Ember.Mixin.create({
 
   detectInstance: function(obj) {
     return this.PrototypeMixin.detect(obj);
+  },
+
+  /**
+    In some cases, you may want to annotate computed properties with additional
+    metadata about how they function or what values they operate on. For example,
+    computed property functions may close over variables that are then no longer
+    available for introspection.
+
+    You can pass a hash of these values to a computed property like this:
+
+        person: function() {
+          var personId = this.get('personId');
+          return App.Person.create({ id: personId });
+        }.property().meta({ type: App.Person })
+
+    Once you've done this, you can retrieve the values saved to the computed
+    property from your class like this:
+
+        MyClass.metaForProperty('person');
+
+    This will return the original hash that was passed to `meta()`.
+  */
+  metaForProperty: function(key) {
+    var desc = meta(get(this, 'proto'), false).descs[key];
+
+    ember_assert("metaForProperty() could not find a computed property with key '"+key+"'.", !!desc && desc instanceof Ember.ComputedProperty);
+    return desc._meta || {};
   }
 
 });
@@ -7831,7 +7989,7 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
 var o_create = Ember.Set.create;
 Ember.Set.create = function(items) {
   if (items && Ember.Enumerable.detect(items)) {
-    Ember.Logger.warn('Passing an enumerable to Ember.Set.create() is deprecated and will be removed in a future version of Ember.  Use new Ember.Set(items) instead');
+    ember_deprecate('Passing an enumerable to Ember.Set.create() is deprecated and will be removed in a future version of Ember.  Use new Ember.Set(items) instead.');
     return new Ember.Set(items);
   } else {
     return o_create.apply(this, arguments);
@@ -8017,9 +8175,9 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
 
   Then, create a view that binds to your new controller:
 
-    {{#collection contentBinding="MyApp.listController"}}
-      {{content.firstName}} {{content.lastName}}
-    {{/collection}}
+    {{#each MyApp.listController}}
+      {{firstName}} {{lastName}}
+    {{/each}}
 
   The advantage of using an array controller is that you only have to set up
   your view bindings once; to change what's displayed, simply swap out the
