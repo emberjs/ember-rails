@@ -5,15 +5,13 @@ module EmberRails
     class Source
 
       def self.precompiler_path
-        assets_path("ember-precompiler.js")
-      end
-
-      def self.assets_path(name)
-        File.expand_path(File.join(__FILE__, "..", "..", "..", "..", "vendor/assets/javascripts/#{name}"))
+        File.expand_path(File.join(__FILE__, "..", "..", "..",
+          "assets/javascripts/ember-precompiler.js"))
       end
 
       def self.bundled_path
-        assets_path("ember.js")
+        File.expand_path(File.join(__FILE__, "..", "..", "..", "..",
+          "vendor/assets/javascripts/ember.js"))
       end
 
       def self.path
