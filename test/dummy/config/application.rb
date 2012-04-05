@@ -5,7 +5,7 @@ require "rails/test_unit/railtie"
 require 'sprockets/railtie'
 
 Bundler.require
-require "ember-rails"
+require "ember_rails"
 
 module Dummy
   class Application < Rails::Application
@@ -39,6 +39,8 @@ module Dummy
 
     # Enable the asset pipeline
     config.assets.enabled = true
+
+    config.handlebars.precompile = true
   end
 end
 

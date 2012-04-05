@@ -50,9 +50,9 @@ module EmberRails
 
           ember_files.each do |name|
             source_file = if name.match /-dev/
-              name.gsub /-dev/, ''
+              name.gsub /-dev/, '.debug'
             else
-              name.gsub /.js/, '.min.js'
+              name.gsub /.js/, '.prod.js'
             end
 
             copy_file source_file, "vendor/assets/javascripts/#{name}"

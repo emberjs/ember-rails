@@ -1,12 +1,12 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "ember-rails/version"
+require "ember_rails/version"
 
 Gem::Specification.new do |s|
   s.name        = "ember-rails"
   s.version     = EmberRails::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Keith Pitt", "Rob Monie", "Joao Carlos"]
+  s.authors     = ["Keith Pitt", "Rob Monie", "Joao Carlos", "Paul Chavard"]
   s.email       = ["me@keithpitt.com"]
   s.homepage    = "https://github.com/emberjs/ember-rails"
   s.summary     = "Ember for Rails 3.x"

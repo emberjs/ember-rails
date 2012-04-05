@@ -1,7 +1,7 @@
 module EmberRails
   module Generators
     module GeneratorHelpers
-      
+
       def ember_path
         "app/assets/javascripts/ember"
       end
