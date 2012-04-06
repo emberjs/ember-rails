@@ -3,7 +3,12 @@ require 'sprockets/engines'
 require 'ember-rails/hjs_template'
 
 module EmberRails
+  autoload :HamlFilter, 'ember-rails/haml_filter'
+
   class Engine < Rails::Engine
+    initializer 'ember_rails conditionaly_initialize_haml_filter'do
+      EmberRails::HamlFilter if defined? Haml
+    end
   end
 
   # Registers the HandlebarsJS template engine so that
@@ -12,3 +17,4 @@ module EmberRails
   Sprockets.register_engine '.hjs', HjsTemplate
   Sprockets.register_engine '.handlebars', HjsTemplate
 end
+
