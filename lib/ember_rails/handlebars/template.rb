@@ -30,7 +30,11 @@ module EmberRails
 
       def template_path(path)
         path = path.split('/')
-        path.delete(Rails.configuration.handlebars.template_root)
+
+        unless Rails.configuration.handlebars.template_root.blank?
+          path.delete(Rails.configuration.handlebars.template_root)
+        end
+
         path.join(Rails.configuration.handlebars.template_path_separator)
       end
 

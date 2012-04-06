@@ -8,7 +8,7 @@ module EmberRails
   class Engine < ::Rails::Engine
     config.handlebars = ActiveSupport::OrderedOptions.new
     config.handlebars.precompile = Rails.env.production?
-    config.handlebars.template_root = 'templates'
+    config.handlebars.template_root = nil
     config.handlebars.template_path_separator = '/'
 
     initializer :setup_ember_rails, :group => :all do |app|
