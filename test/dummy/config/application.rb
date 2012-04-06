@@ -5,7 +5,7 @@ require "rails/test_unit/railtie"
 require 'sprockets/railtie'
 
 Bundler.require
-require "ember_rails"
+require "ember-rails"
 
 module Dummy
   class Application < Rails::Application

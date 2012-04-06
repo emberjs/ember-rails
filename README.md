@@ -10,7 +10,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 Add the gem to your application Gemfile:
 
-    gem "ember_rails"
+    gem "ember-rails"
 
 Run `bundle install` and add the following line to `app/assets/javascripts/application.js`:
 
