@@ -1,8 +1,8 @@
 require 'test_helper'
-require 'generators/ember_rails/bootstrap/bootstrap_generator'
+require 'generators/ember/bootstrap_generator'
 
 class BootstrapGeneratorTest < Rails::Generators::TestCase
-  tests EmberRails::Generators::BootstrapGenerator
+  tests Ember::Generators::BootstrapGenerator
   destination File.join(Rails.root, "tmp")
 
   setup :prepare_destination

@@ -1,12 +1,11 @@
 require "execjs"
 
-module EmberRails
+module Ember
   module Handlebars
     class Source
 
       def self.precompiler_path
-        File.expand_path(File.join(__FILE__, "..", "..", "..",
-          "assets/javascripts/ember-precompiler.js"))
+        File.expand_path(File.join(__FILE__, "../assets/ember-precompiler.js"))
       end
 
       def self.bundled_path

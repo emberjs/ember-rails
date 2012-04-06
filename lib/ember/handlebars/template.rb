@@ -1,4 +1,4 @@
-module EmberRails
+module Ember
   module Handlebars
     class Template < Tilt::Template
       def self.default_mime_type
@@ -10,8 +10,8 @@ module EmberRails
       def evaluate(scope, locals, &block)
         template = mustache_to_handlebars(scope, data)
 
-        if Rails.configuration.handlebars.precompile
-          func = EmberRails::Handlebars.compile(template)
+        if ::Rails.configuration.handlebars.precompile
+          func = Ember::Handlebars.compile(template)
           "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.template(#{func});\n"
         else
           "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.compile(#{indent(template).inspect});\n"
@@ -31,11 +31,11 @@ module EmberRails
       def template_path(path)
         path = path.split('/')
 
-        unless Rails.configuration.handlebars.template_root.blank?
-          path.delete(Rails.configuration.handlebars.template_root)
+        unless ::Rails.configuration.handlebars.template_root.blank?
+          path.delete(::Rails.configuration.handlebars.template_root)
         end
 
-        path.join(Rails.configuration.handlebars.template_path_separator)
+        path.join(::Rails.configuration.handlebars.template_path_separator)
       end
 
       def indent(string)

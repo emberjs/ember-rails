@@ -1,4 +1,4 @@
-module EmberRails
+module Ember
   module Generators
     class InstallGenerator < Rails::Generators::Base
 
@@ -61,7 +61,7 @@ module EmberRails
         else
 
           self.class.source_root File.expand_path('../../../../../vendor/assets/javascripts', __FILE__)
-          say_status("copying", "Ember.js (#{EmberRails::EMBER_VERSION})", :green)
+          say_status("copying", "Ember.js (#{Ember::VERSION})", :green)
 
           ember_files.each do |name|
             copy_file name, "vendor/assets/javascripts/#{name}"
@@ -72,20 +72,19 @@ module EmberRails
 
       private
 
-        def ember_files
-          options.runtime? ? RUNTIME_FILES : EMBER_FILES
-        end
+      def ember_files
+        options.runtime? ? RUNTIME_FILES : EMBER_FILES
+      end
 
-        def cmd(command)
-          out = `#{command}`
+      def cmd(command)
+        out = `#{command}`
 
-          if $?.exitstatus != 0
-            raise "Command error: command `#{command}` in directory #{Dir.pwd} has failed."
-          end
-          out
+        if $?.exitstatus != 0
+          raise "Command error: command `#{command}` in directory #{Dir.pwd} has failed."
         end
+        out
+      end
 
     end
-
   end
 end

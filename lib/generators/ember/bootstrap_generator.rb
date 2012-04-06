@@ -1,11 +1,11 @@
-require 'generators/ember_rails/generator_helpers'
+require 'generators/ember/generator_helpers'
 
-module EmberRails
+module Ember
   module Generators
-    class BootstrapGenerator < Rails::Generators::Base
-      include EmberRails::Generators::GeneratorHelpers
+    class BootstrapGenerator < ::Rails::Generators::Base
+      include Ember::Generators::GeneratorHelpers
 
-      source_root File.expand_path("../templates", __FILE__)
+      source_root File.expand_path("../../templates", __FILE__)
 
       desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
 
@@ -34,8 +34,6 @@ module EmberRails
       def create_app_file
         template "app.coffee", "#{ember_path}/#{application_name.underscore}.js.coffee"
       end
-
     end
-
   end
 end
