@@ -2,6 +2,9 @@ require 'sprockets'
 require 'sprockets/engines'
 require 'ember-rails/hjs_template'
 
+require "ember-rails/slim" if defined? Slim
+require "ember-rails/haml" if defined? Haml
+
 module EmberRails
   class Engine < Rails::Engine
   end
