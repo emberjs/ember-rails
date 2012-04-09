@@ -1,6 +1,6 @@
 # ember-rails  [![Build Status](https://secure.travis-ci.org/keithpitt/ember-rails.png)](http://travis-ci.org/keithpitt/ember-rails) [![Dependency Status](https://gemnasium.com/emberjs/ember-rails.png)](https://gemnasium.com/emberjs/ember-rails)
 
-ember-rails allows you to include [Ember.JS](http://emberjs.com/) into your Rails 3.x application.
+ember-rails allows you to include [Ember.JS](http://emberjs.com/) into your Rails 3.1+ application.
 
 The gem will also pre-compile your handlebars templates when building your asset pipeline. It includes development and production copies of Ember.
 
