@@ -66,6 +66,27 @@ and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
 
+If you want to strip template root from template names, add `templates_root` option to your application configuration block :
+
+    config.handlebars.templates_root = 'templates'
+
+The result will be like this :
+
+    Ember.TEMPLATES['admin_panel'] = "...";
+
+If you want a different path separator in template names add `templates_path_separator` option to your application configuration block :
+
+    config.handlebars.templates_path_separator = '-'
+
+The result will be like this :
+
+    Ember.TEMPLATES['templates-admin_panel'] = "...";
+
+Default behavior for ember-rails is to precompile handlebars templates only in production environment.
+If you don't want this behavior you can turn it off in your application configuration block :
+
+    config.handlebars.precompile = false
+
 Bundle all templates together thanks to Sprockets,
 e.g create `app/assets/javascripts/templates/all.js` with:
 

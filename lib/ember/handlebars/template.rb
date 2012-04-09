@@ -32,11 +32,11 @@ module Ember
 
       def template_path(path)
         path = path.split('/')
-        root = configuration.template_root
+        root = configuration.templates_root
 
         path.delete(root) unless root.blank?
 
-        path.join(configuration.template_path_separator)
+        path.join(configuration.templates_path_separator)
       end
 
       def configuration
