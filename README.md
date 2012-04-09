@@ -60,7 +60,7 @@ If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember_rails:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
-by putting each template in a dedicated ".js.hjs" or ".handlebars" file
+by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
 (e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
 and including the assets in your layout:
 
