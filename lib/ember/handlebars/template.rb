@@ -1,4 +1,4 @@
-require "ember/handlebars/source"
+require 'ember/handlebars/source'
 
 module Ember
   module Handlebars
