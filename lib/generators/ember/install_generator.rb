@@ -1,6 +1,8 @@
+require 'ember/version'
+
 module Ember
   module Generators
-    class InstallGenerator < Rails::Generators::Base
+    class InstallGenerator < ::Rails::Generators::Base
 
       EMBER_FILES = [ "ember.js", "ember-dev.js" ]
       RUNTIME_FILES = [ "ember-runtime.js", "ember-runtime-dev.js" ]

@@ -1,4 +1,6 @@
-require "ember/handlebars/template"
+require 'ember/handlebars/template'
+require 'ember/handlebars/version'
+require 'ember/version'
 
 module Ember
   module Rails

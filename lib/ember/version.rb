@@ -1,3 +1,5 @@
+require 'ember/handlebars/source'
+
 module Ember
-  VERSION = "0.9.6"
+  VERSION = Ember::Handlebars::Source.ember_version
 end
