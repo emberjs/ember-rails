@@ -8,7 +8,7 @@ module Ember
       
       desc "Creates a new Ember.js model"
       
-      def create_controller_files
+      def create_model_files
         template 'model.js', File.join('app/assets/javascripts/ember/models', class_path, "#{file_name}.js")
       end
       
