@@ -31,7 +31,7 @@
     will be executed.  If the function returns false an exception will be
     thrown.
 */
-window.ember_assert = window.sc_assert = function ember_assert(desc, test) {
+window.ember_assert = function ember_assert(desc, test) {
   if ('function' === typeof test) test = test()!==false;
   if (!test) throw new Error("assertion failed: "+desc);
 };
@@ -140,7 +140,7 @@ if ('undefined' === typeof Ember) {
 /**
   @namespace
   @name Ember
-  @version 0.9.6
+  @version 0.9.7
 
   All Ember methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -172,10 +172,10 @@ if ('undefined' !== typeof window) {
 /**
   @static
   @type String
-  @default '0.9.6'
+  @default '0.9.7'
   @constant
 */
-Ember.VERSION = '0.9.6';
+Ember.VERSION = '0.9.7';
 
 /**
   @static
@@ -1531,7 +1531,7 @@ Ember.defineProperty = function(obj, keyName, desc, val) {
   that support it, this uses the built in Object.create method.  Else one is
   simulated for you.
 
-  This method is a better choice thant Object.create() because it will make
+  This method is a better choice than Object.create() because it will make
   sure that any observers, event listeners, and computed properties are
   inherited from the parent as well.
 
@@ -3157,6 +3157,7 @@ function sendEvent(obj, eventName) {
   return true;
 }
 
+/** @memberOf Ember */
 function deferEvent(obj, eventName) {
   var targetSet = targetSetFor(obj, eventName), actions = [], params = arguments;
   iterateSet(targetSet, function (action) {
@@ -3891,7 +3892,7 @@ RunLoop.prototype = {
       while (this._queues && (queue = this._queues[queueName])) {
         this._queues[queueName] = null;
 
-        // the sync phase is to allow property changes to propogate.  don't
+        // the sync phase is to allow property changes to propagate.  don't
         // invoke observers until that is finished.
         if (queueName === 'sync') {
           log = Ember.LOG_BINDINGS;
@@ -3921,7 +3922,7 @@ RunLoop.prototype = {
           queue = queues[queueName];
 
           if (queue) {
-            // the sync phase is to allow property changes to propogate.  don't
+            // the sync phase is to allow property changes to propagate.  don't
             // invoke observers until that is finished.
             if (queueName === 'sync') {
               log = Ember.LOG_BINDINGS;
@@ -3955,9 +3956,14 @@ Ember.RunLoop = RunLoop;
 // ..........................................................
 // Ember.run - this is ideally the only public API the dev sees
 //
+/** 
+* @namespace Ember.run is both a function and a namespace for
+* RunLoop-related functions.
+* @name Ember.run
+*/ 
 
 /**
-  Runs the passed target and method inside of a runloop, ensuring any
+  Runs the passed target and method inside of a RunLoop, ensuring any
   deferred actions including bindings and views updates are flushed at the
   end.
 
@@ -3966,7 +3972,12 @@ Ember.RunLoop = RunLoop;
   libraries or plugins, you should probably wrap all of your code inside this
   call.
 
-  @function
+      Ember.run(function(){
+        // code to be execute within a RunLoop 
+      });
+
+  @name run^2
+  @methodOf Ember.run
   @param {Object} target
     (Optional) target of method to call
 
@@ -4000,6 +4011,11 @@ var run = Ember.run;
   be buffered until you invoke a matching call to Ember.run.end().  This is
   an lower-level way to use a RunLoop instead of using Ember.run().
 
+      Ember.run.begin();
+      // code to be execute within a RunLoop 
+      Ember.run.end();
+
+
   @returns {void}
 */
 Ember.run.begin = function() {
@@ -4010,6 +4026,10 @@ Ember.run.begin = function() {
   Ends a RunLoop.  This must be called sometime after you call Ember.run.begin()
   to flush any deferred actions.  This is a lower-level way to use a RunLoop
   instead of using Ember.run().
+
+      Ember.run.begin();
+      // code to be execute within a RunLoop 
+      Ember.run.end();
 
   @returns {void}
 */
@@ -4030,6 +4050,7 @@ Ember.run.end = function() {
   to inspect or modify this property.
 
   @property {String}
+  @default ['sync', 'actions', 'destroy', 'timers']
 */
 Ember.run.queues = ['sync', 'actions', 'destroy', 'timers'];
 
@@ -4042,6 +4063,18 @@ Ember.run.queues = ['sync', 'actions', 'destroy', 'timers'];
   At the end of a RunLoop, any methods scheduled in this way will be invoked.
   Methods will be invoked in an order matching the named queues defined in
   the run.queues property.
+
+      Ember.run.schedule('timers', this, function(){
+        // this will be executed at the end of the RunLoop, when timers are run
+        console.log("scheduled on timers queue");
+      });
+      Ember.run.schedule('sync', this, function(){
+        // this will be executed at the end of the RunLoop, when bindings are synced
+        console.log("scheduled on sync queue");
+      });
+      // Note the functions will be run in order based on the run queues order. Output would be:
+      //   scheduled on sync queue
+      //   scheduled on timers queue
 
   @param {String} queue
     The name of the queue to schedule against.  Default queues are 'sync' and
@@ -4079,6 +4112,8 @@ function autorun() {
   ensure the RunLoop always finishes.  You normally do not need to call this
   method directly.  Instead use Ember.run().
 
+      Ember.run.autorun();
+
   @returns {Ember.RunLoop} the new current RunLoop
 */
 Ember.run.autorun = function() {
@@ -4102,8 +4137,10 @@ Ember.run.autorun = function() {
   use this queue so this method is a useful way to immediately force all
   bindings in the application to sync.
 
-  You should call this method anytime you need any changed state to propogate
+  You should call this method anytime you need any changed state to propagate
   throughout the app immediately without repainting the UI.
+
+      Ember.run.sync();
 
   @returns {void}
 */
@@ -4145,9 +4182,13 @@ function invokeLaterTimers() {
   of milliseconds.
 
   You should use this method whenever you need to run some action after a
-  period of time inside of using setTimeout().  This method will ensure that
+  period of time instead of using setTimeout().  This method will ensure that
   items that expire during the same script execution cycle all execute
   together, which is often more efficient than using a real setTimeout.
+
+      Ember.run.later(myContext, function(){
+        // code here will execute within a RunLoop in about 500ms with this == myContext
+      }, 500);
 
   @param {Object} target
     (optional) target of method to invoke
@@ -4201,6 +4242,13 @@ function invokeOnceTimer(guid, onceTimers) {
   Note that although you can pass optional arguments these will not be
   considered when looking for duplicates.  New arguments will replace previous
   calls.
+
+      Ember.run(function(){
+        var doFoo = function() { foo(); }
+        Ember.run.once(myContext, doFoo);
+        Ember.run.once(myContext, doFoo);
+        // doFoo will only be executed once at the end of the RunLoop
+      });
 
   @param {Object} target
     (optional) target of method to invoke
@@ -4261,6 +4309,10 @@ function invokeNextTimers() {
   Schedules an item to run after control has been returned to the system.
   This is often equivalent to calling setTimeout(function...,1).
 
+      Ember.run.next(myContext, function(){
+        // code to be executed in the next RunLoop, which will be scheduled after the current one
+      });
+
   @param {Object} target
     (optional) target of method to invoke
 
@@ -4294,6 +4346,21 @@ Ember.run.next = function(target, method) {
   Cancels a scheduled item.  Must be a value returned by `Ember.run.later()`,
   `Ember.run.once()`, or `Ember.run.next()`.
 
+      var runNext = Ember.run.next(myContext, function(){
+        // will not be executed
+      });
+      Ember.run.cancel(runNext);
+
+      var runLater = Ember.run.next(myContext, function(){
+        // will not be executed
+      }, 500);
+      Ember.run.cancel(runLater);
+
+      var runOnce = Ember.run.once(myContext, function(){
+        // will not be executed
+      });
+      Ember.run.cancel(runOnce);
+
   @param {Object} timer
     Timer object to cancel
 
@@ -4308,10 +4375,9 @@ Ember.run.cancel = function(timer) {
 //
 
 /**
-  @namespace
+  @namespace Compatibility for Ember.run
   @name Ember.RunLoop
   @deprecated
-  @description Compatibility for Ember.run
 */
 
 /**
@@ -4565,7 +4631,7 @@ Binding.prototype = /** @scope Ember.Binding.prototype */ {
 
   /**
     This will set the "to" property path to the specified value. It will not
-    attempt to reoslve this property path to an actual object until you
+    attempt to resolve this property path to an actual object until you
     connect the binding.
 
     The binding will search for the property path starting at the root object
@@ -6224,7 +6290,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
     reaches the your current length-1.  If you run out of data before this
     time for some reason, you should simply return undefined.
 
-    The default impementation of this method simply looks up the index.
+    The default implementation of this method simply looks up the index.
     This works great on any Array-like objects.
 
     @param index {Number} the current index of the iteration
@@ -6849,7 +6915,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
 
     @param {Enumerable} removes
       optional enumerable containing items that were removed from the set.
-      For ordered enumerables, this hsould be an ordered array of items. If
+      For ordered enumerables, this should be an ordered array of items. If
       no items were removed you can pass null.
 
     @returns {Object} receiver
@@ -6893,7 +6959,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
 // ==========================================================================
 // ..........................................................
 // HELPERS
-// 
+//
 
 var get = Ember.get, set = Ember.set, meta = Ember.meta, map = Ember.ArrayUtils.map;
 
@@ -6907,7 +6973,7 @@ function xform(target, method, params) {
 
 // ..........................................................
 // ARRAY
-// 
+//
 /**
   @namespace
 
@@ -6944,7 +7010,7 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
 
   /** @private - compatibility */
   isSCArray: true,
-  
+
   /**
     @field {Number} length
 
@@ -6976,14 +7042,14 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
    */
   objectsAt: function(indexes) {
     var self = this;
-    return map(indexes, function(value,idx){ return self.objectAt(idx); });
+    return map(indexes, function(idx){ return self.objectAt(idx); });
   },
 
   /** @private (nodoc) - overrides Ember.Enumerable version */
   nextObject: function(idx) {
     return this.objectAt(idx);
   },
-  
+
   /**
     @field []
 
@@ -7032,21 +7098,20 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
   /**
     Returns the index of the given object's first occurrence.
     If no startAt argument is given, the starting location to
-    search is 0. If it's negative, will count backward from 
+    search is 0. If it's negative, will count backward from
     the end of the array. Returns -1 if no match is found.
+
+        var arr = ["a", "b", "c", "d", "a"];
+        arr.indexOf("a");      =>  0
+        arr.indexOf("z");      => -1
+        arr.indexOf("a", 2);   =>  4
+        arr.indexOf("a", -1);  =>  4
+        arr.indexOf("b", 3);   => -1
+        arr.indexOf("a", 100); => -1
 
     @param {Object} object the item to search for
     @param {Number} startAt optional starting location to search, default 0
     @returns {Number} index or -1 if not found
-
-    @example
-    var arr = ["a", "b", "c", "d", "a"];
-    arr.indexOf("a");      =>  0
-    arr.indexOf("z");      => -1
-    arr.indexOf("a", 2);   =>  4
-    arr.indexOf("a", -1);  =>  4
-    arr.indexOf("b", 3);   => -1
-    arr.indexOf("a", 100); => -1
   */
   indexOf: function(object, startAt) {
     var idx, len = get(this, 'length');
@@ -7063,21 +7128,20 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
   /**
     Returns the index of the given object's last occurrence.
     If no startAt argument is given, the search starts from
-    the last position. If it's negative, will count backward 
+    the last position. If it's negative, will count backward
     from the end of the array. Returns -1 if no match is found.
+
+        var arr = ["a", "b", "c", "d", "a"];
+        arr.lastIndexOf("a");      =>  4
+        arr.lastIndexOf("z");      => -1
+        arr.lastIndexOf("a", 2);   =>  0
+        arr.lastIndexOf("a", -1);  =>  4
+        arr.lastIndexOf("b", 3);   =>  1
+        arr.lastIndexOf("a", 100); =>  4
 
     @param {Object} object the item to search for
     @param {Number} startAt optional starting location to search, default 0
     @returns {Number} index or -1 if not found
-
-    @example
-    var arr = ["a", "b", "c", "d", "a"];
-    arr.lastIndexOf("a");      =>  4
-    arr.lastIndexOf("z");      => -1
-    arr.lastIndexOf("a", 2);   =>  0
-    arr.lastIndexOf("a", -1);  =>  4
-    arr.lastIndexOf("b", 3);   =>  1
-    arr.lastIndexOf("a", 100); =>  4
   */
   lastIndexOf: function(object, startAt) {
     var idx, len = get(this, 'length');
@@ -7090,36 +7154,36 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     }
     return -1;
   },
-  
+
   // ..........................................................
   // ARRAY OBSERVERS
-  // 
-  
+  //
+
   /**
     Adds an array observer to the receiving array.  The array observer object
     normally must implement two methods:
-    
+
     * `arrayWillChange(start, removeCount, addCount)` - This method will be
       called just before the array is modified.
     * `arrayDidChange(start, removeCount, addCount)` - This method will be
       called just after the array is modified.
-      
-    Both callbacks will be passed the starting index of the change as well a 
+
+    Both callbacks will be passed the starting index of the change as well a
     a count of the items to be removed and added.  You can use these callbacks
-    to optionally inspect the array during the change, clear caches, or do 
+    to optionally inspect the array during the change, clear caches, or do
     any other bookkeeping necessary.
-    
-    In addition to passing a target, you can also include an options hash 
+
+    In addition to passing a target, you can also include an options hash
     which you can use to override the method names that will be invoked on the
     target.
-    
+
     @param {Object} target
       The observer object.
-      
+
     @param {Hash} opts
       Optional hash of configuration options including willChange, didChange,
       and a context option.
-      
+
     @returns {Ember.Array} receiver
   */
   addArrayObserver: function(target, opts) {
@@ -7133,15 +7197,15 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     if (!hasObservers) Ember.propertyDidChange(this, 'hasArrayObservers');
     return this;
   },
-  
+
   /**
-    Removes an array observer from the object if the observer is current 
+    Removes an array observer from the object if the observer is current
     registered.  Calling this method multiple times with the same object will
     have no effect.
-    
+
     @param {Object} target
       The object observing the array.
-    
+
     @returns {Ember.Array} receiver
   */
   removeArrayObserver: function(target, opts) {
@@ -7155,32 +7219,32 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     if (hasObservers) Ember.propertyDidChange(this, 'hasArrayObservers');
     return this;
   },
-  
+
   /**
     Becomes true whenever the array currently has observers watching changes
     on the array.
-    
+
     @property {Boolean}
   */
   hasArrayObservers: Ember.computed(function() {
     return Ember.hasListeners(this, '@array:change') || Ember.hasListeners(this, '@array:before');
   }).property().cacheable(),
-  
+
   /**
-    If you are implementing an object that supports Ember.Array, call this 
+    If you are implementing an object that supports Ember.Array, call this
     method just before the array content changes to notify any observers and
     invalidate any related properties.  Pass the starting index of the change
     as well as a delta of the amounts to change.
-    
+
     @param {Number} startIdx
       The starting index in the array that will change.
-      
+
     @param {Number} removeAmt
       The number of items that will be removed.  If you pass null assumes 0
-    
+
     @param {Number} addAmt
       The number of items that will be added.  If you pass null assumes 0.
-      
+
     @returns {Ember.Array} receiver
   */
   arrayContentWillChange: function(startIdx, removeAmt, addAmt) {
@@ -7204,14 +7268,14 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     } else {
       removing = removeAmt;
     }
-    
+
     this.enumerableContentWillChange(removing, addAmt);
 
     // Make sure the @each proxy is set up if anyone is observing @each
     if (Ember.isWatching(this, '@each')) { get(this, '@each'); }
     return this;
   },
-  
+
   arrayContentDidChange: function(startIdx, removeAmt, addAmt) {
 
     // if no args are passed assume everything changes
@@ -7222,7 +7286,7 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
       if (!removeAmt) removeAmt=0;
       if (!addAmt) addAmt=0;
     }
-    
+
     var adding, lim;
     if (startIdx>=0 && addAmt>=0 && get(this, 'hasEnumerableObservers')) {
       adding = [];
@@ -7236,15 +7300,15 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     Ember.sendEvent(this, '@array:change', startIdx, removeAmt, addAmt);
     return this;
   },
-  
+
   // ..........................................................
   // ENUMERATED PROPERTIES
-  // 
-  
+  //
+
   /**
     Returns a special object that can be used to observe individual properties
     on the array.  Just get an equivalent property on this object and it will
-    return an enumerable that maps automatically to the named key on the 
+    return an enumerable that maps automatically to the named key on the
     member objects.
   */
   '@each': Ember.computed(function() {
@@ -7463,7 +7527,7 @@ Ember.Freezable = Ember.Mixin.create(
     Freezes the object.  Once this method has been called the object should
     no longer allow any properties to be edited.
 
-    @returns {Object} reciever
+    @returns {Object} receiver
   */
   freeze: function() {
     if (get(this, 'isFrozen')) return this;
@@ -7507,7 +7571,6 @@ var forEach = Ember.ArrayUtils.forEach;
   method will only add the object to the enumerable if the object is not
   already present and the object if of a type supported by the enumerable.
 
-      javascript:
       set.addObject(contact);
 
   ## Removing Objects
@@ -7516,7 +7579,6 @@ var forEach = Ember.ArrayUtils.forEach;
   will only remove the object if it is already in the enumerable, otherwise
   this method has no effect.
 
-      javascript:
       set.removeObject(contact);
 
   ## Implementing In Your Own Code
@@ -7624,8 +7686,8 @@ var get = Ember.get, set = Ember.set, forEach = Ember.ArrayUtils.forEach;
   can be applied only to a collection that keeps its items in an ordered set.
 
   Note that an Array can change even if it does not implement this mixin.
-  For example, a SparyArray may not be directly modified but if its
-  underlying enumerable changes, it will change also.
+  For example, one might implement a SparseArray that cannot be directly
+  modified, but if its underlying enumerable changes, it will change also.
 
   @extends Ember.Mixin
   @extends Ember.Array
@@ -7637,7 +7699,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable,
   /**
     __Required.__ You must implement this method to apply this mixin.
 
-    This is one of the primitves you must implement to support Ember.Array.  You
+    This is one of the primitives you must implement to support Ember.Array.  You
     should replace amt objects started at idx with the objects in the passed
     array.  You should also call this.enumerableContentDidChange() ;
 
@@ -7959,17 +8021,25 @@ Ember.Observable = Ember.Mixin.create(/** @scope Ember.Observable.prototype */ {
 
   /**
     To get multiple properties at once, call getProperties
-    with a list of strings:
+    with a list of strings or an array:
 
           record.getProperties('firstName', 'lastName', 'zipCode'); // => { firstName: 'John', lastName: 'Doe', zipCode: '10011' }
 
-    @param {String...} list of keys to get
+   is equivalent to:
+
+          record.getProperties(['firstName', 'lastName', 'zipCode']); // => { firstName: 'John', lastName: 'Doe', zipCode: '10011' }
+
+    @param {String...|Array} list of keys to get
     @returns {Hash}
   */
   getProperties: function() {
     var ret = {};
-    for(var i = 0; i < arguments.length; i++) {
-      ret[arguments[i]] = get(this, arguments[i]);
+    var propertyNames = arguments;
+    if (arguments.length === 1 && Ember.typeOf(arguments[0]) === 'array') {
+      propertyNames = arguments[0];
+    }
+    for(var i = 0; i < propertyNames.length; i++) {
+      ret[propertyNames[i]] = get(this, propertyNames[i]);
     }
     return ret;
   },
@@ -7995,7 +8065,7 @@ Ember.Observable = Ember.Mixin.create(/** @scope Ember.Observable.prototype */ {
     If you try to set a value on a key that is undefined in the target
     object, then the unknownProperty() handler will be called instead. This
     gives you an opportunity to implement complex "virtual" properties that
-    are not predefined on the obejct. If unknownProperty() returns
+    are not predefined on the object. If unknownProperty() returns
     undefined, then set() will simply set the value on the object.
 
     ### Property Observers
@@ -8006,7 +8076,7 @@ Ember.Observable = Ember.Mixin.create(/** @scope Ember.Observable.prototype */ {
     observers (i.e. observer methods declared on the same object), will be
     called immediately. Any "remote" observers (i.e. observer methods
     declared on another object) will be placed in a queue and called at a
-    later time in a coelesced manner.
+    later time in a coalesced manner.
 
     ### Chaining
 
@@ -8181,7 +8251,7 @@ Ember.Observable = Ember.Mixin.create(/** @scope Ember.Observable.prototype */ {
     @param {String} key The key to observer
     @param {Object} target The target object to invoke
     @param {String|Function} method The method to invoke.
-    @returns {Ember.Observable} reciever
+    @returns {Ember.Observable} receiver
   */
   removeObserver: function(key, target, method) {
     Ember.removeObserver(this, key, target, method);
@@ -8527,9 +8597,13 @@ CoreObject.PrototypeMixin = Ember.Mixin.create(
 
   isInstance: true,
 
+  /** @private */
   init: function() {},
 
+  /** @field */
   isDestroyed: false,
+
+  /** @field */
   isDestroying: false,
 
   /**
@@ -9328,7 +9402,7 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
     This method will only be called if content is non-null.
 
     @param {Number} idx
-      The index to retreive.
+      The index to retrieve.
 
     @returns {Object} the value or undefined if none found
   */
@@ -9991,7 +10065,7 @@ Map.prototype = {
 
 (function() {
 // ==========================================================================
-// Project:  Ember Metal
+// Project:  Ember Runtime
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
