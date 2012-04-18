@@ -32,7 +32,7 @@ module Ember
       end
 
       def create_app_file
-        template "app.coffee", "#{ember_path}/#{application_name.underscore}.js.coffee"
+        template "app.js", "#{ember_path}/#{application_name.underscore}.js"
       end
     end
   end
