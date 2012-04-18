@@ -42,7 +42,7 @@ file to setup application namespace and initial requires:
 
 *Example:*
 
-    rails g ember_rails:bootstrap
+    rails g ember:bootstrap
       insert  app/assets/javascripts/application.js
       create  app/assets/javascripts/ember/models
       create  app/assets/javascripts/ember/models/.gitkeep
@@ -57,7 +57,7 @@ file to setup application namespace and initial requires:
       create  app/assets/javascripts/ember/app.js.coffee
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
-this: `rails g ember_rails:bootstrap -g`.
+this: `rails g ember:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
