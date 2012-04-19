@@ -12,6 +12,14 @@ module Ember
         app.assets.register_engine '.handlebars', Ember::Handlebars::Template
         app.assets.register_engine '.hbs', Ember::Handlebars::Template
         app.assets.register_engine '.hjs', Ember::Handlebars::Template
+
+        assets_path = File.expand_path(File.join(__FILE__, '../../../../vendor/assets/javascripts'))
+
+        if ::Rails.env.production?
+          app.assets.append_path File.join(assets_path, 'production')
+        else
+          app.assets.append_path File.join(assets_path, 'development')
+        end
       end
     end
   end
