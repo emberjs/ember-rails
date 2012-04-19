@@ -98,7 +98,7 @@ Now a single line in the layout loads everything:
 
 If you use Slim or Haml templates, you can use handlebars filter :
 
-    handlebars:
+    :handlebars
         {{view Ember.Button}}OK{{/view}}
 
 It will be translated as :
