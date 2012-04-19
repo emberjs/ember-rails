@@ -31,7 +31,7 @@ to use `rails g ember:bootstrap` to create the following directory structure und
     views/
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
-By default, it uses the Rails Application's name and creates an `rails_app_name.js.coffee` 
+By default, it uses the Rails Application's name and creates an `rails_app_name.js` 
 file to setup application namespace and initial requires:
 
     //= require ember
