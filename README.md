@@ -16,11 +16,8 @@ Run `bundle install` and add the following line to `app/assets/javascripts/appli
 
     //= require ember
 
-Ember-rails also provides a way to run Ember in development mode, you
-can switch out your require statement `//= require ember` to use the
-dev copies like so:
-
-    //= require ember-dev
+Ember-rails will use the production build of Ember.js when Rails is running in
+production mode, and the development build otherwise.
 
 ## Architecture
 
