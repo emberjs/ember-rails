@@ -12,6 +12,28 @@ end
 
 class HjsTemplateTest < ActionController::IntegrationTest
 
+  test "should replace separators with templates_path_separator" do
+    t = Ember::Handlebars::Template.new {}
+    Rails.configuration.handlebars.templates_path_separator = '-'
+    path = t.send(:template_path, 'app/templates/example')
+    assert path == 'app-templates-example', path
+  end
+
+  test "should strip only first occurence of templates_root" do
+    t = Ember::Handlebars::Template.new {}
+    Rails.configuration.handlebars.templates_root = 'app'
+    Rails.configuration.handlebars.templates_path_separator = '/'
+    path = t.send(:template_path, 'app/templates/app/example')
+    assert path == 'templates/app/example', path
+  end
+
+  test "should strip templates_root with / in it" do
+    t = Ember::Handlebars::Template.new {}
+    Rails.configuration.handlebars.templates_root = 'app/templates'
+    path = t.send(:template_path, 'app/templates/app/example')
+    assert path == 'app/example', path
+  end
+
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
     assert_response :success

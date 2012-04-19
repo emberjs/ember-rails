@@ -31,10 +31,13 @@ module Ember
       end
 
       def template_path(path)
-        path = path.split('/')
         root = configuration.templates_root
 
-        path.delete(root) unless root.blank?
+        unless root.blank?
+          path.gsub!(/^#{Regexp.quote(root)}\/?/, '')
+        end
+
+        path = path.split('/')
 
         path.join(configuration.templates_path_separator)
       end
