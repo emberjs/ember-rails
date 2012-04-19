@@ -9,6 +9,10 @@ module Ember
       config.handlebars.templates_path_separator = '/'
 
       initializer :setup_ember_rails, :group => :all do |app|
+
+        require 'ember/filters/slim' if defined? Slim
+        require 'ember/filters/haml' if defined? Haml
+
         app.assets.register_engine '.handlebars', Ember::Handlebars::Template
         app.assets.register_engine '.hbs', Ember::Handlebars::Template
         app.assets.register_engine '.hjs', Ember::Handlebars::Template
