@@ -10,7 +10,7 @@ if ('undefined' === typeof Ember) {
 /**
   @namespace
   @name Ember
-  @version 0.9.7
+  @version 0.9.7.1
 
   All Ember methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -42,10 +42,10 @@ if ('undefined' !== typeof window) {
 /**
   @static
   @type String
-  @default '0.9.7'
+  @default '0.9.7.1'
   @constant
 */
-Ember.VERSION = '0.9.7';
+Ember.VERSION = '0.9.7.1';
 
 /**
   @static
@@ -610,7 +610,6 @@ Ember.wrap = function(func, superFunc) {
       Ember.isArray([]); // true
       Ember.isArray( Ember.ArrayProxy.create({ content: [] }) ); // true
 
-  @name Ember.isArray
   @param {Object} obj The object to test
   @returns {Boolean}
 */

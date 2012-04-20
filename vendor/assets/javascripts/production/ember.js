@@ -1607,7 +1607,7 @@ if ('undefined' === typeof Ember) {
 /**
   @namespace
   @name Ember
-  @version 0.9.7
+  @version 0.9.7.1
 
   All Ember methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -1639,10 +1639,10 @@ if ('undefined' !== typeof window) {
 /**
   @static
   @type String
-  @default '0.9.7'
+  @default '0.9.7.1'
   @constant
 */
-Ember.VERSION = '0.9.7';
+Ember.VERSION = '0.9.7.1';
 
 /**
   @static
@@ -2207,7 +2207,6 @@ Ember.wrap = function(func, superFunc) {
       Ember.isArray([]); // true
       Ember.isArray( Ember.ArrayProxy.create({ content: [] }) ); // true
 
-  @name Ember.isArray
   @param {Object} obj The object to test
   @returns {Boolean}
 */
@@ -11996,13 +11995,27 @@ Ember._RenderBuffer.prototype =
   },
 
   _escapeAttribute: function(value) {
-    // Escaping only double quotes is probably sufficient, but it can't hurt to do a few more
-    return value.toString()
-                  .replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/'/g, '&#x27;')
-                  .replace(/"/g, '&quot;');
+    // Stolen shamelessly from Handlebars
+
+    var escape = {
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#x27;",
+      "`": "&#x60;"
+    };
+
+    var badChars = /&(?!\w+;)|[<>"'`]/g;
+    var possible = /[&<>"'`]/;
+
+    var escapeChar = function(chr) {
+      return escape[chr] || "&amp;";
+    };
+
+    var string = value.toString();
+
+    if(!possible.test(string)) { return string; }
+    return string.replace(badChars, escapeChar);
   }
 
 };
@@ -14254,8 +14267,7 @@ var childViewsProperty = Ember.computed(function() {
 
 /**
   @class
-  @extends Ember.View
-  
+
   A `ContainerView` is an `Ember.View` subclass that allows for manual or programatic
   management of a view's `childViews` array that will correctly update the `ContainerView`
   instance's rendered DOM representation.
@@ -14421,6 +14433,8 @@ var childViewsProperty = Ember.computed(function() {
   property on a container view will not result in the template or layout being rendered. 
   The HTML contents of a `Ember.ContainerView`'s DOM representation will only be the rendered HTML
   of its child views.
+
+  @extends Ember.View
 */
 
 Ember.ContainerView = Ember.View.extend({
@@ -14640,9 +14654,7 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
 
 /**
   @class
-  @since Ember 0.9
-  @extends Ember.ContainerView
-  
+
   `Ember.CollectionView` is an `Ember.View` descendent responsible for managing a
   collection (an array or array-like object) by maintaing a child view object and 
   associated DOM representation for each item in the array and ensuring that child
@@ -14749,7 +14761,9 @@ var get = Ember.get, set = Ember.set, fmt = Ember.String.fmt;
   ## Use in templates via the `{{collection}}` Ember.Handlebars helper
   Ember.Handlebars provides a helper specifically for adding `CollectionView`s to templates.
   See `Ember.Handlebars.collection` for more details
-  
+
+  @since Ember 0.9
+  @extends Ember.ContainerView
 */
 Ember.CollectionView = Ember.ContainerView.extend(
 /** @scope Ember.CollectionView.prototype */ {
@@ -17012,7 +17026,7 @@ EmberHandlebars.registerHelper('bindAttr', function(options) {
   var classBindings = attrs['class'];
   if (classBindings !== null && classBindings !== undefined) {
     var classResults = EmberHandlebars.bindClasses(this, classBindings, view, dataId, options);
-    ret.push('class="' + classResults.join(' ') + '"');
+    ret.push('class="' + Handlebars.Utils.escapeExpression(classResults.join(' ')) + '"');
     delete attrs['class'];
   }
 
@@ -17063,8 +17077,9 @@ EmberHandlebars.registerHelper('bindAttr', function(options) {
 
     // if this changes, also change the logic in ember-views/lib/views/view.js
     if ((type === 'string' || (type === 'number' && !isNaN(value)))) {
-      ret.push(attr + '="' + value + '"');
+      ret.push(attr + '="' + Handlebars.Utils.escapeExpression(value) + '"');
     } else if (value && type === 'boolean') {
+      // The developer controls the attr name, so it should always be safe
       ret.push(attr + '="' + attr + '"');
     }
   }, this);
@@ -17330,6 +17345,143 @@ EmberHandlebars.ViewHelper = Ember.Object.create({
 });
 
 /**
+`{{view}}` inserts a new instance of `Ember.View` into a template passing its options
+to the `Ember.View`'s `create` method and using the supplied block as the view's own template.
+
+An empty `<body>` and the following template:
+
+      <script type="text/x-handlebars">
+        A span:
+        {{#view tagName="span"}}
+          hello.
+        {{/view}}
+      </script>
+
+Will result in HTML structure:
+
+      <body>
+        <!-- Note: the handlebars template script 
+             also results in a rendered Ember.View
+             which is the outer <div> here -->
+
+        <div class="ember-view">
+          A span:
+          <span id="ember1" class="ember-view">
+            Hello.
+          </span>
+        </div>
+      </body>
+
+### parentView setting
+The `parentView` property of the new `Ember.View` instance created through `{{view}}`
+will be set to the `Ember.View` instance of the template where `{{view}}` was called.
+    
+    aView = Ember.View.create({
+      template: Ember.Handlebars.compile("{{#view}} my parent: {{parentView.elementId}} {{/view}}")
+    })
+
+    aView.appendTo('body')
+    
+Will result in HTML structure:
+
+    <div id="ember1" class="ember-view">
+      <div id="ember2" class="ember-view">
+        my parent: ember1
+      </div>
+    </div>
+
+
+
+### Setting CSS id and class attributes
+The HTML `id` attribute can be set on the `{{view}}`'s resulting element with the `id` option.
+This option will _not_ be passed to `Ember.View.create`.
+
+    <script type="text/x-handlebars">
+      {{#view tagName="span" id="a-custom-id"}}
+        hello.
+      {{/view}}
+    </script>
+
+Results in the following HTML structure:
+
+    <div class="ember-view">
+      <span id="a-custom-id" class="ember-view">
+        hello.
+      </span>
+    </div>
+
+The HTML `class` attribute can be set on the `{{view}}`'s resulting element with
+the `class` or `classNameBindings` options. The `class` option
+will directly set the CSS `class` attribute and will not be passed to
+`Ember.View.create`. `classNameBindings` will be passed to `create` and use
+`Ember.View`'s class name binding functionality:
+
+      <script type="text/x-handlebars">
+        {{#view tagName="span" class="a-custom-class"}}
+          hello.
+        {{/view}}
+      </script>
+
+Results in the following HTML structure:
+
+      <div class="ember-view">
+        <span id="ember2" class="ember-view a-custom-class">
+          hello.
+        </span>
+      </div>
+
+### Supplying a different view class
+`{{view}}` can take an optional first argument before its supplied options to specify a
+path to a custom view class.
+
+      <script type="text/x-handlebars">
+        {{#view "MyApp.CustomView"}}
+          hello.
+        {{/view}}
+      </script>
+
+The first argument can also be a relative path. Ember will search for the view class 
+starting at the `Ember.View` of the template where `{{view}}` was used as the root object:
+
+
+      MyApp = Ember.Application.create({})
+      MyApp.OuterView = Ember.View.extend({
+        innerViewClass: Ember.View.extend({
+          classNames: ['a-custom-view-class-as-property']
+        }),
+        template: Ember.Handlebars.compile('{{#view "innerViewClass"}} hi {{/view}}')
+      })
+
+      MyApp.OuterView.create().appendTo('body')
+
+Will result in the following HTML:
+
+      <div id="ember1" class="ember-view">
+        <div id="ember2" class="ember-view a-custom-view-class-as-property"> 
+          hi
+        </div>
+      </div>
+      
+### Blockless use
+If you supply a custom `Ember.View` subclass that specifies its own template 
+or provide a `templateName` option to `{{view}}` it can be used without supplying a block.
+Attempts to use both a `templateName` option and supply a block will throw an error.
+
+        <script type="text/x-handlebars">
+          {{view "MyApp.ViewWithATemplateDefined"}}
+        </script>
+
+### viewName property
+You can supply a `viewName` option to `{{view}}`. The `Ember.View` instance will
+be referenced as a property of its parent view by this name.
+
+    aView = Ember.View.create({
+      template: Ember.Handlebars.compile('{{#view viewName="aChildByName"}} hi {{/view}}')
+    })
+
+    aView.appendTo('body')
+    aView.get('aChildByName') // the instance of Ember.View created by {{view}} helper
+  
   @name Handlebars.helpers.view
   @param {String} path
   @param {Hash} options
@@ -17691,9 +17843,33 @@ var EmberHandlebars = Ember.Handlebars, getPath = EmberHandlebars.getPath;
 var ActionHelper = EmberHandlebars.ActionHelper = {
   registeredActions: {}
 };
+
+ActionHelper.registerAction = function(actionName, eventName, target, view, context) {
+  var actionId = (++Ember.$.uuid).toString();
+
+  ActionHelper.registeredActions[actionId] = {
+    eventName: eventName,
+    handler: function(event) {
+      event.view = view;
+      event.context = context;
+
+      // Check for StateManager (or compatible object)
+      if (target.isState && typeof target.send === 'function') {
+        return target.send(actionName, event);
+      } else {
+        return target[actionName].call(target, event);
+      }
+    }
+  };
+
+  view.on('willRerender', function() {
+    delete ActionHelper.registeredActions[actionId];
+  });
+
+  return actionId;
+};
+
 /**
-  @name Handlebars.helpers.action
-  
   The `{{action}}` helper registers an HTML element within a template for
   DOM event handling.  User interaction with that element will call the method
   on the template's associated `Ember.View` instance that has the same name
@@ -17801,33 +17977,11 @@ var ActionHelper = EmberHandlebars.ActionHelper = {
   an `Ember.EventDispatcher` instance is available. An `Ember.EventDispatcher` instance 
   will be created when a new `Ember.Application` is created. Having an instance of
   `Ember.Application` will satisfy this requirement.
-  
+
+  @name Handlebars.helpers.action
+  @param {String} actionName
+  @param {Hash} options
 */
-ActionHelper.registerAction = function(actionName, eventName, target, view, context) {
-  var actionId = (++Ember.$.uuid).toString();
-
-  ActionHelper.registeredActions[actionId] = {
-    eventName: eventName,
-    handler: function(event) {
-      event.view = view;
-      event.context = context;
-
-      // Check for StateManager (or compatible object)
-      if (target.isState && typeof target.send === 'function') {
-        return target.send(actionName, event);
-      } else {
-        return target[actionName].call(target, event);
-      }
-    }
-  };
-
-  view.on('willRerender', function() {
-    delete ActionHelper.registeredActions[actionId];
-  });
-
-  return actionId;
-};
-
 EmberHandlebars.registerHelper('action', function(actionName, options) {
   var hash = options.hash || {},
       eventName = hash.on || "click",
@@ -17850,14 +18004,13 @@ EmberHandlebars.registerHelper('action', function(actionName, options) {
 var get = Ember.get, set = Ember.set;
 
 /**
-  @name Handlebars.helpers.yield
-  
+
   When used in a Handlebars template that is assigned to an `Ember.View` instance's
   `layout` property Ember will render the layout template first, inserting the view's
   own rendered output at the `{{ yield }}` location.
-  
+
   An empty `<body>` and the following application code:
-  
+
         AView = Ember.View.extend({
           classNames: ['a-view-with-layout'],
           layout: Ember.Handlebars.compile('<div class="wrapper">{{ yield }}</div>'),
@@ -17866,9 +18019,9 @@ var get = Ember.get, set = Ember.set;
 
         aView = AView.create()
         aView.appendTo('body')
-        
+
   Will result in the following HTML output:
-  
+
         <body>
           <div class='ember-view a-view-with-layout'>
             <div class="wrapper">
@@ -17876,11 +18029,11 @@ var get = Ember.get, set = Ember.set;
             </div>
           </div>
         </body>
-  
-  
+
+
   The yield helper cannot be used outside of a template assigned to an `Ember.View`'s `layout` property
   and will throw an error if attempted.
-  
+
       BView = Ember.View.extend({
         classNames: ['a-view-with-layout'],
         template: Ember.Handlebars.compile('{{yield}}')
@@ -17888,9 +18041,13 @@ var get = Ember.get, set = Ember.set;
 
       bView = BView.create()
       bView.appendTo('body')
-      
+
       // throws
       // Uncaught Error: assertion failed: You called yield in a template that was not a layout
+
+  @name Handlebars.helpers.yield
+  @param {Hash} options
+  @returns {String} HTML string
 */
 Ember.Handlebars.registerHelper('yield', function(options) {
   var view = options.data.view, template;
