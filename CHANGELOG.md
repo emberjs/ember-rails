@@ -1,3 +1,11 @@
+## 0.4.0 (Avr 20, 2012)
+
+Improvements:
+
+  - Updated Ember.js to version 0.9.7.1
+  - Ember-rails will use the production build of Ember.js when Rails is
+    running in production mode, and the development build otherwise.
+
 ## 0.3.1 (Avr 19, 2012)
 
 Improvements:
