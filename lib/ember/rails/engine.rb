@@ -1,4 +1,5 @@
 require 'ember/handlebars/template'
+require 'ember/handlebars/haml_template' if defined? Haml
 
 module Ember
   module Rails
