@@ -16,6 +16,7 @@ module Ember
         app.assets.register_engine '.handlebars', Ember::Handlebars::Template
         app.assets.register_engine '.hbs', Ember::Handlebars::Template
         app.assets.register_engine '.hjs', Ember::Handlebars::Template
+        app.assets.register_engine '.hbaml', Ember::Handlebars::HamlTemplate if defined? Haml
 
         assets_path = File.expand_path(File.join(__FILE__, '../../../../vendor/assets/javascripts'))
 
