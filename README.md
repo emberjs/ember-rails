@@ -60,7 +60,7 @@ If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
-by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
+by putting each template in a dedicated ".js.hjs", ".hbs", ".handlebars" or ".hbaml" file
 (e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
 and including the assets in your layout:
 
@@ -81,6 +81,15 @@ If you want a different path separator in template names add `templates_path_sep
 The result will be like this :
 
     Ember.TEMPLATES['templates-admin_panel'] = "...";
+
+Hbaml files are Haml files that are first compiled to html, then then compiled into Ember templates.
+That means you can do this:
+
+    %h1 {{ some.variable }}
+
+And the template will get compiled into the following (including the above "Ember.TEMPLATES..."):
+
+    <h1>{{ some.variable }}</h1>
 
 Default behavior for ember-rails is to precompile handlebars templates only in production environment.
 If you don't want this behavior you can turn it off in your application configuration block :
