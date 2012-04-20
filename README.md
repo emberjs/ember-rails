@@ -19,6 +19,10 @@ Run `bundle install` and add the following line to `app/assets/javascripts/appli
 Ember-rails will use the production build of Ember.js when Rails is running in
 production mode, and the development build otherwise.
 
+If you would like to also include ember-data add the following additional line to `app/assets/javascripts/application.js`:
+
+    //= require ember-data
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you 
