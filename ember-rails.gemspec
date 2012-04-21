@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", ["~> 3.1"]
 
   s.add_development_dependency "rails", ["~> 3.1"]
+  s.add_development_dependency "haml", ["~> 3.1.4"]
 
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/assets/**/*"]
 
