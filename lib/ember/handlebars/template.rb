@@ -10,20 +10,24 @@ module Ember
       def prepare; end
 
       def evaluate(scope, locals, &block)
-        template = mustache_to_handlebars(scope, data)
-
-        if configuration.precompile
-          func = Ember::Handlebars.compile(template)
-          "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.template(#{func});\n"
+        if scope.pathname.to_s =~ /\.raw\.(handlebars|hjs|hbs)/
+          "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Handlebars.compile(#{indent(data).inspect});\n"
         else
-          "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.compile(#{indent(template).inspect});\n"
+          template = mustache_to_handlebars(scope, data)
+
+          if configuration.precompile
+            func = Ember::Handlebars.compile(template)
+            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.template(#{func});\n"
+          else
+            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.compile(#{indent(template).inspect});\n"
+          end
         end
       end
 
       private
 
       def mustache_to_handlebars(scope, template)
-        if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs)/
+        if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs|hbs)/
           template.gsub(/\{\{(\w[^\}\}]+)\}\}/){ |x| "{{unbound #{$1}}}" }
         else
           template
