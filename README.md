@@ -105,7 +105,11 @@ It will be translated as :
         {{#view Ember.Button}}OK{{/view}}
     </script>
 
-## Note on Patches/Pull Requests
+## Contributing
+
+Run `bundle exec rake` to run the test suite.
+
+To send a pull request:
 
 1. Fork the project.
 2. Make your feature addition or bug fix.
