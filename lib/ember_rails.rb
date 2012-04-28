@@ -16,7 +16,7 @@ module Ember
     def self.ember_path
       @ember_path ||= begin
         mapped_dir = Ember::Rails.map[::Rails.env]
-        vendored_ember = File.expand_path("../vendor/ember", __FILE__)
+        vendored_ember = File.expand_path("../../vendor/ember", __FILE__)
         File.join(vendored_ember, mapped_dir || ::Rails.env)
       end
     end
