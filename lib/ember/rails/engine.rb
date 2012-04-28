@@ -1,4 +1,5 @@
 require 'ember/handlebars/template'
+require 'active_model_serializers'
 
 module Ember
   module Rails
@@ -8,8 +9,7 @@ module Ember
       config.handlebars.templates_root = "templates"
       config.handlebars.templates_path_separator = '/'
 
-      initializer :setup_ember_rails, :group => :all do |app|
-
+      initializer "ember_rails.setup", :group => :all do |app|
         require 'ember/filters/slim' if defined? Slim
         require 'ember/filters/haml' if defined? Haml
 
@@ -17,13 +17,8 @@ module Ember
         app.assets.register_engine '.hbs', Ember::Handlebars::Template
         app.assets.register_engine '.hjs', Ember::Handlebars::Template
 
-        assets_path = File.expand_path(File.join(__FILE__, '../../../../vendor/assets/javascripts'))
-
-        if ::Rails.env.production?
-          app.assets.append_path File.join(assets_path, 'production')
-        else
-          app.assets.append_path File.join(assets_path, 'development')
-        end
+        # Add the gem's vendored ember to the end of the asset search path
+        app.config.assets.paths << Ember::Rails.ember_path
       end
     end
   end
