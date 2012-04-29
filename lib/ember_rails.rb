@@ -11,6 +11,8 @@ module Ember
     # By default, production and test will both use minified Ember.
     # Add mappings in your environment files like so:
     #   Ember::Rails.map["staging"] = "production"
+    # To use ember-spade, map development to spade:
+    #   Ember::Rails.map["development"] = "spade"
     self.map ||= {"test" => "production"}
 
     # Returns the asset path containing Ember for the current Rails
