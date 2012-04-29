@@ -13,11 +13,23 @@ module Ember
     #   Ember::Rails.map["staging"] = "production"
     self.map ||= {"test" => "production"}
 
+    # Returns the asset path containing Ember for the current Rails
+    # environment. Defaults to development if no other version is found.
     def self.ember_path
       @ember_path ||= begin
+        # Check for an enviroment mapping
         mapped_dir = Ember::Rails.map[::Rails.env]
-        vendored_ember = File.expand_path("../../vendor/ember", __FILE__)
-        File.join(vendored_ember, mapped_dir || ::Rails.env)
+
+        # Get the location, either mapped or based on Rails.env
+        ember_root = File.expand_path("../../vendor/ember", __FILE__)
+        ember_path = File.join(ember_root, mapped_dir || ::Rails.env)
+
+        # Fall back on development if we couldn't find another version
+        unless File.exist?(ember_path)
+          ember_path = File.join(ember_root, "development")
+        end
+
+        ember_path
       end
     end
   end
