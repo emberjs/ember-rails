@@ -320,6 +320,21 @@ DS.ManyArray = DS.RecordArray.extend({
     if (actual) {
       set(record, actual.name, remove ? null : parentRecord);
     }
+  },
+
+  // Create a child record within the parentRecord
+  createRecord: function(hash, transaction) {
+    var parentRecord = get(this, 'parentRecord'),
+        store = get(parentRecord, 'store'),
+        type = get(this, 'type'),
+        record;
+
+    transaction = transaction || get(parentRecord, 'transaction');
+
+    record = store.createRecord.call(store, type, hash, transaction);
+    this.pushObject(record);
+
+    return record;
   }
 });
 
@@ -517,7 +532,7 @@ DS.Transaction = Ember.Object.extend({
     this.removeCleanRecords();
 
     if (adapter && adapter.commit) { adapter.commit(store, commitDetails); }
-    else { throw fmt("Adapter is either null or do not implement `commit` method", this); }
+    else { throw fmt("Adapter is either null or does not implement `commit` method", this); }
   },
 
   /**
@@ -1590,7 +1605,7 @@ var get = Ember.get, set = Ember.set, getPath = Ember.getPath, guidFor = Ember.g
   string. You can determine a record's current state by getting its manager's
   current state path:
 
-        record.getPath('manager.currentState.path');
+        record.getPath('stateManager.currentState.path');
         //=> "created.uncommitted"
 
   The `DS.Model` states are themselves stateless. What we mean is that,
@@ -2546,7 +2561,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
   addHasManyToJSON: function(json, data, meta, options) {
     var key = meta.key,
         manyArray = get(this, key),
-        records = [],
+        records = [], i, l,
         clientId, id;
 
     if (meta.options.embedded) {
@@ -2557,7 +2572,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
     } else {
       var clientIds = get(manyArray, 'content');
 
-      for (var i=0, l=clientIds.length; i<l; i++) {
+      for (i=0, l=clientIds.length; i<l; i++) {
         clientId = clientIds[i];
         id = get(this, 'store').clientIdToId[clientId];
 
@@ -2567,7 +2582,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
       }
     }
 
-    key = options.key || get(this, 'namingConvention').keyToJSONKey(key);
+    key = meta.options.key || get(this, 'namingConvention').keyToJSONKey(key);
     json[key] = records;
   },
 
@@ -2584,12 +2599,12 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
   addBelongsToToJSON: function(json, data, meta, options) {
     var key = meta.key, value, id;
 
-    if (options.embedded) {
-      key = options.key || get(this, 'namingConvention').keyToJSONKey(key);
+    if (meta.options.embedded) {
+      key = meta.options.key || get(this, 'namingConvention').keyToJSONKey(key);
       value = get(data.record, key);
       json[key] = value ? value.toJSON(options) : null;
     } else {
-      key = options.key || get(this, 'namingConvention').foreignKey(key);
+      key = meta.options.key || get(this, 'namingConvention').foreignKey(key);
       id = data.get(key);
       json[key] = none(id) ? null : id;
     }
@@ -3472,7 +3487,7 @@ DS.RESTAdapter = DS.Adapter.extend({
     hash.url = url;
     hash.type = type;
     hash.dataType = 'json';
-    hash.contentType = 'application/json';
+    hash.contentType = 'application/json; charset=utf-8';
     hash.context = this;
 
     if (hash.data && type !== 'GET') {
@@ -3495,7 +3510,7 @@ DS.RESTAdapter = DS.Adapter.extend({
         mappings = get(this, 'mappings');
 
 
-        sideloadedType = get(get(this, 'mappings'), prop);
+        sideloadedType = get(mappings, prop);
 
       }
 
@@ -3513,6 +3528,9 @@ DS.RESTAdapter = DS.Adapter.extend({
 
   buildURL: function(record, suffix) {
     var url = [""];
+
+
+
 
     if (this.namespace !== undefined) {
       url.push(this.namespace);
