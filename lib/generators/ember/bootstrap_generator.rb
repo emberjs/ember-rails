@@ -17,6 +17,7 @@ module Ember
           inject_into_file(application_file, :before => "//= require_tree") do
             dependencies = [
               "//= require ember",
+              "//= require ember-data",
               "//= require ember/#{application_name.underscore}"
             ]
             dependencies.join("\n").concat("\n")
