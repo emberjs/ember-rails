@@ -13,15 +13,16 @@ module Ember
 
       def inject_ember
         application_file = "app/assets/javascripts/application.js"
-        if File.exists? application_file
-          inject_into_file(application_file, :before => "//= require_tree") do
-            dependencies = [
-              "//= require ember",
-              "//= require ember-data",
-              "//= require ember/#{application_name.underscore}"
-            ]
-            dependencies.join("\n").concat("\n")
-          end
+
+        inject_into_file(application_file, :before => "//= require_tree") do
+          dependencies = [
+            "//= require ember",
+            "//= require ember-data",
+            "//= require_self",
+            "//= require #{application_name.underscore}",
+            "#{application_name.camelize} = Ember.Application.create();"
+          ]
+          dependencies.join("\n").concat("\n")
         end
       end
 
@@ -34,6 +35,10 @@ module Ember
 
       def create_app_file
         template "app.js", "#{ember_path}/#{application_name.underscore}.js"
+      end
+
+      def create_state_manager_file
+        template "states.js", "#{ember_path}/states/app_states.js"
       end
     end
   end

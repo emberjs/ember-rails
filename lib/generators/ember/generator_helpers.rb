@@ -3,7 +3,7 @@ module Ember
     module GeneratorHelpers
 
       def ember_path
-        "app/assets/javascripts/ember"
+        "app/assets/javascripts"
       end
 
       def application_name
