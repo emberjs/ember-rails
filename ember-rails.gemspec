@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "rails", ["~> 3.1"]
 
-  s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/assets/**/*"]
+  s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
 
   s.require_paths = ["lib"]
 end

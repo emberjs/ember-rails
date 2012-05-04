@@ -12,7 +12,7 @@ module Ember
           path = ::Rails.root.nil? ? '' : ::Rails.root.join('vendor/assets/javascripts/ember.js')
 
           if !File.exists?(path)
-            path = File.expand_path(File.join(__FILE__, '../../../../vendor/assets/javascripts/production/ember.js'))
+            path = File.expand_path(File.join(__FILE__, '../../../../vendor/ember/production/ember.js'))
           end
         end
 
