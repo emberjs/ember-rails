@@ -9,7 +9,7 @@ module Ember
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
 
       def create_controller_files
-        file_path = File.join('app/assets/javascripts/ember/controllers', class_path, "#{file_name}_controller.js")
+        file_path = File.join('app/assets/javascripts/controllers', class_path, "#{file_name}_controller.js")
         if options.array?
           template 'array_controller.js', file_path
         else

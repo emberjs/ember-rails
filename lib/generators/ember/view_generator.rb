@@ -9,8 +9,8 @@ module Ember
       desc "Creates a new Ember.js view and associated Handlebars template"
       
       def create_model_files
-        template 'view.js', File.join('app/assets/javascripts/ember/views/' + controller_name, class_path, "#{file_name}_view.js")
-        template 'view.handlebars', File.join('app/assets/javascripts/ember/templates/' + controller_name, class_path, "#{file_name}.handlebars")
+        template 'view.js', File.join('app/assets/javascripts/views/' + controller_name, class_path, "#{file_name}_view.js")
+        template 'view.handlebars', File.join('app/assets/javascripts/templates/' + controller_name, class_path, "#{file_name}.handlebars")
       end
       
     end
