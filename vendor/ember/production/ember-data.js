@@ -275,7 +275,7 @@ DS.ManyArray = DS.RecordArray.extend({
     var stateManager = get(this, 'stateManager');
 
     added = added.map(function(record) {
-      ember_assert("You can only add records of " + (get(this, 'type') && get(this, 'type').toString()) + " to this association.", !get(this, 'type') || (get(this, 'type') === record.constructor));
+
 
       if (pendingParent) {
         record.send('waitingOn', parentRecord);
@@ -320,6 +320,21 @@ DS.ManyArray = DS.RecordArray.extend({
     if (actual) {
       set(record, actual.name, remove ? null : parentRecord);
     }
+  },
+
+  // Create a child record within the parentRecord
+  createRecord: function(hash, transaction) {
+    var parentRecord = get(this, 'parentRecord'),
+        store = get(parentRecord, 'store'),
+        type = get(this, 'type'),
+        record;
+
+    transaction = transaction || get(parentRecord, 'transaction');
+
+    record = store.createRecord.call(store, type, hash, transaction);
+    this.pushObject(record);
+
+    return record;
   }
 });
 
@@ -455,12 +470,11 @@ DS.Transaction = Ember.Object.extend({
   */
   add: function(record) {
     // we could probably make this work if someone has a valid use case. Do you?
-    ember_assert("Once a record has changed, you cannot move it into a different transaction", !get(record, 'isDirty'));
+
 
     var recordTransaction = get(record, 'transaction'),
         defaultTransaction = getPath(this, 'store.defaultTransaction');
 
-    ember_assert("Models cannot belong to more than one transaction at a time.", recordTransaction === defaultTransaction);
 
     this.adoptRecord(record);
   },
@@ -518,7 +532,7 @@ DS.Transaction = Ember.Object.extend({
     this.removeCleanRecords();
 
     if (adapter && adapter.commit) { adapter.commit(store, commitDetails); }
-    else { throw fmt("Adapter is either null or do not implement `commit` method", this); }
+    else { throw fmt("Adapter is either null or does not implement `commit` method", this); }
   },
 
   /**
@@ -1274,9 +1288,9 @@ DS.Store = Ember.Object.extend({
 
     // TODO: Make ember_assert more flexible and convert this into an ember_assert
     if (hash) {
-      ember_assert("The server must provide a primary key: " + primaryKey, get(hash, primaryKey));
+
     } else {
-      ember_assert("The server did not return data, and you did not create a primary key (" + primaryKey + ") on the client", get(get(record, 'data'), primaryKey));
+
     }
 
     clientId = get(record, 'clientId');
@@ -1449,7 +1463,7 @@ DS.Store = Ember.Object.extend({
     if (hash === undefined) {
       hash = id;
       var primaryKey = type.proto().primaryKey;
-      ember_assert("A data hash was loaded for a record of type " + type.toString() + " but no primary key '" + primaryKey + "' was provided.", primaryKey in hash);
+
       id = hash[primaryKey];
     }
 
@@ -1591,7 +1605,7 @@ var get = Ember.get, set = Ember.set, getPath = Ember.getPath, guidFor = Ember.g
   string. You can determine a record's current state by getting its manager's
   current state path:
 
-        record.getPath('manager.currentState.path');
+        record.getPath('stateManager.currentState.path');
         //=> "created.uncommitted"
 
   The `DS.Model` states are themselves stateless. What we mean is that,
@@ -2547,7 +2561,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
   addHasManyToJSON: function(json, data, meta, options) {
     var key = meta.key,
         manyArray = get(this, key),
-        records = [],
+        records = [], i, l,
         clientId, id;
 
     if (meta.options.embedded) {
@@ -2558,7 +2572,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
     } else {
       var clientIds = get(manyArray, 'content');
 
-      for (var i=0, l=clientIds.length; i<l; i++) {
+      for (i=0, l=clientIds.length; i<l; i++) {
         clientId = clientIds[i];
         id = get(this, 'store').clientIdToId[clientId];
 
@@ -2568,7 +2582,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
       }
     }
 
-    key = options.key || get(this, 'namingConvention').keyToJSONKey(key);
+    key = meta.options.key || get(this, 'namingConvention').keyToJSONKey(key);
     json[key] = records;
   },
 
@@ -2585,12 +2599,12 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
   addBelongsToToJSON: function(json, data, meta, options) {
     var key = meta.key, value, id;
 
-    if (options.embedded) {
-      key = options.key || get(this, 'namingConvention').keyToJSONKey(key);
+    if (meta.options.embedded) {
+      key = meta.options.key || get(this, 'namingConvention').keyToJSONKey(key);
       value = get(data.record, key);
       json[key] = value ? value.toJSON(options) : null;
     } else {
-      key = options.key || get(this, 'namingConvention').foreignKey(key);
+      key = meta.options.key || get(this, 'namingConvention').foreignKey(key);
       id = data.get(key);
       json[key] = none(id) ? null : id;
     }
@@ -2691,7 +2705,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
     var data = get(this, 'data');
 
     if (data && key in data) {
-      ember_assert("You attempted to access the " + key + " property on a record without defining an attribute.", false);
+
     }
   },
 
@@ -2699,7 +2713,7 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
     var data = get(this, 'data');
 
     if (data && key in data) {
-      ember_assert("You attempted to set the " + key + " property on a record without defining an attribute.", false);
+
     } else {
       return this._super(key, value);
     }
@@ -2818,7 +2832,7 @@ DS.Model.reopenClass({
 
 DS.attr = function(type, options) {
   var transform = DS.attr.transforms[type];
-  ember_assert("Could not find model attribute of type " + type, !!transform);
+
 
   var transformFrom = transform.from;
   var transformTo = transform.to;
@@ -3007,7 +3021,7 @@ var hasAssociation = function(type, options, one) {
 };
 
 DS.belongsTo = function(type, options) {
-  ember_assert("The type passed to DS.belongsTo must be defined", !!type);
+
   return hasAssociation(type, options);
 };
 
@@ -3053,7 +3067,7 @@ var hasAssociation = function(type, options) {
 };
 
 DS.hasMany = function(type, options) {
-  ember_assert("The type passed to DS.hasMany must be defined", !!type);
+
   return hasAssociation(type, options);
 };
 
@@ -3262,7 +3276,6 @@ DS.fixtureAdapter = DS.Adapter.create({
   find: function(store, type, id) {
     var fixtures = type.FIXTURES;
 
-    ember_assert("Unable to find fixtures for model type "+type.toString(), !!fixtures);
     if (fixtures.hasLoaded) { return; }
 
     setTimeout(function() {
@@ -3278,7 +3291,6 @@ DS.fixtureAdapter = DS.Adapter.create({
   findAll: function(store, type) {
     var fixtures = type.FIXTURES;
 
-    ember_assert("Unable to find fixtures for model type "+type.toString(), !!fixtures);
 
     var ids = fixtures.map(function(item, index, self){ return item.id; });
     store.loadMany(type, ids, fixtures);
@@ -3475,7 +3487,7 @@ DS.RESTAdapter = DS.Adapter.extend({
     hash.url = url;
     hash.type = type;
     hash.dataType = 'json';
-    hash.contentType = 'application/json';
+    hash.contentType = 'application/json; charset=utf-8';
     hash.context = this;
 
     if (hash.data && type !== 'GET') {
@@ -3497,11 +3509,9 @@ DS.RESTAdapter = DS.Adapter.extend({
       if (!sideloadedType) {
         mappings = get(this, 'mappings');
 
-        ember_assert("Your server returned a hash with the key " + prop + " but you have no mappings", !!mappings);
 
-        sideloadedType = get(get(this, 'mappings'), prop);
+        sideloadedType = get(mappings, prop);
 
-        ember_assert("Your server returned a hash with the key " + prop + " but you have no mapping for it", !!sideloadedType);
       }
 
       this.loadValue(store, sideloadedType, json[prop]);
@@ -3518,6 +3528,9 @@ DS.RESTAdapter = DS.Adapter.extend({
 
   buildURL: function(record, suffix) {
     var url = [""];
+
+
+
 
     if (this.namespace !== undefined) {
       url.push(this.namespace);

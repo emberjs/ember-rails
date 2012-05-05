@@ -1,3 +1,5 @@
+require 'sprockets'
+require 'sprockets/engines'
 require 'ember/handlebars/source'
 
 module Ember
