@@ -57,13 +57,13 @@ class HjsTemplateTest < ActionController::IntegrationTest
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
     assert_response :success
-    assert_match @response.body, /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m
+    assert_match /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m, @response.body
   end
 
   test "should unbind mustache templates" do
     get "/assets/templates/hairy.mustache"
     assert_response :success
-    assert_match @response.body, /Ember\.TEMPLATES\["hairy"\] = Ember\.Handlebars\.template\(function .*unbound/m
+    assert_match /Ember\.TEMPLATES\["hairy"\] = Ember\.Handlebars\.template\(function .*unbound/m, @response.body
   end
 
   test "ensure new lines inside the anon function are persisted" do
