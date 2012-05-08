@@ -22,7 +22,7 @@ production mode, and the development build otherwise.
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you 
-to use `rails g ember:bootstrap` to create the following directory structure under `app/assets/javascripts/ember`:
+to use `rails g ember:bootstrap` to create the following directory structure under `app/assets/javascripts`:
 
     controllers/
     helpers/
@@ -42,17 +42,17 @@ file to setup application namespace and initial requires:
 
     rails g ember:bootstrap
       insert  app/assets/javascripts/application.js
-      create  app/assets/javascripts/ember/models
-      create  app/assets/javascripts/ember/models/.gitkeep
-      create  app/assets/javascripts/ember/controllers
-      create  app/assets/javascripts/ember/controllers/.gitkeep
-      create  app/assets/javascripts/ember/views
-      create  app/assets/javascripts/ember/views/.gitkeep
-      create  app/assets/javascripts/ember/helpers
-      create  app/assets/javascripts/ember/helpers/.gitkeep
-      create  app/assets/javascripts/ember/templates
-      create  app/assets/javascripts/ember/templates/.gitkeep
-      create  app/assets/javascripts/ember/app.js.coffee
+      create  app/assets/javascripts/models
+      create  app/assets/javascripts/models/.gitkeep
+      create  app/assets/javascripts/controllers
+      create  app/assets/javascripts/controllers/.gitkeep
+      create  app/assets/javascripts/views
+      create  app/assets/javascripts/views/.gitkeep
+      create  app/assets/javascripts/helpers
+      create  app/assets/javascripts/helpers/.gitkeep
+      create  app/assets/javascripts/templates
+      create  app/assets/javascripts/templates/.gitkeep
+      create  app/assets/javascripts/app.js.coffee
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
