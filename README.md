@@ -97,12 +97,12 @@ Now a single line in the layout loads everything:
 If you use Slim or Haml templates, you can use handlebars filter :
 
     :handlebars
-        {{view Ember.Button}}OK{{/view}}
+        {{#view Ember.Button}}OK{{/view}}
 
 It will be translated as :
 
     <script type="text/x-handlebars">
-        {{view Ember.Button}}OK{{/view}}
+        {{#view Ember.Button}}OK{{/view}}
     </script>
 
 ## Note on Patches/Pull Requests
