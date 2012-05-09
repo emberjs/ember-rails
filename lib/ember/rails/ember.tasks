@@ -1,0 +1,33 @@
+namespace :ember do
+  desc "Update vendor/ember to the latest commit"
+  task :latest do
+    require 'net/https'
+
+    embers = {
+      "development" => "ember-latest.js",
+      "production" => "ember-latest.min.js"
+    }
+
+    def download_file(url)
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = (uri.scheme == "https")
+      request = Net::HTTP::Get.new(uri.request_uri)
+      response = http.request(request)
+
+      if response.kind_of?(Net::HTTPRedirection)
+        download_file(response['location'])
+      else
+        response.body
+      end
+    end
+
+    embers.each do |env, file|
+      path = Rails.root.join("vendor/ember", env)
+      path.mkpath
+
+      ember_version = download_file("https://github.com/downloads/emberjs/ember.js/#{file}")
+      path.join("ember.js").open("w"){|f| f.write(ember_version) }
+    end
+  end
+end
