@@ -4,6 +4,10 @@ require 'active_model_serializers'
 module Ember
   module Rails
     class Engine < ::Rails::Engine
+      rake_tasks do
+        load File.expand_path("../ember.tasks", __FILE__)
+      end
+
       config.before_configuration do
         # set up a Handlebars configuration options object
         config.handlebars = ActiveSupport::OrderedOptions.new
