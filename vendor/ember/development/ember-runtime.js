@@ -1,9 +1,17 @@
 (function() {
 /*global __fail__*/
 
+if ('undefined' === typeof Ember) {
+  Ember = {};
+
+  if ('undefined' !== typeof window) {
+    window.Em = window.Ember = Em = Ember;
+  }
+}
+
 /**
   Define an assertion that will throw an exception if the condition is not
-  met.  Ember build tools will remove any calls to ember_assert() when
+  met.  Ember build tools will remove any calls to Ember.assert() when
   doing a production build.
 
   ## Examples
@@ -11,11 +19,11 @@
       #js:
 
       // pass a simple Boolean value
-      ember_assert('must pass a valid object', !!obj);
+      Ember.assert('must pass a valid object', !!obj);
 
       // pass a function.  If the function returns false the assertion fails
       // any other return value (including void) will pass.
-      ember_assert('a passed record must have a firstName', function() {
+      Ember.assert('a passed record must have a firstName', function() {
         if (obj instanceof Ember.Record) {
           return !Ember.empty(obj.firstName);
         }
@@ -32,7 +40,7 @@
     will be executed.  If the function returns false an exception will be
     thrown.
 */
-window.ember_assert = function ember_assert(desc, test) {
+Ember.assert = function(desc, test) {
   if ('function' === typeof test) test = test()!==false;
   if (!test) throw new Error("assertion failed: "+desc);
 };
@@ -40,7 +48,7 @@ window.ember_assert = function ember_assert(desc, test) {
 
 /**
   Display a warning with the provided message. Ember build tools will
-  remove any calls to ember_warn() when doing a production build.
+  remove any calls to Ember.warn() when doing a production build.
 
   @static
   @function
@@ -51,16 +59,16 @@ window.ember_assert = function ember_assert(desc, test) {
     An optional boolean or function. If the test returns false, the warning
     will be displayed.
 */
-window.ember_warn = function(message, test) {
+Ember.warn = function(message, test) {
   if (arguments.length === 1) { test = false; }
   if ('function' === typeof test) test = test()!==false;
-  if (!test) console.warn("WARNING: "+message);
+  if (!test) Ember.Logger.warn("WARNING: "+message);
 };
 
 /**
   Display a deprecation warning with the provided message and a stack trace
   (Chrome and Firefox only). Ember build tools will remove any calls to
-  ember_deprecate() when doing a production build.
+  Ember.deprecate() when doing a production build.
 
   @static
   @function
@@ -71,7 +79,7 @@ window.ember_warn = function(message, test) {
     An optional boolean or function. If the test returns false, the deprecation
     will be displayed.
 */
-window.ember_deprecate = function(message, test) {
+Ember.deprecate = function(message, test) {
   if (Ember && Ember.TESTING_DEPRECATION) { return; }
 
   if (arguments.length === 1) { test = false; }
@@ -103,7 +111,7 @@ window.ember_deprecate = function(message, test) {
     stackStr = "\n    " + stack.slice(2).join("\n    ");
   }
 
-  console.warn("DEPRECATION: "+message+stackStr);
+  Ember.Logger.warn("DEPRECATION: "+message+stackStr);
 };
 
 
@@ -111,6 +119,9 @@ window.ember_deprecate = function(message, test) {
 /**
   Display a deprecation warning with the provided message and a stack trace
   (Chrome and Firefox only) when the wrapped method is called.
+
+  Ember build tools will not remove calls to Ember.deprecateFunc(), though
+  no warnings will be shown in production.
 
   @static
   @function
@@ -120,12 +131,18 @@ window.ember_deprecate = function(message, test) {
   @param {Function} func
     The function to be deprecated.
 */
-window.ember_deprecateFunc = function(message, func) {
+Ember.deprecateFunc = function(message, func) {
   return function() {
-    window.ember_deprecate(message);
+    Ember.deprecate(message);
     return func.apply(this, arguments);
   };
 };
+
+
+window.ember_assert         = Ember.deprecateFunc("ember_assert is deprecated. Please use Ember.assert instead.",               Ember.assert);
+window.ember_warn           = Ember.deprecateFunc("ember_warn is deprecated. Please use Ember.warn instead.",                   Ember.warn);
+window.ember_deprecate      = Ember.deprecateFunc("ember_deprecate is deprecated. Please use Ember.deprecate instead.",         Ember.deprecate);
+window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprecated. Please use Ember.deprecateFunc instead.", Ember.deprecateFunc);
 
 })();
 
@@ -141,7 +158,7 @@ if ('undefined' === typeof Ember) {
 /**
   @namespace
   @name Ember
-  @version 0.9.7.1
+  @version 0.9.8
 
   All Ember methods and functions are defined inside of this namespace.
   You generally should not add new properties to this namespace as it may be
@@ -161,7 +178,7 @@ if ('undefined' === typeof Ember) {
 
 // Create core object. Make it act like an instance of Ember.Namespace so that
 // objects assigned to it are given a sane string representation.
-Ember = { isNamespace: true, toString: function() { return "Ember"; } };
+Ember = {};
 
 // aliases needed to keep minifiers from removing the global context
 if ('undefined' !== typeof window) {
@@ -170,13 +187,20 @@ if ('undefined' !== typeof window) {
 
 }
 
+// Make sure these are set whether Ember was already defined or not
+
+Ember.isNamespace = true;
+
+Ember.toString = function() { return "Ember"; };
+
+
 /**
   @static
   @type String
-  @default '0.9.7.1'
+  @default '0.9.8'
   @constant
 */
-Ember.VERSION = '0.9.7.1';
+Ember.VERSION = '0.9.8';
 
 /**
   @static
@@ -291,17 +315,22 @@ Ember.K = function() { return this; };
 
 // Stub out the methods defined by the ember-debug package in case it's not loaded
 
-if ('undefined' === typeof ember_assert) {
-  window.ember_assert = Ember.K;
+if ('undefined' === typeof Ember.assert) { Ember.assert = Ember.K; }
+if ('undefined' === typeof Ember.warn) { Ember.warn = Ember.K; }
+if ('undefined' === typeof Ember.deprecate) { Ember.deprecate = Ember.K; }
+if ('undefined' === typeof Ember.deprecateFunc) {
+  Ember.deprecateFunc = function(_, func) { return func; };
 }
 
+// These are deprecated but still supported
+
+if ('undefined' === typeof ember_assert) { window.ember_assert = Ember.K; }
 if ('undefined' === typeof ember_warn) { window.ember_warn = Ember.K; }
-
 if ('undefined' === typeof ember_deprecate) { window.ember_deprecate = Ember.K; }
-
 if ('undefined' === typeof ember_deprecateFunc) {
   window.ember_deprecateFunc = function(_, func) { return func; };
 }
+
 
 // ..........................................................
 // LOGGER
@@ -464,7 +493,7 @@ if (!platform.defineProperty) {
   platform.hasPropertyAccessors = false;
 
   platform.defineProperty = function(obj, keyName, desc) {
-    ember_assert("property descriptor cannot have `get` or `set` on this platform", !desc.get && !desc.set);
+    Ember.assert("property descriptor cannot have `get` or `set` on this platform", !desc.get && !desc.set);
     obj[keyName] = desc.value;
   };
 
@@ -836,7 +865,6 @@ Ember.makeArray = function(obj) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 var USE_ACCESSORS = Ember.platform.hasPropertyAccessors && Ember.ENV.USE_ACCESSORS;
 Ember.USE_ACCESSORS = !!USE_ACCESSORS;
 
@@ -891,7 +919,7 @@ if (!USE_ACCESSORS) {
       obj = Ember;
     }
 
-    ember_assert("You need to provide an object and key to `get`.", !!obj && keyName);
+    Ember.assert("You need to provide an object and key to `get`.", !!obj && keyName);
 
     if (!obj) return undefined;
     var desc = meta(obj, false).descs[keyName];
@@ -901,7 +929,7 @@ if (!USE_ACCESSORS) {
 
   /** @private */
   set = function(obj, keyName, value) {
-    ember_assert("You need to provide an object and key to `set`.", !!obj && keyName !== undefined);
+    Ember.assert("You need to provide an object and key to `set`.", !!obj && keyName !== undefined);
     var desc = meta(obj, false).descs[keyName];
     if (desc) desc.set(obj, keyName, value);
     else o_set(obj, keyName, value);
@@ -976,13 +1004,24 @@ Ember.set = set;
 //
 
 /** @private */
+function cleanupStars(path) {
+  if (path.indexOf('*') === -1 || path === '*') return path;
+
+  Ember.deprecate('Star paths are now treated the same as normal paths', !/(^|[^\.])\*/.test(path));
+
+  return path.replace(/(^|.)\*/, function(match, char){
+    return (char === '.') ? match : (char + '.');
+  });
+}
+
+/** @private */
 function normalizePath(path) {
-  ember_assert('must pass non-empty string to normalizePath()', path && path!=='');
+  Ember.assert('must pass non-empty string to normalizePath()', path && path!=='');
+  path = cleanupStars(path);
 
   if (path==='*') return path; //special case...
   var first = path.charAt(0);
   if(first==='.') return 'this'+path;
-  if (first==='*' && path.charAt(1)!=='.') return 'this.'+path.slice(1);
   return path;
 }
 
@@ -991,10 +1030,7 @@ function normalizePath(path) {
 function getPath(target, path) {
   var len = path.length, idx, next, key;
 
-  idx = path.indexOf('*');
-  if (idx>0 && path.charAt(idx-1)!=='.') {
-    return getPath(getPath(target, path.slice(0, idx)), path.slice(idx+1));
-  }
+  path = cleanupStars(path);
 
   idx = 0;
   while(target && idx<len) {
@@ -1031,19 +1067,9 @@ function normalizeTuple(target, path) {
   if (!target || isGlobal) target = window;
   if (hasThis) path = path.slice(5);
 
-  var idx = path.indexOf('*');
-  if (idx>0 && path.charAt(idx-1)!=='.') {
+  path = cleanupStars(path);
 
-    // should not do lookup on a prototype object because the object isn't
-    // really live yet.
-    if (target && meta(target,false).proto!==target) {
-      target = getPath(target, path.slice(0, idx));
-    } else {
-      target = null;
-    }
-    path   = path.slice(idx+1);
-
-  } else if (target === window) {
+  if (target === window) {
     key = firstKey(path);
     target = get(target, key);
     path   = path.slice(key.length+1);
@@ -1097,8 +1123,8 @@ Ember.getWithDefault = function(root, key, defaultValue) {
   return value;
 };
 
-Ember.getPath = function(root, path, _checkGlobal) {
-  var pathOnly, hasThis, hasStar, isGlobal, ret;
+Ember.getPath = function(root, path) {
+  var hasThis, isGlobal, ret;
 
   // Helpers that operate with 'this' within an #each
   if (path === '') {
@@ -1108,37 +1134,27 @@ Ember.getPath = function(root, path, _checkGlobal) {
   if (!path && 'string'===typeof root) {
     path = root;
     root = null;
-    pathOnly = true;
   }
 
-  hasStar = path.indexOf('*') > -1;
+  path = cleanupStars(path);
 
   // If there is no root and path is a key name, return that
   // property from the global object.
   // E.g. getPath('Ember') -> Ember
-  if (root === null && !hasStar && path.indexOf('.') < 0) { return get(window, path); }
+  if (root === null && path.indexOf('.') < 0) { return get(window, path); }
 
   // detect complicated paths and normalize them
   path = normalizePath(path);
   hasThis  = HAS_THIS.test(path);
 
-  if (!root || hasThis || hasStar) {
-    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
-
+  if (!root || hasThis) {
     var tuple = normalizeTuple(root, path);
     root = tuple[0];
     path = tuple[1];
     tuple.length = 0;
   }
 
-  ret = getPath(root, path);
-
-  if (ret === undefined && !pathOnly && !hasThis && root !== window && IS_GLOBAL.test(path) && _checkGlobal !== false) {
-    ember_deprecate("Fetching globals with Ember.getPath is deprecated (root: "+root+", path: "+path+")");
-    return Ember.getPath(window, path);
-  } else {
-    return ret;
-  }
+  return getPath(root, path);
 };
 
 Ember.setPath = function(root, path, value, tolerant) {
@@ -1151,25 +1167,12 @@ Ember.setPath = function(root, path, value, tolerant) {
   }
 
   path = normalizePath(path);
-  if (path.indexOf('*')>0) {
-    ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")", !root || root === window || !IS_GLOBAL.test(path));
-
-    var tuple = normalizeTuple(root, path);
-    root = tuple[0];
-    path = tuple[1];
-    tuple.length = 0;
-  }
 
   if (path.indexOf('.') > 0) {
     keyName = path.slice(path.lastIndexOf('.')+1);
     path    = path.slice(0, path.length-(keyName.length+1));
     if (path !== 'this') {
-      // Remove the `false` when we're done with this deprecation
-      root = Ember.getPath(root, path, false);
-      if (!root && IS_GLOBAL.test(path)) {
-        ember_deprecate("Setting globals with Ember.setPath is deprecated (path: "+path+")");
-        root = Ember.getPath(window, path);
-      }
+      root = Ember.getPath(root, path);
     }
 
   } else {
@@ -1227,7 +1230,6 @@ Ember.isGlobalPath = function(path) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 var USE_ACCESSORS = Ember.USE_ACCESSORS;
 var GUID_KEY = Ember.GUID_KEY;
 var META_KEY = Ember.META_KEY;
@@ -1366,16 +1368,16 @@ Dp.val = function(obj, keyName) {
 if (!USE_ACCESSORS) {
   Ember.Descriptor.MUST_USE_GETTER = function() {
     if (this instanceof Ember.Object) {
-      ember_assert('Must use Ember.get() to access this property', false);
+      Ember.assert('Must use Ember.get() to access this property', false);
     }
   };
 
   Ember.Descriptor.MUST_USE_SETTER = function() {
     if (this instanceof Ember.Object) {
       if (this.isDestroyed) {
-        ember_assert('You cannot set observed properties on destroyed objects', false);
+        Ember.assert('You cannot set observed properties on destroyed objects', false);
       } else {
-        ember_assert('Must use Ember.set() to access this property', false);
+        Ember.assert('Must use Ember.set() to access this property', false);
       }
     }
   };
@@ -1640,8 +1642,7 @@ Ember.createPrototype = function(obj, props) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
-ember_warn("Computed properties will soon be cacheable by default. To enable this in your app, set `ENV.CP_DEFAULT_CACHEABLE = true`.", Ember.CP_DEFAULT_CACHEABLE);
+Ember.warn("Computed properties will soon be cacheable by default. To enable this in your app, set `ENV.CP_DEFAULT_CACHEABLE = true`.", Ember.CP_DEFAULT_CACHEABLE);
 
 
 var meta = Ember.meta;
@@ -2007,7 +2008,7 @@ Ember.computed = function(func) {
 Ember.cacheFor = function(obj, key) {
   var cache = meta(obj, false).cache;
 
-  if (cache && cache[key]) {
+  if (cache && key in cache) {
     return cache[key];
   }
 };
@@ -2404,7 +2405,6 @@ Ember.notifyBeforeObservers = function(obj, keyName) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 var guidFor = Ember.guidFor;
 var meta    = Ember.meta;
 var get = Ember.get, set = Ember.set;
@@ -2513,16 +2513,15 @@ var pendingQueue = [];
 // back in the queue and reschedule is true, schedules a timeout to try
 // again.
 /** @private */
-function flushPendingChains(reschedule) {
+function flushPendingChains() {
   if (pendingQueue.length===0) return ; // nothing to do
 
   var queue = pendingQueue;
   pendingQueue = [];
 
   forEach(queue, function(q) { q[0].add(q[1]); });
-  if (reschedule!==false && pendingQueue.length>0) {
-    setTimeout(flushPendingChains, 1);
-  }
+
+  Ember.warn('Watching an undefined global, Ember expects watched globals to be setup by the time the run loop is flushed, check for typos', pendingQueue.length > 0);
 }
 
 /** @private */
@@ -2892,14 +2891,6 @@ Ember.rewatch = function(obj) {
   // make sure any chained watchers update.
   if (chains && chains.value() !== obj) chainsFor(obj);
 
-  // if the object has bindings then sync them..
-  if (bindings && m.proto!==obj) {
-    for (key in bindings) {
-      b = !DEP_SKIP[key] && obj[key];
-      if (b && b instanceof Ember.Binding) b.fromDidChange(obj);
-    }
-  }
-
   return this;
 };
 
@@ -3018,7 +3009,6 @@ Ember.destroy = function (obj) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 var o_create = Ember.platform.create;
 var meta = Ember.meta;
 var guidFor = Ember.guidFor;
@@ -3130,7 +3120,7 @@ function invokeAction(action, params) {
   @memberOf Ember
 */
 function addListener(obj, eventName, target, method, xform) {
-  ember_assert("You must pass at least an object and event name to Ember.addListener", !!obj && !!eventName);
+  Ember.assert("You must pass at least an object and event name to Ember.addListener", !!obj && !!eventName);
 
   if (!method && 'function' === typeof target) {
     method = target;
@@ -3280,578 +3270,10 @@ Ember.deferEvent = deferEvent;
 (function() {
 // ==========================================================================
 // Project:  Ember Runtime
-// Copyright: ©2011 Strobe Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-var Mixin, MixinDelegate, REQUIRED, Alias;
-var classToString, superClassString;
-
-var a_map = Ember.ArrayUtils.map;
-var a_indexOf = Ember.ArrayUtils.indexOf;
-var a_forEach = Ember.ArrayUtils.forEach;
-var a_slice = Array.prototype.slice;
-var EMPTY_META = {}; // dummy for non-writable meta
-var META_SKIP = { __emberproto__: true, __ember_count__: true };
-
-var o_create = Ember.platform.create;
-
-/** @private */
-function meta(obj, writable) {
-  var m = Ember.meta(obj, writable!==false), ret = m.mixins;
-  if (writable===false) return ret || EMPTY_META;
-
-  if (!ret) {
-    ret = m.mixins = { __emberproto__: obj };
-  } else if (ret.__emberproto__ !== obj) {
-    ret = m.mixins = o_create(ret);
-    ret.__emberproto__ = obj;
-  }
-  return ret;
-}
-
-/** @private */
-function initMixin(mixin, args) {
-  if (args && args.length > 0) {
-    mixin.mixins = a_map(args, function(x) {
-      if (x instanceof Mixin) return x;
-
-      // Note: Manually setup a primitive mixin here.  This is the only
-      // way to actually get a primitive mixin.  This way normal creation
-      // of mixins will give you combined mixins...
-      var mixin = new Mixin();
-      mixin.properties = x;
-      return mixin;
-    });
-  }
-  return mixin;
-}
-
-var NATIVES = [Boolean, Object, Number, Array, Date, String];
-/** @private */
-function isMethod(obj) {
-  if ('function' !== typeof obj || obj.isMethod===false) return false;
-  return a_indexOf(NATIVES, obj)<0;
-}
-
-/** @private */
-function mergeMixins(mixins, m, descs, values, base) {
-  var len = mixins.length, idx, mixin, guid, props, value, key, ovalue, concats;
-
-  /** @private */
-  function removeKeys(keyName) {
-    delete descs[keyName];
-    delete values[keyName];
-  }
-
-  for(idx=0;idx<len;idx++) {
-
-    mixin = mixins[idx];
-    if (!mixin) throw new Error('Null value found in Ember.mixin()');
-
-    if (mixin instanceof Mixin) {
-      guid = Ember.guidFor(mixin);
-      if (m[guid]) continue;
-      m[guid] = mixin;
-      props = mixin.properties;
-    } else {
-      props = mixin; // apply anonymous mixin properties
-    }
-
-    if (props) {
-
-      // reset before adding each new mixin to pickup concats from previous
-      concats = values.concatenatedProperties || base.concatenatedProperties;
-      if (props.concatenatedProperties) {
-        concats = concats ? concats.concat(props.concatenatedProperties) : props.concatenatedProperties;
-      }
-
-      for (key in props) {
-        if (!props.hasOwnProperty(key)) continue;
-        value = props[key];
-        if (value instanceof Ember.Descriptor) {
-          if (value === REQUIRED && descs[key]) { continue; }
-
-          descs[key]  = value;
-          values[key] = undefined;
-        } else {
-
-          // impl super if needed...
-          if (isMethod(value)) {
-            ovalue = (descs[key] === Ember.SIMPLE_PROPERTY) && values[key];
-            if (!ovalue) ovalue = base[key];
-            if ('function' !== typeof ovalue) ovalue = null;
-            if (ovalue) {
-              var o = value.__ember_observes__, ob = value.__ember_observesBefore__;
-              value = Ember.wrap(value, ovalue);
-              value.__ember_observes__ = o;
-              value.__ember_observesBefore__ = ob;
-            }
-          } else if ((concats && a_indexOf(concats, key)>=0) || key === 'concatenatedProperties') {
-            var baseValue = values[key] || base[key];
-            value = baseValue ? baseValue.concat(value) : Ember.makeArray(value);
-          }
-
-          descs[key]  = Ember.SIMPLE_PROPERTY;
-          values[key] = value;
-        }
-      }
-
-      // manually copy toString() because some JS engines do not enumerate it
-      if (props.hasOwnProperty('toString')) {
-        base.toString = props.toString;
-      }
-
-    } else if (mixin.mixins) {
-      mergeMixins(mixin.mixins, m, descs, values, base);
-      if (mixin._without) a_forEach(mixin._without, removeKeys);
-    }
-  }
-}
-
-/** @private */
-var defineProperty = Ember.defineProperty;
-
-/** @private */
-function writableReq(obj) {
-  var m = Ember.meta(obj), req = m.required;
-  if (!req || (req.__emberproto__ !== obj)) {
-    req = m.required = req ? o_create(req) : { __ember_count__: 0 };
-    req.__emberproto__ = obj;
-  }
-  return req;
-}
-
-/** @private */
-function getObserverPaths(value) {
-  return ('function' === typeof value) && value.__ember_observes__;
-}
-
-/** @private */
-function getBeforeObserverPaths(value) {
-  return ('function' === typeof value) && value.__ember_observesBefore__;
-}
-
-Ember._mixinBindings = function(obj, key, value, m) {
-  return value;
-};
-
-/** @private */
-function applyMixin(obj, mixins, partial) {
-  var descs = {}, values = {}, m = Ember.meta(obj), req = m.required;
-  var key, willApply, didApply, value, desc;
-
-  var mixinBindings = Ember._mixinBindings;
-
-  // Go through all mixins and hashes passed in, and:
-  //
-  // * Handle concatenated properties
-  // * Set up _super wrapping if necessary
-  // * Set up descriptors (simple, watched or computed properties)
-  // * Copying `toString` in broken browsers
-  mergeMixins(mixins, meta(obj), descs, values, obj);
-
-  if (MixinDelegate.detect(obj)) {
-    willApply = values.willApplyProperty || obj.willApplyProperty;
-    didApply  = values.didApplyProperty || obj.didApplyProperty;
-  }
-
-  for(key in descs) {
-    if (!descs.hasOwnProperty(key)) continue;
-
-    desc = descs[key];
-    value = values[key];
-
-    if (desc === REQUIRED) {
-      if (!(key in obj)) {
-        if (!partial) throw new Error('Required property not defined: '+key);
-
-        // for partial applies add to hash of required keys
-        req = writableReq(obj);
-        req.__ember_count__++;
-        req[key] = true;
-      }
-
-    } else {
-
-      while (desc instanceof Alias) {
-
-        var altKey = desc.methodName;
-        if (descs[altKey]) {
-          value = values[altKey];
-          desc  = descs[altKey];
-        } else if (m.descs[altKey]) {
-          desc  = m.descs[altKey];
-          value = desc.val(obj, altKey);
-        } else {
-          value = obj[altKey];
-          desc  = Ember.SIMPLE_PROPERTY;
-        }
-      }
-
-      if (willApply) willApply.call(obj, key);
-
-      var observerPaths = getObserverPaths(value),
-          curObserverPaths = observerPaths && getObserverPaths(obj[key]),
-          beforeObserverPaths = getBeforeObserverPaths(value),
-          curBeforeObserverPaths = beforeObserverPaths && getBeforeObserverPaths(obj[key]),
-          len, idx;
-
-      if (curObserverPaths) {
-        len = curObserverPaths.length;
-        for(idx=0;idx<len;idx++) {
-          Ember.removeObserver(obj, curObserverPaths[idx], null, key);
-        }
-      }
-
-      if (curBeforeObserverPaths) {
-        len = curBeforeObserverPaths.length;
-        for(idx=0;idx<len;idx++) {
-          Ember.removeBeforeObserver(obj, curBeforeObserverPaths[idx], null,key);
-        }
-      }
-
-      // TODO: less hacky way for ember-runtime to add bindings.
-      value = mixinBindings(obj, key, value, m);
-
-      defineProperty(obj, key, desc, value);
-
-      if (observerPaths) {
-        len = observerPaths.length;
-        for(idx=0;idx<len;idx++) {
-          Ember.addObserver(obj, observerPaths[idx], null, key);
-        }
-      }
-
-      if (beforeObserverPaths) {
-        len = beforeObserverPaths.length;
-        for(idx=0;idx<len;idx++) {
-          Ember.addBeforeObserver(obj, beforeObserverPaths[idx], null, key);
-        }
-      }
-
-      if (req && req[key]) {
-        req = writableReq(obj);
-        req.__ember_count__--;
-        req[key] = false;
-      }
-
-      if (didApply) didApply.call(obj, key);
-
-    }
-  }
-
-  // Make sure no required attrs remain
-  if (!partial && req && req.__ember_count__>0) {
-    var keys = [];
-    for(key in req) {
-      if (META_SKIP[key]) continue;
-      keys.push(key);
-    }
-    throw new Error('Required properties not defined: '+keys.join(','));
-  }
-  return obj;
-}
-
-Ember.mixin = function(obj) {
-  var args = a_slice.call(arguments, 1);
-  return applyMixin(obj, args, false);
-};
-
-
-/**
-  @constructor
-*/
-Ember.Mixin = function() { return initMixin(this, arguments); };
-
-/** @private */
-Mixin = Ember.Mixin;
-
-/** @private */
-Mixin._apply = applyMixin;
-
-Mixin.applyPartial = function(obj) {
-  var args = a_slice.call(arguments, 1);
-  return applyMixin(obj, args, true);
-};
-
-Mixin.create = function() {
-  classToString.processed = false;
-  var M = this;
-  return initMixin(new M(), arguments);
-};
-
-Mixin.prototype.reopen = function() {
-
-  var mixin, tmp;
-
-  if (this.properties) {
-    mixin = Mixin.create();
-    mixin.properties = this.properties;
-    delete this.properties;
-    this.mixins = [mixin];
-  }
-
-  var len = arguments.length, mixins = this.mixins, idx;
-
-  for(idx=0;idx<len;idx++) {
-    mixin = arguments[idx];
-    if (mixin instanceof Mixin) {
-      mixins.push(mixin);
-    } else {
-      tmp = Mixin.create();
-      tmp.properties = mixin;
-      mixins.push(tmp);
-    }
-  }
-
-  return this;
-};
-
-var TMP_ARRAY = [];
-Mixin.prototype.apply = function(obj) {
-  TMP_ARRAY[0] = this;
-  var ret = applyMixin(obj, TMP_ARRAY, false);
-  TMP_ARRAY.length=0;
-  return ret;
-};
-
-Mixin.prototype.applyPartial = function(obj) {
-  TMP_ARRAY[0] = this;
-  var ret = applyMixin(obj, TMP_ARRAY, true);
-  TMP_ARRAY.length=0;
-  return ret;
-};
-
-/** @private */
-function _detect(curMixin, targetMixin, seen) {
-  var guid = Ember.guidFor(curMixin);
-
-  if (seen[guid]) return false;
-  seen[guid] = true;
-
-  if (curMixin === targetMixin) return true;
-  var mixins = curMixin.mixins, loc = mixins ? mixins.length : 0;
-  while(--loc >= 0) {
-    if (_detect(mixins[loc], targetMixin, seen)) return true;
-  }
-  return false;
-}
-
-Mixin.prototype.detect = function(obj) {
-  if (!obj) return false;
-  if (obj instanceof Mixin) return _detect(obj, this, {});
-  return !!meta(obj, false)[Ember.guidFor(this)];
-};
-
-Mixin.prototype.without = function() {
-  var ret = new Mixin(this);
-  ret._without = a_slice.call(arguments);
-  return ret;
-};
-
-/** @private */
-function _keys(ret, mixin, seen) {
-  if (seen[Ember.guidFor(mixin)]) return;
-  seen[Ember.guidFor(mixin)] = true;
-
-  if (mixin.properties) {
-    var props = mixin.properties;
-    for(var key in props) {
-      if (props.hasOwnProperty(key)) ret[key] = true;
-    }
-  } else if (mixin.mixins) {
-    a_forEach(mixin.mixins, function(x) { _keys(ret, x, seen); });
-  }
-}
-
-Mixin.prototype.keys = function() {
-  var keys = {}, seen = {}, ret = [];
-  _keys(keys, this, seen);
-  for(var key in keys) {
-    if (keys.hasOwnProperty(key)) ret.push(key);
-  }
-  return ret;
-};
-
-/** @private - make Mixin's have nice displayNames */
-
-var NAME_KEY = Ember.GUID_KEY+'_name';
-var get = Ember.get;
-
-/** @private */
-function processNames(paths, root, seen) {
-  var idx = paths.length;
-  for(var key in root) {
-    if (!root.hasOwnProperty || !root.hasOwnProperty(key)) continue;
-    var obj = root[key];
-    paths[idx] = key;
-
-    if (obj && obj.toString === classToString) {
-      obj[NAME_KEY] = paths.join('.');
-    } else if (obj && get(obj, 'isNamespace')) {
-      if (seen[Ember.guidFor(obj)]) continue;
-      seen[Ember.guidFor(obj)] = true;
-      processNames(paths, obj, seen);
-    }
-
-  }
-  paths.length = idx; // cut out last item
-}
-
-/** @private */
-function findNamespaces() {
-  var Namespace = Ember.Namespace, obj, isNamespace;
-
-  if (Namespace.PROCESSED) { return; }
-
-  for (var prop in window) {
-    //  get(window.globalStorage, 'isNamespace') would try to read the storage for domain isNamespace and cause exception in Firefox.
-    // globalStorage is a storage obsoleted by the WhatWG storage specification. See https://developer.mozilla.org/en/DOM/Storage#globalStorage
-    if (prop === "globalStorage" && window.StorageList && window.globalStorage instanceof window.StorageList) { continue; }
-    // Unfortunately, some versions of IE don't support window.hasOwnProperty
-    if (window.hasOwnProperty && !window.hasOwnProperty(prop)) { continue; }
-
-    // At times we are not allowed to access certain properties for security reasons.
-    // There are also times where even if we can access them, we are not allowed to access their properties.
-    try {
-      obj = window[prop];
-      isNamespace = obj && get(obj, 'isNamespace');
-    } catch (e) {
-      continue;
-    }
-
-    if (isNamespace) {
-      ember_deprecate("Namespaces should not begin with lowercase.", /^[A-Z]/.test(prop));
-      obj[NAME_KEY] = prop;
-    }
-  }
-}
-
-Ember.identifyNamespaces = findNamespaces;
-
-/** @private */
-superClassString = function(mixin) {
-  var superclass = mixin.superclass;
-  if (superclass) {
-    if (superclass[NAME_KEY]) { return superclass[NAME_KEY]; }
-    else { return superClassString(superclass); }
-  } else {
-    return;
-  }
-};
-
-/** @private */
-classToString = function() {
-  var Namespace = Ember.Namespace, namespace;
-
-  // TODO: Namespace should really be in Metal
-  if (Namespace) {
-    if (!this[NAME_KEY] && !classToString.processed) {
-      if (!Namespace.PROCESSED) {
-        findNamespaces();
-        Namespace.PROCESSED = true;
-      }
-
-      classToString.processed = true;
-
-      var namespaces = Namespace.NAMESPACES;
-      for (var i=0, l=namespaces.length; i<l; i++) {
-        namespace = namespaces[i];
-        processNames([namespace.toString()], namespace, {});
-      }
-    }
-  }
-
-  if (this[NAME_KEY]) {
-    return this[NAME_KEY];
-  } else {
-    var str = superClassString(this);
-    if (str) {
-      return "(subclass of " + str + ")";
-    } else {
-      return "(unknown mixin)";
-    }
-  }
-};
-
-Mixin.prototype.toString = classToString;
-
-// returns the mixins currently applied to the specified object
-// TODO: Make Ember.mixin
-Mixin.mixins = function(obj) {
-  var ret = [], mixins = meta(obj, false), key, mixin;
-  for(key in mixins) {
-    if (META_SKIP[key]) continue;
-    mixin = mixins[key];
-
-    // skip primitive mixins since these are always anonymous
-    if (!mixin.properties) ret.push(mixins[key]);
-  }
-  return ret;
-};
-
-REQUIRED = new Ember.Descriptor();
-REQUIRED.toString = function() { return '(Required Property)'; };
-
-Ember.required = function() {
-  return REQUIRED;
-};
-
-/** @private */
-Alias = function(methodName) {
-  this.methodName = methodName;
-};
-Alias.prototype = new Ember.Descriptor();
-
-Ember.alias = function(methodName) {
-  return new Alias(methodName);
-};
-
-Ember.MixinDelegate = Mixin.create({
-
-  willApplyProperty: Ember.required(),
-  didApplyProperty:  Ember.required()
-
-});
-
-/** @private */
-MixinDelegate = Ember.MixinDelegate;
-
-
-// ..........................................................
-// OBSERVER HELPER
-//
-
-Ember.observer = function(func) {
-  var paths = a_slice.call(arguments, 1);
-  func.__ember_observes__ = paths;
-  return func;
-};
-
-Ember.beforeObserver = function(func) {
-  var paths = a_slice.call(arguments, 1);
-  func.__ember_observesBefore__ = paths;
-  return func;
-};
-
-
-
-
-
-
-
-})();
-
-
-
-(function() {
-// ==========================================================================
-// Project:  Ember Runtime
 // Copyright: ©2006-2011 Strobe Inc. and contributors.
 //            Portions ©2008-2010 Apple Inc. All rights reserved.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 // Ember.Logger
 // Ember.watch.flushPending
 // Ember.beginPropertyChanges, Ember.endPropertyChanges
@@ -4104,7 +3526,7 @@ Ember.run.begin = function() {
   @returns {void}
 */
 Ember.run.end = function() {
-  ember_assert('must have a current run loop', run.currentRunLoop);
+  Ember.assert('must have a current run loop', run.currentRunLoop);
   try {
     run.currentRunLoop.end();
   }
@@ -4440,34 +3862,6 @@ Ember.run.cancel = function(timer) {
   delete timers[timer];
 };
 
-// ..........................................................
-// DEPRECATED API
-//
-
-/**
-  @namespace Compatibility for Ember.run
-  @name Ember.RunLoop
-  @deprecated
-*/
-
-/**
-  @deprecated
-  @method
-
-  Use `#js:Ember.run.begin()` instead
-*/
-Ember.RunLoop.begin = ember_deprecateFunc("Use Ember.run.begin instead of Ember.RunLoop.begin.", Ember.run.begin);
-
-/**
-  @deprecated
-  @method
-
-  Use `#js:Ember.run.end()` instead
-*/
-Ember.RunLoop.end = ember_deprecateFunc("Use Ember.run.end instead of Ember.RunLoop.end.", Ember.run.end);
-
-
-
 })();
 
 
@@ -4478,7 +3872,6 @@ Ember.RunLoop.end = ember_deprecateFunc("Use Ember.run.end instead of Ember.RunL
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ember_assert */
 // Ember.Logger
 // get, getPath, setPath, trySetPath
 // guidFor, isArray, meta
@@ -4678,6 +4071,29 @@ var Binding = function(toPath, fromPath) {
 K.prototype = Binding.prototype;
 
 Binding.prototype = /** @scope Ember.Binding.prototype */ {
+  /**
+    This copies the Binding so it can be connected to another object.
+    @returns {Ember.Binding}
+  */
+  copy: function () {
+    var copy = new Binding(this._to, this._from);
+    if (this._oneWay) {
+      copy._oneWay = true;
+    }
+    if (this._transforms) {
+      copy._transforms = this._transforms.slice(0);
+    }
+    if (this._typeTransform) {
+      copy._typeTransform = this._typeTransform;
+      copy._placeholder = this._placeholder;
+    }
+    if (this._operand) {
+      copy._operand = this._operand;
+      copy._operation = this._operation;
+    }
+    return copy;
+  },
+
   // ..........................................................
   // CONFIG
   //
@@ -4914,7 +4330,7 @@ Binding.prototype = /** @scope Ember.Binding.prototype */ {
     @returns {Ember.Binding} this
   */
   connect: function(obj) {
-    ember_assert('Must pass a valid object to Ember.Binding.connect()', !!obj);
+    Ember.assert('Must pass a valid object to Ember.Binding.connect()', !!obj);
 
     var oneWay = this._oneWay, operand = this._operand;
 
@@ -4944,7 +4360,7 @@ Binding.prototype = /** @scope Ember.Binding.prototype */ {
     @returns {Ember.Binding} this
   */
   disconnect: function(obj) {
-    ember_assert('Must pass a valid object to Ember.Binding.disconnect()', !!obj);
+    Ember.assert('Must pass a valid object to Ember.Binding.disconnect()', !!obj);
 
     var oneWay = this._oneWay, operand = this._operand;
 
@@ -5180,6 +4596,21 @@ mixinProperties(Binding,
     binding._operand = pathB;
     binding._operation = OR_OPERATION;
     return binding;
+  },
+
+  /**
+    Registers a custom transform for use in bindings.
+
+    @param {String} name The name of the transform
+    @param {Function} transform The transformation function
+  */
+  registerTransform: function(name, transform) {
+    this.prototype[name] = transform;
+    this[name] = function(from) {
+      var C = this, binding = new C(null, from), args;
+      args = Array.prototype.slice.call(arguments, 1);
+      return binding[name].apply(binding, args);
+    };
   }
 
 });
@@ -5266,12 +4697,10 @@ mixinProperties(Binding,
   below adds a new helper called `notLessThan()` which will limit the value to
   be not less than the passed minimum:
 
-      Ember.Binding.reopen({
-        notLessThan: function(minValue) {
-          return this.transform(function(value, binding) {
-            return ((Ember.typeOf(value) === 'number') && (value < minValue)) ? minValue : value;
-          });
-        }
+      Ember.Binding.registerTransform('notLessThan', function(minValue) {
+        return this.transform(function(value, binding) {
+          return ((Ember.typeOf(value) === 'number') && (value < minValue)) ? minValue : value;
+        });
       });
 
   You could specify this in your core.js file, for example. Then anywhere in
@@ -5387,6 +4816,612 @@ Ember.oneWay = function(obj, to, from) {
 
 (function() {
 // ==========================================================================
+// Project:  Ember Runtime
+// Copyright: ©2011 Strobe Inc. and contributors.
+// License:   Licensed under MIT license (see license.js)
+// ==========================================================================
+var Mixin, MixinDelegate, REQUIRED, Alias;
+var classToString, superClassString;
+
+var a_map = Ember.ArrayUtils.map;
+var a_indexOf = Ember.ArrayUtils.indexOf;
+var a_forEach = Ember.ArrayUtils.forEach;
+var a_slice = Array.prototype.slice;
+var EMPTY_META = {}; // dummy for non-writable meta
+var META_SKIP = { __emberproto__: true, __ember_count__: true };
+
+var o_create = Ember.platform.create;
+
+/** @private */
+function meta(obj, writable) {
+  var m = Ember.meta(obj, writable!==false), ret = m.mixins;
+  if (writable===false) return ret || EMPTY_META;
+
+  if (!ret) {
+    ret = m.mixins = { __emberproto__: obj };
+  } else if (ret.__emberproto__ !== obj) {
+    ret = m.mixins = o_create(ret);
+    ret.__emberproto__ = obj;
+  }
+  return ret;
+}
+
+/** @private */
+function initMixin(mixin, args) {
+  if (args && args.length > 0) {
+    mixin.mixins = a_map(args, function(x) {
+      if (x instanceof Mixin) return x;
+
+      // Note: Manually setup a primitive mixin here.  This is the only
+      // way to actually get a primitive mixin.  This way normal creation
+      // of mixins will give you combined mixins...
+      var mixin = new Mixin();
+      mixin.properties = x;
+      return mixin;
+    });
+  }
+  return mixin;
+}
+
+var NATIVES = [Boolean, Object, Number, Array, Date, String];
+/** @private */
+function isMethod(obj) {
+  if ('function' !== typeof obj || obj.isMethod===false) return false;
+  return a_indexOf(NATIVES, obj)<0;
+}
+
+/** @private */
+function mergeMixins(mixins, m, descs, values, base) {
+  var len = mixins.length, idx, mixin, guid, props, value, key, ovalue, concats;
+
+  /** @private */
+  function removeKeys(keyName) {
+    delete descs[keyName];
+    delete values[keyName];
+  }
+
+  for(idx=0;idx<len;idx++) {
+
+    mixin = mixins[idx];
+    if (!mixin) throw new Error('Null value found in Ember.mixin()');
+
+    if (mixin instanceof Mixin) {
+      guid = Ember.guidFor(mixin);
+      if (m[guid]) continue;
+      m[guid] = mixin;
+      props = mixin.properties;
+    } else {
+      props = mixin; // apply anonymous mixin properties
+    }
+
+    if (props) {
+
+      // reset before adding each new mixin to pickup concats from previous
+      concats = values.concatenatedProperties || base.concatenatedProperties;
+      if (props.concatenatedProperties) {
+        concats = concats ? concats.concat(props.concatenatedProperties) : props.concatenatedProperties;
+      }
+
+      for (key in props) {
+        if (!props.hasOwnProperty(key)) continue;
+        value = props[key];
+        if (value instanceof Ember.Descriptor) {
+          if (value === REQUIRED && descs[key]) { continue; }
+
+          descs[key]  = value;
+          values[key] = undefined;
+        } else {
+
+          // impl super if needed...
+          if (isMethod(value)) {
+            ovalue = (descs[key] === Ember.SIMPLE_PROPERTY) && values[key];
+            if (!ovalue) ovalue = base[key];
+            if ('function' !== typeof ovalue) ovalue = null;
+            if (ovalue) {
+              var o = value.__ember_observes__, ob = value.__ember_observesBefore__;
+              value = Ember.wrap(value, ovalue);
+              value.__ember_observes__ = o;
+              value.__ember_observesBefore__ = ob;
+            }
+          } else if ((concats && a_indexOf(concats, key)>=0) || key === 'concatenatedProperties') {
+            var baseValue = values[key] || base[key];
+            value = baseValue ? baseValue.concat(value) : Ember.makeArray(value);
+          }
+
+          descs[key]  = Ember.SIMPLE_PROPERTY;
+          values[key] = value;
+        }
+      }
+
+      // manually copy toString() because some JS engines do not enumerate it
+      if (props.hasOwnProperty('toString')) {
+        base.toString = props.toString;
+      }
+
+    } else if (mixin.mixins) {
+      mergeMixins(mixin.mixins, m, descs, values, base);
+      if (mixin._without) a_forEach(mixin._without, removeKeys);
+    }
+  }
+}
+
+/** @private */
+var defineProperty = Ember.defineProperty;
+
+/** @private */
+function writableReq(obj) {
+  var m = Ember.meta(obj), req = m.required;
+  if (!req || (req.__emberproto__ !== obj)) {
+    req = m.required = req ? o_create(req) : { __ember_count__: 0 };
+    req.__emberproto__ = obj;
+  }
+  return req;
+}
+
+/** @private */
+function getObserverPaths(value) {
+  return ('function' === typeof value) && value.__ember_observes__;
+}
+
+/** @private */
+function getBeforeObserverPaths(value) {
+  return ('function' === typeof value) && value.__ember_observesBefore__;
+}
+
+var IS_BINDING = Ember.IS_BINDING = /^.+Binding$/;
+
+function detectBinding(obj, key, m) {
+  if (IS_BINDING.test(key)) {
+    var bindings = m.bindings;
+    if (!bindings) {
+      bindings = m.bindings = { __emberproto__: obj };
+    } else if (bindings.__emberproto__ !== obj) {
+      bindings = m.bindings = o_create(m.bindings);
+      bindings.__emberproto__ = obj;
+    }
+    bindings[key] = true;
+  }
+}
+
+function connectBindings(obj, m) {
+  if (m === undefined) {
+    m = Ember.meta(obj);
+  }
+  var bindings = m.bindings, key, binding;
+  if (bindings) {
+    for (key in bindings) {
+      binding = key !== '__emberproto__' && obj[key];
+      if (binding) {
+        if (binding instanceof Ember.Binding) {
+          binding = binding.copy(); // copy prototypes' instance
+          binding.to(key.slice(0, -7));
+        } else {
+          binding = new Ember.Binding(key.slice(0,-7), binding);
+        }
+        binding.connect(obj);
+        obj[key] = binding;
+      }
+    }
+  }
+}
+
+/** @private */
+function applyMixin(obj, mixins, partial) {
+  var descs = {}, values = {}, m = Ember.meta(obj), req = m.required;
+  var key, willApply, didApply, value, desc;
+
+  // Go through all mixins and hashes passed in, and:
+  //
+  // * Handle concatenated properties
+  // * Set up _super wrapping if necessary
+  // * Set up descriptors (simple, watched or computed properties)
+  // * Copying `toString` in broken browsers
+  mergeMixins(mixins, meta(obj), descs, values, obj);
+
+  if (MixinDelegate.detect(obj)) {
+    willApply = values.willApplyProperty || obj.willApplyProperty;
+    didApply  = values.didApplyProperty || obj.didApplyProperty;
+  }
+
+  for(key in descs) {
+    if (!descs.hasOwnProperty(key)) continue;
+
+    desc = descs[key];
+    value = values[key];
+
+    if (desc === REQUIRED) {
+      if (!(key in obj)) {
+        if (!partial) throw new Error('Required property not defined: '+key);
+
+        // for partial applies add to hash of required keys
+        req = writableReq(obj);
+        req.__ember_count__++;
+        req[key] = true;
+      }
+
+    } else {
+
+      while (desc instanceof Alias) {
+
+        var altKey = desc.methodName;
+        if (descs[altKey]) {
+          value = values[altKey];
+          desc  = descs[altKey];
+        } else if (m.descs[altKey]) {
+          desc  = m.descs[altKey];
+          value = desc.val(obj, altKey);
+        } else {
+          value = obj[altKey];
+          desc  = Ember.SIMPLE_PROPERTY;
+        }
+      }
+
+      if (willApply) willApply.call(obj, key);
+
+      var observerPaths = getObserverPaths(value),
+          curObserverPaths = observerPaths && getObserverPaths(obj[key]),
+          beforeObserverPaths = getBeforeObserverPaths(value),
+          curBeforeObserverPaths = beforeObserverPaths && getBeforeObserverPaths(obj[key]),
+          len, idx;
+
+      if (curObserverPaths) {
+        len = curObserverPaths.length;
+        for(idx=0;idx<len;idx++) {
+          Ember.removeObserver(obj, curObserverPaths[idx], null, key);
+        }
+      }
+
+      if (curBeforeObserverPaths) {
+        len = curBeforeObserverPaths.length;
+        for(idx=0;idx<len;idx++) {
+          Ember.removeBeforeObserver(obj, curBeforeObserverPaths[idx], null,key);
+        }
+      }
+
+      detectBinding(obj, key, m);
+
+      defineProperty(obj, key, desc, value);
+
+      if (observerPaths) {
+        len = observerPaths.length;
+        for(idx=0;idx<len;idx++) {
+          Ember.addObserver(obj, observerPaths[idx], null, key);
+        }
+      }
+
+      if (beforeObserverPaths) {
+        len = beforeObserverPaths.length;
+        for(idx=0;idx<len;idx++) {
+          Ember.addBeforeObserver(obj, beforeObserverPaths[idx], null, key);
+        }
+      }
+
+      if (req && req[key]) {
+        req = writableReq(obj);
+        req.__ember_count__--;
+        req[key] = false;
+      }
+
+      if (didApply) didApply.call(obj, key);
+
+    }
+  }
+
+  if (!partial) { // don't apply to prototype
+    value = connectBindings(obj, m);
+  }
+
+  // Make sure no required attrs remain
+  if (!partial && req && req.__ember_count__>0) {
+    var keys = [];
+    for(key in req) {
+      if (META_SKIP[key]) continue;
+      keys.push(key);
+    }
+    throw new Error('Required properties not defined: '+keys.join(','));
+  }
+  return obj;
+}
+
+Ember.mixin = function(obj) {
+  var args = a_slice.call(arguments, 1);
+  return applyMixin(obj, args, false);
+};
+
+
+/**
+  @constructor
+*/
+Ember.Mixin = function() { return initMixin(this, arguments); };
+
+/** @private */
+Mixin = Ember.Mixin;
+
+/** @private */
+Mixin._apply = applyMixin;
+
+Mixin.applyPartial = function(obj) {
+  var args = a_slice.call(arguments, 1);
+  return applyMixin(obj, args, true);
+};
+
+Mixin.finishPartial = function(obj) {
+  connectBindings(obj);
+  return obj;
+};
+
+Mixin.create = function() {
+  classToString.processed = false;
+  var M = this;
+  return initMixin(new M(), arguments);
+};
+
+Mixin.prototype.reopen = function() {
+
+  var mixin, tmp;
+
+  if (this.properties) {
+    mixin = Mixin.create();
+    mixin.properties = this.properties;
+    delete this.properties;
+    this.mixins = [mixin];
+  }
+
+  var len = arguments.length, mixins = this.mixins, idx;
+
+  for(idx=0;idx<len;idx++) {
+    mixin = arguments[idx];
+    if (mixin instanceof Mixin) {
+      mixins.push(mixin);
+    } else {
+      tmp = Mixin.create();
+      tmp.properties = mixin;
+      mixins.push(tmp);
+    }
+  }
+
+  return this;
+};
+
+var TMP_ARRAY = [];
+Mixin.prototype.apply = function(obj) {
+  TMP_ARRAY[0] = this;
+  var ret = applyMixin(obj, TMP_ARRAY, false);
+  TMP_ARRAY.length=0;
+  return ret;
+};
+
+Mixin.prototype.applyPartial = function(obj) {
+  TMP_ARRAY[0] = this;
+  var ret = applyMixin(obj, TMP_ARRAY, true);
+  TMP_ARRAY.length=0;
+  return ret;
+};
+
+/** @private */
+function _detect(curMixin, targetMixin, seen) {
+  var guid = Ember.guidFor(curMixin);
+
+  if (seen[guid]) return false;
+  seen[guid] = true;
+
+  if (curMixin === targetMixin) return true;
+  var mixins = curMixin.mixins, loc = mixins ? mixins.length : 0;
+  while(--loc >= 0) {
+    if (_detect(mixins[loc], targetMixin, seen)) return true;
+  }
+  return false;
+}
+
+Mixin.prototype.detect = function(obj) {
+  if (!obj) return false;
+  if (obj instanceof Mixin) return _detect(obj, this, {});
+  return !!meta(obj, false)[Ember.guidFor(this)];
+};
+
+Mixin.prototype.without = function() {
+  var ret = new Mixin(this);
+  ret._without = a_slice.call(arguments);
+  return ret;
+};
+
+/** @private */
+function _keys(ret, mixin, seen) {
+  if (seen[Ember.guidFor(mixin)]) return;
+  seen[Ember.guidFor(mixin)] = true;
+
+  if (mixin.properties) {
+    var props = mixin.properties;
+    for(var key in props) {
+      if (props.hasOwnProperty(key)) ret[key] = true;
+    }
+  } else if (mixin.mixins) {
+    a_forEach(mixin.mixins, function(x) { _keys(ret, x, seen); });
+  }
+}
+
+Mixin.prototype.keys = function() {
+  var keys = {}, seen = {}, ret = [];
+  _keys(keys, this, seen);
+  for(var key in keys) {
+    if (keys.hasOwnProperty(key)) ret.push(key);
+  }
+  return ret;
+};
+
+/** @private - make Mixin's have nice displayNames */
+
+var NAME_KEY = Ember.GUID_KEY+'_name';
+var get = Ember.get;
+
+/** @private */
+function processNames(paths, root, seen) {
+  var idx = paths.length;
+  for(var key in root) {
+    if (!root.hasOwnProperty || !root.hasOwnProperty(key)) continue;
+    var obj = root[key];
+    paths[idx] = key;
+
+    if (obj && obj.toString === classToString) {
+      obj[NAME_KEY] = paths.join('.');
+    } else if (obj && get(obj, 'isNamespace')) {
+      if (seen[Ember.guidFor(obj)]) continue;
+      seen[Ember.guidFor(obj)] = true;
+      processNames(paths, obj, seen);
+    }
+
+  }
+  paths.length = idx; // cut out last item
+}
+
+/** @private */
+function findNamespaces() {
+  var Namespace = Ember.Namespace, obj, isNamespace;
+
+  if (Namespace.PROCESSED) { return; }
+
+  for (var prop in window) {
+    //  get(window.globalStorage, 'isNamespace') would try to read the storage for domain isNamespace and cause exception in Firefox.
+    // globalStorage is a storage obsoleted by the WhatWG storage specification. See https://developer.mozilla.org/en/DOM/Storage#globalStorage
+    if (prop === "globalStorage" && window.StorageList && window.globalStorage instanceof window.StorageList) { continue; }
+    // Unfortunately, some versions of IE don't support window.hasOwnProperty
+    if (window.hasOwnProperty && !window.hasOwnProperty(prop)) { continue; }
+
+    // At times we are not allowed to access certain properties for security reasons.
+    // There are also times where even if we can access them, we are not allowed to access their properties.
+    try {
+      obj = window[prop];
+      isNamespace = obj && get(obj, 'isNamespace');
+    } catch (e) {
+      continue;
+    }
+
+    if (isNamespace) {
+      Ember.deprecate("Namespaces should not begin with lowercase.", /^[A-Z]/.test(prop));
+      obj[NAME_KEY] = prop;
+    }
+  }
+}
+
+Ember.identifyNamespaces = findNamespaces;
+
+/** @private */
+superClassString = function(mixin) {
+  var superclass = mixin.superclass;
+  if (superclass) {
+    if (superclass[NAME_KEY]) { return superclass[NAME_KEY]; }
+    else { return superClassString(superclass); }
+  } else {
+    return;
+  }
+};
+
+/** @private */
+classToString = function() {
+  var Namespace = Ember.Namespace, namespace;
+
+  // TODO: Namespace should really be in Metal
+  if (Namespace) {
+    if (!this[NAME_KEY] && !classToString.processed) {
+      if (!Namespace.PROCESSED) {
+        findNamespaces();
+        Namespace.PROCESSED = true;
+      }
+
+      classToString.processed = true;
+
+      var namespaces = Namespace.NAMESPACES;
+      for (var i=0, l=namespaces.length; i<l; i++) {
+        namespace = namespaces[i];
+        processNames([namespace.toString()], namespace, {});
+      }
+    }
+  }
+
+  if (this[NAME_KEY]) {
+    return this[NAME_KEY];
+  } else {
+    var str = superClassString(this);
+    if (str) {
+      return "(subclass of " + str + ")";
+    } else {
+      return "(unknown mixin)";
+    }
+  }
+};
+
+Mixin.prototype.toString = classToString;
+
+// returns the mixins currently applied to the specified object
+// TODO: Make Ember.mixin
+Mixin.mixins = function(obj) {
+  var ret = [], mixins = meta(obj, false), key, mixin;
+  for(key in mixins) {
+    if (META_SKIP[key]) continue;
+    mixin = mixins[key];
+
+    // skip primitive mixins since these are always anonymous
+    if (!mixin.properties) ret.push(mixins[key]);
+  }
+  return ret;
+};
+
+REQUIRED = new Ember.Descriptor();
+REQUIRED.toString = function() { return '(Required Property)'; };
+
+Ember.required = function() {
+  return REQUIRED;
+};
+
+/** @private */
+Alias = function(methodName) {
+  this.methodName = methodName;
+};
+Alias.prototype = new Ember.Descriptor();
+
+Ember.alias = function(methodName) {
+  return new Alias(methodName);
+};
+
+Ember.MixinDelegate = Mixin.create({
+
+  willApplyProperty: Ember.required(),
+  didApplyProperty:  Ember.required()
+
+});
+
+/** @private */
+MixinDelegate = Ember.MixinDelegate;
+
+
+// ..........................................................
+// OBSERVER HELPER
+//
+
+Ember.observer = function(func) {
+  var paths = a_slice.call(arguments, 1);
+  func.__ember_observes__ = paths;
+  return func;
+};
+
+Ember.beforeObserver = function(func) {
+  var paths = a_slice.call(arguments, 1);
+  func.__ember_observesBefore__ = paths;
+  return func;
+};
+
+
+
+
+
+
+
+})();
+
+
+
+(function() {
+// ==========================================================================
 // Project:  Ember Metal
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
@@ -5435,19 +5470,8 @@ Ember.oneWay = function(obj, to, from) {
 // Copyright: ©2011 Strobe Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
-/*globals ENV ember_assert */
+/*globals ENV */
 var indexOf = Ember.ArrayUtils.indexOf;
-
-// ........................................
-// GLOBAL CONSTANTS
-//
-
-// ensure no undefined errors in browsers where console doesn't exist
-if (typeof console === 'undefined') {
-  window.console = {};
-  console.log = console.info = console.warn = console.error = function() {};
-}
-
 
 // ........................................
 // TYPING & ARRAY MESSAGING
@@ -5669,7 +5693,7 @@ function _copy(obj, deep, seen, copies) {
   // avoid cyclical loops
   if (deep && (loc=indexOf(seen, obj))>=0) return copies[loc];
 
-  ember_assert('Cannot clone an Ember.Object that does not implement Ember.Copyable', !(obj instanceof Ember.Object) || (Ember.Copyable && Ember.Copyable.detect(obj)));
+  Ember.assert('Cannot clone an Ember.Object that does not implement Ember.Copyable', !(obj instanceof Ember.Object) || (Ember.Copyable && Ember.Copyable.detect(obj)));
 
   // IMPORTANT: this specific test will detect a native array only.  Any other
   // object will need to implement Copyable.
@@ -6138,7 +6162,10 @@ if (Ember.EXTEND_PROTOTYPES) {
         });
 
     Make sure you list these dependencies so Ember.js knows when to update
-    bindings that connect to a computed property.
+    bindings that connect to a computed property. Changing a dependency
+    will not immediately trigger an update of the computed property, but
+    will instead clear the cache so that it is updated when the next `get`
+    is called on the property.
 
     Note: you will usually want to use `property(...)` with `cacheable()`.
 
@@ -6194,44 +6221,6 @@ if (Ember.EXTEND_PROTOTYPES) {
 
 }
 
-
-})();
-
-
-
-(function() {
-// ==========================================================================
-// Project:  Ember Runtime
-// Copyright: ©2006-2011 Strobe Inc. and contributors.
-//            Portions ©2008-2011 Apple Inc. All rights reserved.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-var IS_BINDING = Ember.IS_BINDING = /^.+Binding$/;
-
-Ember._mixinBindings = function(obj, key, value, m) {
-  if (IS_BINDING.test(key)) {
-    if (!(value instanceof Ember.Binding)) {
-      value = new Ember.Binding(key.slice(0,-7), value); // make binding
-    } else {
-      value.to(key.slice(0, -7));
-    }
-    value.connect(obj);
-
-    // keep a set of bindings in the meta so that when we rewatch we can
-    // resync them...
-    var bindings = m.bindings;
-    if (!bindings) {
-      bindings = m.bindings = { __emberproto__: obj };
-    } else if (bindings.__emberproto__ !== obj) {
-      bindings = m.bindings = Ember.create(m.bindings);
-      bindings.__emberproto__ = obj;
-    }
-
-    bindings[key] = true;
-  }
-
-  return value;
-};
 
 })();
 
@@ -6390,14 +6379,13 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
   */
   firstObject: Ember.computed(function() {
     if (get(this, 'length')===0) return undefined ;
-    if (Ember.Array && Ember.Array.detect(this)) return this.objectAt(0);
 
     // handle generic enumerables
     var context = popCtx(), ret;
     ret = this.nextObject(0, null, context);
     pushCtx(context);
     return ret ;
-  }).property().volatile(),
+  }).property('[]').cacheable(),
 
   /**
     Helper method returns the last object from a collection. If your enumerable
@@ -6415,18 +6403,14 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
   lastObject: Ember.computed(function() {
     var len = get(this, 'length');
     if (len===0) return undefined ;
-    if (Ember.Array && Ember.Array.detect(this)) {
-      return this.objectAt(len-1);
-    } else {
-      var context = popCtx(), idx=0, cur, last = null;
-      do {
-        last = cur;
-        cur = this.nextObject(idx++, last, context);
-      } while (cur !== undefined);
-      pushCtx(context);
-      return last;
-    }
-  }).property().volatile(),
+    var context = popCtx(), idx=0, cur, last = null;
+    do {
+      last = cur;
+      cur = this.nextObject(idx++, last, context);
+    } while (cur !== undefined);
+    pushCtx(context);
+    return last;
+  }).property('[]').cacheable(),
 
   /**
     Returns true if the passed object can be found in the receiver.  The
@@ -6961,6 +6945,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
     if (removing === -1) removing = null;
     if (adding   === -1) adding   = null;
 
+    Ember.propertyWillChange(this, '[]');
     if (hasDelta) Ember.propertyWillChange(this, 'length');
     Ember.sendEvent(this, '@enumerable:before', removing, adding);
 
@@ -6978,15 +6963,13 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
       optional start offset for the content change.  For unordered
       enumerables, you should always pass -1.
 
-    @param {Enumerable} added
-      optional enumerable containing items that were added to the set.  For
-      ordered enumerables, this should be an ordered array of items.  If no
-      items were added you can pass null.
+    @param {Ember.Enumerable|Number} removing
+      An enumerable of the objects to be removed or the number of items to
+      be removed.
 
-    @param {Enumerable} removes
-      optional enumerable containing items that were removed from the set.
-      For ordered enumerables, this should be an ordered array of items. If
-      no items were removed you can pass null.
+    @param {Ember.Enumerable|Numbe} adding
+      An enumerable of the objects to be added or the number of items to be
+      added.
 
     @returns {Object} receiver
   */
@@ -7008,6 +6991,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
 
     Ember.sendEvent(this, '@enumerable:change', removing, adding);
     if (hasDelta) Ember.propertyDidChange(this, 'length');
+    Ember.propertyDidChange(this, '[]');
 
     return this ;
   }
@@ -7031,7 +7015,7 @@ Ember.Enumerable = Ember.Mixin.create( /** @lends Ember.Enumerable */ {
 // HELPERS
 //
 
-var get = Ember.get, set = Ember.set, meta = Ember.meta, map = Ember.ArrayUtils.map;
+var get = Ember.get, set = Ember.set, meta = Ember.meta, map = Ember.ArrayUtils.map, cacheFor = Ember.cacheFor;
 
 /** @private */
 function none(obj) { return obj===null || obj===undefined; }
@@ -7132,6 +7116,14 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
   '[]': Ember.computed(function(key, value) {
     if (value !== undefined) this.replace(0, get(this, 'length'), value) ;
     return this ;
+  }).property().cacheable(),
+
+  firstObject: Ember.computed(function() {
+    return this.objectAt(0);
+  }).property().cacheable(),
+
+  lastObject: Ember.computed(function() {
+    return this.objectAt(get(this, 'length')-1);
   }).property().cacheable(),
 
   /** @private (nodoc) - optimized version from Enumerable */
@@ -7324,8 +7316,8 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
       startIdx = 0;
       removeAmt = addAmt = -1;
     } else {
-      if (!removeAmt) removeAmt=0;
-      if (!addAmt) addAmt=0;
+      if (removeAmt === undefined) removeAmt=-1;
+      if (addAmt    === undefined) addAmt=-1;
     }
 
     Ember.sendEvent(this, '@array:before', startIdx, removeAmt, addAmt);
@@ -7343,6 +7335,7 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
 
     // Make sure the @each proxy is set up if anyone is observing @each
     if (Ember.isWatching(this, '@each')) { get(this, '@each'); }
+
     return this;
   },
 
@@ -7353,8 +7346,8 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
       startIdx = 0;
       removeAmt = addAmt = -1;
     } else {
-      if (!removeAmt) removeAmt=0;
-      if (!addAmt) addAmt=0;
+      if (removeAmt === undefined) removeAmt=-1;
+      if (addAmt    === undefined) addAmt=-1;
     }
 
     var adding, lim;
@@ -7368,6 +7361,19 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
 
     this.enumerableContentDidChange(removeAmt, adding);
     Ember.sendEvent(this, '@array:change', startIdx, removeAmt, addAmt);
+
+    var length      = get(this, 'length'),
+        cachedFirst = cacheFor(this, 'firstObject'),
+        cachedLast  = cacheFor(this, 'lastObject');
+    if (this.objectAt(0) !== cachedFirst) {
+      Ember.propertyWillChange(this, 'firstObject');
+      Ember.propertyDidChange(this, 'firstObject');
+    }
+    if (this.objectAt(length-1) !== cachedLast) {
+      Ember.propertyWillChange(this, 'lastObject');
+      Ember.propertyDidChange(this, 'lastObject');
+    }
+
     return this;
   },
 
@@ -7834,7 +7840,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable,
         colors.removeAt(2, 2); => ["green", "blue"]
         colors.removeAt(4, 2); => Error: Index out of range
 
-    @param {Number|Ember.IndexSet} start index, start of range, or index set
+    @param {Number} start index, start of range
     @param {Number} len length of passing range
     @returns {Object} receiver
   */
@@ -7946,9 +7952,7 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable,
     @returns {Ember.Array} receiver
   */
   unshiftObjects: function(objects) {
-    this.beginPropertyChanges();
-    forEach(objects, function(obj) { this.unshiftObject(obj); }, this);
-    this.endPropertyChanges();
+    this.replace(0, 0, objects);
     return this;
   },
 
@@ -8042,6 +8046,11 @@ var get = Ember.get, set = Ember.set;
 
   This will call the `targetAction` method on the `targetObject` to be called
   whenever the value of the `propertyKey` changes.
+  
+  Note that if `propertyKey` is a computed property, the observer will be 
+  called when any of the property dependencies are changed, even if the 
+  resulting value of the computed property is unchanged. This is necessary
+  because computed properties are not computed until `get` is called.
   
   @extends Ember.Mixin
 */
@@ -8495,8 +8504,7 @@ Ember.TargetActionSupport = Ember.Mixin.create({
     var target = get(this, 'target');
 
     if (Ember.typeOf(target) === "string") {
-      // TODO: Remove the false when deprecation is done
-      var value = getPath(this, target, false);
+      var value = getPath(this, target);
       if (value === undefined) { value = getPath(window, target); }
       return value;
     } else {
@@ -8612,6 +8620,7 @@ function makeCtor() {
       this.reopen.apply(this, initMixins);
       initMixins = null;
       rewatch(this); // always rewatch just in case
+      Ember.Mixin.finishPartial(this);
       this.init.apply(this, arguments);
     } else {
       if (hasChains) {
@@ -8623,6 +8632,7 @@ function makeCtor() {
       if (init===false) { init = this.init; } // cache for later instantiations
       Ember.GUID_DESC.value = undefined;
       o_defineProperty(this, '_super', Ember.GUID_DESC);
+      Ember.Mixin.finishPartial(this);
       init.apply(this, arguments);
     }
   };
@@ -8817,7 +8827,7 @@ var ClassMixin = Ember.Mixin.create({
   metaForProperty: function(key) {
     var desc = meta(this.proto(), false).descs[key];
 
-    ember_assert("metaForProperty() could not find a computed property with key '"+key+"'.", !!desc && desc instanceof Ember.ComputedProperty);
+    Ember.assert("metaForProperty() could not find a computed property with key '"+key+"'.", !!desc && desc instanceof Ember.ComputedProperty);
     return desc._meta || {};
   },
 
@@ -8875,11 +8885,8 @@ var get = Ember.get, set = Ember.set, guidFor = Ember.guidFor, none = Ember.none
   can also iterate through a set just like an array, even accessing objects
   by index, however there is no guarantee as to their order.
 
-  Starting with Ember 2.0 all Sets are now observable since there is no
-  added cost to providing this support.  Sets also do away with the more
-  specialized Set Observer API in favor of the more generic Enumerable
-  Observer API - which works on any enumerable object including both Sets and
-  Arrays.
+  All Sets are observable via the Enumerable Observer API - which works
+  on any enumerable object including both Sets and Arrays.
 
   ## Creating a Set
 
@@ -8931,9 +8938,11 @@ var get = Ember.get, set = Ember.set, guidFor = Ember.guidFor, none = Ember.none
 
   ## Observing changes
 
-  When using `Ember.Set`, you can add an enumerable observer to the set to
-  be notified of specific objects that are added and removed from the set.
-  See `Ember.Enumerable` for more information on enumerables.
+  When using `Ember.Set`, you can observe the `"[]"` property to be
+  alerted whenever the content changes.  You can also add an enumerable
+  observer to the set to be notified of specific objects that are added and
+  removed from the set.  See `Ember.Enumerable` for more information on
+  enumerables.
 
   This is often unhelpful. If you are filtering sets of objects, for instance,
   it is very inefficient to re-filter all of the items each time the set
@@ -8991,16 +9000,28 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
   */
   clear: function() {
     if (this.isFrozen) { throw new Error(Ember.FROZEN_ERROR); }
+
     var len = get(this, 'length');
+    if (len === 0) { return this; }
+
     var guid;
+
     this.enumerableContentWillChange(len, 0);
+    Ember.propertyWillChange(this, 'firstObject');
+    Ember.propertyWillChange(this, 'lastObject');
+
     for (var i=0; i < len; i++){
       guid = guidFor(this[i]);
       delete this[guid];
       delete this[i];
     }
+
     set(this, 'length', 0);
+
+    Ember.propertyDidChange(this, 'firstObject');
+    Ember.propertyDidChange(this, 'lastObject');
     this.enumerableContentDidChange(len, 0);
+
     return this;
   },
 
@@ -9068,7 +9089,7 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
 
   /**
     Removes the last element from the set and returns it, or null if it's empty.
-    
+
         var colors = new Ember.Set(["green", "blue"]);
         colors.pop(); => "blue"
         colors.pop(); => "green"
@@ -9176,12 +9197,12 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
   /** @private - more optimized version */
   firstObject: Ember.computed(function() {
     return this.length > 0 ? this[0] : undefined;
-  }).property('[]').cacheable(),
+  }).property().cacheable(),
 
   /** @private - more optimized version */
   lastObject: Ember.computed(function() {
     return this.length > 0 ? this[this.length-1] : undefined;
-  }).property('[]').cacheable(),
+  }).property().cacheable(),
 
   /** @private (nodoc) - implements Ember.MutableEnumerable */
   addObject: function(obj) {
@@ -9196,11 +9217,16 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
     if (idx>=0 && idx<len && (this[idx] === obj)) return this; // added
 
     added = [obj];
+
     this.enumerableContentWillChange(null, added);
+    Ember.propertyWillChange(this, 'lastObject');
+
     len = get(this, 'length');
     this[guid] = len;
     this[len] = obj;
     set(this, 'length', len+1);
+
+    Ember.propertyDidChange(this, 'lastObject');
     this.enumerableContentDidChange(null, added);
 
     return this;
@@ -9214,6 +9240,8 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
     var guid = guidFor(obj),
         idx  = this[guid],
         len = get(this, 'length'),
+        isFirst = idx === 0,
+        isLast = idx === len-1,
         last, removed;
 
 
@@ -9221,6 +9249,8 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
       removed = [obj];
 
       this.enumerableContentWillChange(removed, null);
+      if (isFirst) { Ember.propertyWillChange(this, 'firstObject'); }
+      if (isLast)  { Ember.propertyWillChange(this, 'lastObject'); }
 
       // swap items - basically move the item to the end so it can be removed
       if (idx < len-1) {
@@ -9233,6 +9263,8 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
       delete this[len-1];
       set(this, 'length', len-1);
 
+      if (isFirst) { Ember.propertyDidChange(this, 'firstObject'); }
+      if (isLast)  { Ember.propertyDidChange(this, 'lastObject'); }
       this.enumerableContentDidChange(removed, null);
     }
 
@@ -9262,41 +9294,9 @@ Ember.Set = Ember.CoreObject.extend(Ember.MutableEnumerable, Ember.Copyable, Emb
       array[idx] = this[idx];
     }
     return "Ember.Set<%@>".fmt(array.join(','));
-  },
-
-  // ..........................................................
-  // DEPRECATED
-  //
-
-  /** @deprecated
-
-    This property is often used to determine that a given object is a set.
-    Instead you should use instanceof:
-
-        #js:
-        // SproutCore 1.x:
-        isSet = myobject && myobject.isSet;
-
-        // Ember:
-        isSet = myobject instanceof Ember.Set
-
-    @type Boolean
-    @default true
-  */
-  isSet: true
+  }
 
 });
-
-// Support the older API
-var o_create = Ember.Set.create;
-Ember.Set.create = function(items) {
-  if (items && Ember.Enumerable.detect(items)) {
-    ember_deprecate('Passing an enumerable to Ember.Set.create() is deprecated and will be removed in a future version of Ember.  Use new Ember.Set(items) instead.');
-    return new Ember.Set(items);
-  } else {
-    return o_create.apply(this, arguments);
-  }
-};
 
 })();
 
@@ -9531,7 +9531,8 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
   length: Ember.computed(function() {
     var content = get(this, 'content');
     return content ? get(content, 'length') : 0;
-  }).property('content.length').cacheable(),
+    // No dependencies since Enumerable notifies length of change
+  }).property().cacheable(),
 
   /** @private (nodoc) */
   replace: function(idx, amt, objects) {
@@ -9552,6 +9553,7 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
   /** @private (nodoc) */
   init: function() {
     this._super();
+    this.contentWillChange();
     this.contentDidChange();
   }
 
@@ -9590,7 +9592,7 @@ var EachArray = Ember.Object.extend(Ember.Array, {
   length: Ember.computed(function() {
     var content = this._content;
     return content ? get(content, 'length') : 0;
-  }).property('[]').cacheable()
+  }).property().cacheable()
 
 });
 
@@ -10112,6 +10114,37 @@ Map.prototype = {
     keys.forEach(function(key) {
       var guid = guidFor(key);
       callback.call(self, key, values[guid]);
+    });
+  }
+};
+
+})();
+
+
+
+(function() {
+var loadHooks = {};
+var loaded = {};
+
+Ember.onLoad = function(name, callback) {
+  var object;
+
+  loadHooks[name] = loadHooks[name] || Ember.A();
+  loadHooks[name].pushObject(callback);
+
+  if (object = loaded[name]) {
+    callback(object);
+  }
+};
+
+Ember.runLoadHooks = function(name, object) {
+  var hooks;
+
+  loaded[name] = object;
+
+  if (hooks = loadHooks[name]) {
+    loadHooks[name].forEach(function(callback) {
+      callback(object);
     });
   }
 };
