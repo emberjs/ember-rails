@@ -1,3 +1,11 @@
+## 0.5.0 (Mai 25, 2012)
+
+Improvements:
+
+  - Updated Ember.js to version 0.9.8.1
+  - The development/production switch was rewriten and should be muche more robust
+  - Lots of work on generators
+
 ## 0.4.0 (Avr 20, 2012)
 
 Improvements:
