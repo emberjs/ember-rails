@@ -3,21 +3,8 @@ require 'ember/version'
 module Ember
   module Generators
     class InstallGenerator < ::Rails::Generators::Base
-
-      EMBER_FILES = [ "ember.js", "ember-dev.js" ]
-      RUNTIME_FILES = [ "ember-runtime.js", "ember-runtime-dev.js" ]
-      ALL_FILES = [ *EMBER_FILES, *RUNTIME_FILES ]
-
       desc "Install Ember.js into your vendor folder"
       class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
-      class_option :runtime, :type => :boolean, :default => false, :desc => "Include the Ember.js runtime only"
-
-      def remove_ember
-        ALL_FILES.each do |name|
-          file = "vendor/assets/javascripts/#{name}"
-          remove_file file if File.exist?(file)
-        end
-      end
 
       def copy_ember
         if options.head?
@@ -33,7 +20,7 @@ module Ember
             cmd command
           else
             Dir.chdir git_root do
-              command = "git fetch --force --quiet --tags && git reset HEAD --hard"
+              command = "git fetch --force --quiet --tags && git reset origin/master --hard"
               say_status("updating", command, :green)
 
               cmd command
@@ -50,33 +37,12 @@ module Ember
 
           self.class.source_root File.join(git_root, "dist")
 
-          ember_files.each do |name|
-            source_file = if name.match /-dev/
-              name.gsub /-dev/, '.debug'
-            else
-              name.gsub /.js/, '.prod.js'
-            end
-
-            copy_file source_file, "vendor/assets/javascripts/#{name}"
-          end
-
-        else
-
-          self.class.source_root File.expand_path('../../../../../vendor/assets/javascripts', __FILE__)
-          say_status("copying", "Ember.js (#{Ember::VERSION})", :green)
-
-          ember_files.each do |name|
-            copy_file name, "vendor/assets/javascripts/#{name}"
-          end
-
+          copy_file "ember.js", "vendor/assets/ember/development/ember.js"
+          copy_file "ember.min.js", "vendor/assets/ember/production/ember.js"
         end
       end
 
       private
-
-      def ember_files
-        options.runtime? ? RUNTIME_FILES : EMBER_FILES
-      end
 
       def cmd(command)
         out = `#{command}`

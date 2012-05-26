@@ -18,7 +18,9 @@ module Ember
         app.assets.register_engine '.hjs', Ember::Handlebars::Template
 
         # Add the gem's vendored ember to the end of the asset search path
-        app.config.assets.paths << Ember::Rails.ember_path
+        variant = app.config.ember.variant
+        ember_path = File.expand_path("../../../../vendor/ember/#{variant}", __FILE__)
+        app.config.assets.paths.unshift ember_path
       end
     end
   end

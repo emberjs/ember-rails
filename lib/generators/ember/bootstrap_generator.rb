@@ -16,6 +16,7 @@ module Ember
 
         inject_into_file(application_file, :before => "//= require_tree") do
           dependencies = [
+            "//= require handlebars-runtime",
             "//= require ember",
             "//= require ember-data",
             "//= require_self",
@@ -39,6 +40,20 @@ module Ember
 
       def create_state_manager_file
         template "states.js", "#{ember_path}/states/app_states.js"
+      end
+
+      def inject_proper_ember_version
+        environment <<-RUBY.strip_heredoc, :env => :development
+          config.ember.variant = :development
+        RUBY
+
+        environment <<-RUBY.strip_heredoc, :env => :test
+          config.ember.variant = :development
+        RUBY
+
+        environment <<-RUBY.strip_heredoc, :env => :production
+          config.ember.variant = :production
+        RUBY
       end
     end
   end

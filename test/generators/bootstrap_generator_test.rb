@@ -7,14 +7,19 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
   setup :prepare_destination
 
-  def prepare_destination
-    super
-
-    source = Rails.root.join("app/assets/javascripts")
-    dest   = Rails.root.join("tmp/app/assets")
+  def copy_directory(dir)
+    source = Rails.root.join(dir)
+    dest = Rails.root.join("tmp", File.dirname(dir))
 
     FileUtils.mkdir_p dest
     FileUtils.cp_r source, dest
+  end
+
+  def prepare_destination
+    super
+
+    copy_directory "app/assets/javascripts"
+    copy_directory "config"
   end
 
   test "Assert folder layout and .gitkeep files are properly created" do

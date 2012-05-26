@@ -5,33 +5,27 @@ require 'ember/rails/engine'
 
 module Ember
   module Rails
-    # Create a map from Rails environments to versions of Ember.
-    mattr_accessor :map
+    class Railtie < ::Rails::Railtie
+      config.ember = ActiveSupport::OrderedOptions.new
 
-    # By default, production and test will both use minified Ember.
-    # Add mappings in your environment files like so:
-    #   Ember::Rails.map["staging"] = "production"
-    # To use ember-spade, map development to spade:
-    #   Ember::Rails.map["development"] = "spade"
-    self.map ||= {"test" => "production"}
+      initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
+        # Add the gem's vendored ember to the end of the asset search path
+        variant = app.config.ember.variant
+        ember_path = app.root.join("vendor/assets/ember/#{variant}")
+        app.config.assets.paths.unshift(ember_path.to_s) if ember_path.exist?
+      end
 
-    # Returns the asset path containing Ember for the current Rails
-    # environment. Defaults to development if no other version is found.
-    def self.ember_path
-      @ember_path ||= begin
-        # Check for an enviroment mapping
-        mapped_dir = Ember::Rails.map[::Rails.env]
+      initializer "ember_rails.find_ember", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        config.ember.ember_location = location_for(app, "ember.js")
+        config.ember.handlebars_location = location_for(app, "handlebars.js")
+      end
 
-        # Get the location, either mapped or based on Rails.env
-        ember_root = File.expand_path("../../vendor/ember", __FILE__)
-        ember_path = File.join(ember_root, mapped_dir || ::Rails.env)
-
-        # Fall back on development if we couldn't find another version
-        unless File.exist?(ember_path)
-          ember_path = File.join(ember_root, "development")
+      def location_for(app, file)
+        path = app.config.assets.paths.find do |dir|
+          Pathname.new(dir).join(file).exist?
         end
 
-        ember_path
+        File.join(path, file) if path
       end
     end
   end
