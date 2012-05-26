@@ -1,5 +1,5 @@
 require 'ember/handlebars/source'
 
 module Ember
-  VERSION = Ember::Handlebars::Source.ember_version
+  VERSION = "1.0.beta"
 end

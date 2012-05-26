@@ -21,7 +21,14 @@ module Ember
         end
 
         def contents
-          @contents ||= [File.read(precompiler_path), File.read(path)].join("\n")
+          @contents ||= begin
+            config = ::Rails.application.config.ember
+            handlebars = File.read(config.handlebars_location)
+            ember = File.read(config.ember_location)
+            precompiler = File.read(precompiler_path)
+
+            [precompiler, handlebars, ember, File.read(path)].join("\n")
+          end
         end
 
         def handlebars_version
@@ -40,7 +47,6 @@ module Ember
 
     class << self
       def compile(template)
-        template = template.read if template.respond_to?(:read)
         Source.context.call('EmberRails.precompile', template)
       end
     end
