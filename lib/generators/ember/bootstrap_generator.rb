@@ -16,7 +16,9 @@ module Ember
 
         inject_into_file(application_file, :before => "//= require_tree") do
           dependencies = [
-            "//= require handlebars-runtime",
+            # this should eventually become handlebars-runtime when we remove
+            # the runtime dependency on compilation
+            "//= require handlebars",
             "//= require ember",
             "//= require ember-data",
             "//= require_self",

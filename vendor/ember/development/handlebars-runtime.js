@@ -1,7 +1,11 @@
 // lib/handlebars/base.js
-var Handlebars = {};
 
-Handlebars.VERSION = "1.0.beta.6";
+/*jshint eqnull:true*/
+this.Handlebars = {};
+
+(function() {
+
+Handlebars.VERSION = "1.0.rc.1";
 
 Handlebars.helpers  = {};
 Handlebars.partials = {};
@@ -92,6 +96,8 @@ Handlebars.registerHelper('with', function(context, options) {
 Handlebars.registerHelper('log', function(context) {
   Handlebars.log(context);
 });
+
+}());
 ;
 // lib/handlebars/utils.js
 Handlebars.Exception = function(message) {
@@ -103,7 +109,7 @@ Handlebars.Exception = function(message) {
 
   this.message = tmp.message;
 };
-Handlebars.Exception.prototype = new Error;
+Handlebars.Exception.prototype = new Error();
 
 // Build out our basic SafeString type
 Handlebars.SafeString = function(string) {
@@ -204,7 +210,7 @@ Handlebars.VM = {
   },
   noop: function() { return ""; },
   invokePartial: function(partial, name, context, helpers, partials, data) {
-    options = { helpers: helpers, partials: partials, data: data };
+    var options = { helpers: helpers, partials: partials, data: data };
 
     if(partial === undefined) {
       throw new Handlebars.Exception("The partial " + name + " could not be found");
@@ -221,4 +227,3 @@ Handlebars.VM = {
 
 Handlebars.template = Handlebars.VM.template;
 ;
-

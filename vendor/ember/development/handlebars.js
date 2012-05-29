@@ -1,7 +1,11 @@
 // lib/handlebars/base.js
-Handlebars = {};
 
-Handlebars.VERSION = "1.0.beta.6";
+/*jshint eqnull:true*/
+this.Handlebars = {};
+
+(function() {
+
+Handlebars.VERSION = "1.0.rc.1";
 
 Handlebars.helpers  = {};
 Handlebars.partials = {};
@@ -92,6 +96,8 @@ Handlebars.registerHelper('with', function(context, options) {
 Handlebars.registerHelper('log', function(context) {
   Handlebars.log(context);
 });
+
+}());
 ;
 // lib/handlebars/compiler/parser.js
 /* Jison generated parser */
@@ -106,85 +112,85 @@ performAction: function anonymous(yytext,yyleng,yylineno,yy,yystate,$$,_$) {
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: return $$[$0-1] 
+case 1: return $$[$0-1]; 
 break;
-case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]) 
+case 2: this.$ = new yy.ProgramNode($$[$0-2], $$[$0]); 
 break;
-case 3: this.$ = new yy.ProgramNode($$[$0]) 
+case 3: this.$ = new yy.ProgramNode($$[$0]); 
 break;
-case 4: this.$ = new yy.ProgramNode([]) 
+case 4: this.$ = new yy.ProgramNode([]); 
 break;
-case 5: this.$ = [$$[$0]] 
+case 5: this.$ = [$$[$0]]; 
 break;
-case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 6: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 7: this.$ = new yy.InverseNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 7: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1].inverse, $$[$0-1], $$[$0]); 
 break;
-case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0]) 
+case 8: this.$ = new yy.BlockNode($$[$0-2], $$[$0-1], $$[$0-1].inverse, $$[$0]); 
 break;
-case 9: this.$ = $$[$0] 
+case 9: this.$ = $$[$0]; 
 break;
-case 10: this.$ = $$[$0] 
+case 10: this.$ = $$[$0]; 
 break;
-case 11: this.$ = new yy.ContentNode($$[$0]) 
+case 11: this.$ = new yy.ContentNode($$[$0]); 
 break;
-case 12: this.$ = new yy.CommentNode($$[$0]) 
+case 12: this.$ = new yy.CommentNode($$[$0]); 
 break;
-case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 13: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 14: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 15: this.$ = $$[$0-1] 
+case 15: this.$ = $$[$0-1]; 
 break;
-case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]) 
+case 16: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1]); 
 break;
-case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true) 
+case 17: this.$ = new yy.MustacheNode($$[$0-1][0], $$[$0-1][1], true); 
 break;
-case 18: this.$ = new yy.PartialNode($$[$0-1]) 
+case 18: this.$ = new yy.PartialNode($$[$0-1]); 
 break;
-case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]) 
+case 19: this.$ = new yy.PartialNode($$[$0-2], $$[$0-1]); 
 break;
 case 20: 
 break;
-case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]] 
+case 21: this.$ = [[$$[$0-2]].concat($$[$0-1]), $$[$0]]; 
 break;
-case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null] 
+case 22: this.$ = [[$$[$0-1]].concat($$[$0]), null]; 
 break;
-case 23: this.$ = [[$$[$0-1]], $$[$0]] 
+case 23: this.$ = [[$$[$0-1]], $$[$0]]; 
 break;
-case 24: this.$ = [[$$[$0]], null] 
+case 24: this.$ = [[$$[$0]], null]; 
 break;
 case 25: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 26: this.$ = [$$[$0]] 
+case 26: this.$ = [$$[$0]]; 
 break;
-case 27: this.$ = $$[$0] 
+case 27: this.$ = $$[$0]; 
 break;
-case 28: this.$ = new yy.StringNode($$[$0]) 
+case 28: this.$ = new yy.StringNode($$[$0]); 
 break;
-case 29: this.$ = new yy.IntegerNode($$[$0]) 
+case 29: this.$ = new yy.IntegerNode($$[$0]); 
 break;
-case 30: this.$ = new yy.BooleanNode($$[$0]) 
+case 30: this.$ = new yy.BooleanNode($$[$0]); 
 break;
-case 31: this.$ = new yy.HashNode($$[$0]) 
+case 31: this.$ = new yy.HashNode($$[$0]); 
 break;
-case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1] 
+case 32: $$[$0-1].push($$[$0]); this.$ = $$[$0-1]; 
 break;
-case 33: this.$ = [$$[$0]] 
+case 33: this.$ = [$$[$0]]; 
 break;
-case 34: this.$ = [$$[$0-2], $$[$0]] 
+case 34: this.$ = [$$[$0-2], $$[$0]]; 
 break;
-case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])] 
+case 35: this.$ = [$$[$0-2], new yy.StringNode($$[$0])]; 
 break;
-case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])] 
+case 36: this.$ = [$$[$0-2], new yy.IntegerNode($$[$0])]; 
 break;
-case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])] 
+case 37: this.$ = [$$[$0-2], new yy.BooleanNode($$[$0])]; 
 break;
-case 38: this.$ = new yy.IdNode($$[$0]) 
+case 38: this.$ = new yy.IdNode($$[$0]); 
 break;
 case 39: $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
-case 40: this.$ = [$$[$0]] 
+case 40: this.$ = [$$[$0]]; 
 break;
 }
 },
@@ -194,103 +200,189 @@ parseError: function parseError(str, hash) {
     throw new Error(str);
 },
 parse: function parse(input) {
-    var self = this, stack = [0], vstack = [null], lstack = [], table = this.table, yytext = "", yylineno = 0, yyleng = 0, recovering = 0, TERROR = 2, EOF = 1;
+    var self = this,
+        stack = [0],
+        vstack = [null], // semantic value stack
+        lstack = [], // location stack
+        table = this.table,
+        yytext = '',
+        yylineno = 0,
+        yyleng = 0,
+        recovering = 0,
+        TERROR = 2,
+        EOF = 1;
+
+    //this.reductionCount = this.shiftCount = 0;
+
     this.lexer.setInput(input);
     this.lexer.yy = this.yy;
     this.yy.lexer = this.lexer;
-    if (typeof this.lexer.yylloc == "undefined")
+    if (typeof this.lexer.yylloc == 'undefined')
         this.lexer.yylloc = {};
     var yyloc = this.lexer.yylloc;
     lstack.push(yyloc);
-    if (typeof this.yy.parseError === "function")
+
+    if (typeof this.yy.parseError === 'function')
         this.parseError = this.yy.parseError;
-    function popStack(n) {
-        stack.length = stack.length - 2 * n;
+
+    function popStack (n) {
+        stack.length = stack.length - 2*n;
         vstack.length = vstack.length - n;
         lstack.length = lstack.length - n;
     }
+
     function lex() {
         var token;
-        token = self.lexer.lex() || 1;
-        if (typeof token !== "number") {
+        token = self.lexer.lex() || 1; // $end = 1
+        // if token isn't its numeric value, convert
+        if (typeof token !== 'number') {
             token = self.symbols_[token] || token;
         }
         return token;
     }
-    var symbol, preErrorSymbol, state, action, a, r, yyval = {}, p, len, newState, expected;
+
+    var symbol, preErrorSymbol, state, action, a, r, yyval={},p,len,newState, expected;
     while (true) {
-        state = stack[stack.length - 1];
+        // retreive state number from top of stack
+        state = stack[stack.length-1];
+
+        // use default actions if available
         if (this.defaultActions[state]) {
             action = this.defaultActions[state];
         } else {
             if (symbol == null)
                 symbol = lex();
+            // read action for current state and first input
             action = table[state] && table[state][symbol];
         }
-        if (typeof action === "undefined" || !action.length || !action[0]) {
+
+        // handle parse error
+        _handle_error:
+        if (typeof action === 'undefined' || !action.length || !action[0]) {
+
             if (!recovering) {
+                // Report error
                 expected = [];
-                for (p in table[state])
-                    if (this.terminals_[p] && p > 2) {
-                        expected.push("'" + this.terminals_[p] + "'");
-                    }
-                var errStr = "";
-                if (this.lexer.showPosition) {
-                    errStr = "Parse error on line " + (yylineno + 1) + ":\n" + this.lexer.showPosition() + "\nExpecting " + expected.join(", ") + ", got '" + this.terminals_[symbol] + "'";
-                } else {
-                    errStr = "Parse error on line " + (yylineno + 1) + ": Unexpected " + (symbol == 1?"end of input":"'" + (this.terminals_[symbol] || symbol) + "'");
+                for (p in table[state]) if (this.terminals_[p] && p > 2) {
+                    expected.push("'"+this.terminals_[p]+"'");
                 }
-                this.parseError(errStr, {text: this.lexer.match, token: this.terminals_[symbol] || symbol, line: this.lexer.yylineno, loc: yyloc, expected: expected});
+                var errStr = '';
+                if (this.lexer.showPosition) {
+                    errStr = 'Parse error on line '+(yylineno+1)+":\n"+this.lexer.showPosition()+"\nExpecting "+expected.join(', ') + ", got '" + this.terminals_[symbol]+ "'";
+                } else {
+                    errStr = 'Parse error on line '+(yylineno+1)+": Unexpected " +
+                                  (symbol == 1 /*EOF*/ ? "end of input" :
+                                              ("'"+(this.terminals_[symbol] || symbol)+"'"));
+                }
+                this.parseError(errStr,
+                    {text: this.lexer.match, token: this.terminals_[symbol] || symbol, line: this.lexer.yylineno, loc: yyloc, expected: expected});
             }
-        }
-        if (action[0] instanceof Array && action.length > 1) {
-            throw new Error("Parse Error: multiple actions possible at state: " + state + ", token: " + symbol);
-        }
-        switch (action[0]) {
-        case 1:
-            stack.push(symbol);
-            vstack.push(this.lexer.yytext);
-            lstack.push(this.lexer.yylloc);
-            stack.push(action[1]);
-            symbol = null;
-            if (!preErrorSymbol) {
+
+            // just recovered from another error
+            if (recovering == 3) {
+                if (symbol == EOF) {
+                    throw new Error(errStr || 'Parsing halted.');
+                }
+
+                // discard current lookahead and grab another
                 yyleng = this.lexer.yyleng;
                 yytext = this.lexer.yytext;
                 yylineno = this.lexer.yylineno;
                 yyloc = this.lexer.yylloc;
-                if (recovering > 0)
-                    recovering--;
-            } else {
-                symbol = preErrorSymbol;
-                preErrorSymbol = null;
+                symbol = lex();
             }
-            break;
-        case 2:
-            len = this.productions_[action[1]][1];
-            yyval.$ = vstack[vstack.length - len];
-            yyval._$ = {first_line: lstack[lstack.length - (len || 1)].first_line, last_line: lstack[lstack.length - 1].last_line, first_column: lstack[lstack.length - (len || 1)].first_column, last_column: lstack[lstack.length - 1].last_column};
-            r = this.performAction.call(yyval, yytext, yyleng, yylineno, this.yy, action[1], vstack, lstack);
-            if (typeof r !== "undefined") {
-                return r;
+
+            // try to recover from error
+            while (1) {
+                // check for error recovery rule in this state
+                if ((TERROR.toString()) in table[state]) {
+                    break;
+                }
+                if (state == 0) {
+                    throw new Error(errStr || 'Parsing halted.');
+                }
+                popStack(1);
+                state = stack[stack.length-1];
             }
-            if (len) {
-                stack = stack.slice(0, -1 * len * 2);
-                vstack = vstack.slice(0, -1 * len);
-                lstack = lstack.slice(0, -1 * len);
-            }
-            stack.push(this.productions_[action[1]][0]);
-            vstack.push(yyval.$);
-            lstack.push(yyval._$);
-            newState = table[stack[stack.length - 2]][stack[stack.length - 1]];
-            stack.push(newState);
-            break;
-        case 3:
-            return true;
+
+            preErrorSymbol = symbol; // save the lookahead token
+            symbol = TERROR;         // insert generic error symbol as new lookahead
+            state = stack[stack.length-1];
+            action = table[state] && table[state][TERROR];
+            recovering = 3; // allow 3 real symbols to be shifted before reporting a new error
         }
+
+        // this shouldn't happen, unless resolve defaults are off
+        if (action[0] instanceof Array && action.length > 1) {
+            throw new Error('Parse Error: multiple actions possible at state: '+state+', token: '+symbol);
+        }
+
+        switch (action[0]) {
+
+            case 1: // shift
+                //this.shiftCount++;
+
+                stack.push(symbol);
+                vstack.push(this.lexer.yytext);
+                lstack.push(this.lexer.yylloc);
+                stack.push(action[1]); // push state
+                symbol = null;
+                if (!preErrorSymbol) { // normal execution/no error
+                    yyleng = this.lexer.yyleng;
+                    yytext = this.lexer.yytext;
+                    yylineno = this.lexer.yylineno;
+                    yyloc = this.lexer.yylloc;
+                    if (recovering > 0)
+                        recovering--;
+                } else { // error just occurred, resume old lookahead f/ before error
+                    symbol = preErrorSymbol;
+                    preErrorSymbol = null;
+                }
+                break;
+
+            case 2: // reduce
+                //this.reductionCount++;
+
+                len = this.productions_[action[1]][1];
+
+                // perform semantic action
+                yyval.$ = vstack[vstack.length-len]; // default to $$ = $1
+                // default location, uses first token for firsts, last for lasts
+                yyval._$ = {
+                    first_line: lstack[lstack.length-(len||1)].first_line,
+                    last_line: lstack[lstack.length-1].last_line,
+                    first_column: lstack[lstack.length-(len||1)].first_column,
+                    last_column: lstack[lstack.length-1].last_column
+                };
+                r = this.performAction.call(yyval, yytext, yyleng, yylineno, this.yy, action[1], vstack, lstack);
+
+                if (typeof r !== 'undefined') {
+                    return r;
+                }
+
+                // pop off stack
+                if (len) {
+                    stack = stack.slice(0,-1*len*2);
+                    vstack = vstack.slice(0, -1*len);
+                    lstack = lstack.slice(0, -1*len);
+                }
+
+                stack.push(this.productions_[action[1]][0]);    // push nonterminal (reduce)
+                vstack.push(yyval.$);
+                lstack.push(yyval._$);
+                // goto new state = table[STATE][NONTERMINAL]
+                newState = table[stack[stack.length-2]][stack[stack.length-1]];
+                stack.push(newState);
+                break;
+
+            case 3: // accept
+                return true;
+        }
+
     }
+
     return true;
-}
-};/* Jison generated lexer */
+}};/* Jison generated lexer */
 var lexer = (function(){
 
 var lexer = ({EOF:1,
@@ -531,12 +623,26 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
     if(inverse) { this.inverse = new Handlebars.AST.ProgramNode(inverse); }
   };
 
-  Handlebars.AST.MustacheNode = function(params, hash, unescaped) {
+  Handlebars.AST.MustacheNode = function(rawParams, hash, unescaped) {
     this.type = "mustache";
-    this.id = params[0];
-    this.params = params.slice(1);
-    this.hash = hash;
     this.escaped = !unescaped;
+    this.hash = hash;
+
+    var id = this.id = rawParams[0];
+    var params = this.params = rawParams.slice(1);
+
+    // a mustache is an eligible helper if:
+    // * its id is simple (a single part, not `this` or `..`)
+    var eligibleHelper = this.eligibleHelper = id.isSimple;
+
+    // a mustache is definitely a helper if:
+    // * it is an eligible helper, and
+    // * it has at least one parameter or hash segment
+    this.isHelper = eligibleHelper && (params.length || hash);
+
+    // if a mustache is an eligible helper but not a definite
+    // helper, it is ambiguous, and will be resolved in a later
+    // pass or at runtime.
   };
 
   Handlebars.AST.PartialNode = function(id, context) {
@@ -554,18 +660,16 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
     }
   };
 
-  Handlebars.AST.BlockNode = function(mustache, program, close) {
+  Handlebars.AST.BlockNode = function(mustache, program, inverse, close) {
     verifyMatch(mustache.id, close);
     this.type = "block";
     this.mustache = mustache;
     this.program  = program;
-  };
+    this.inverse  = inverse;
 
-  Handlebars.AST.InverseNode = function(mustache, program, close) {
-    verifyMatch(mustache.id, close);
-    this.type = "inverse";
-    this.mustache = mustache;
-    this.program  = program;
+    if (this.inverse && !this.program) {
+      this.isInverse = true;
+    }
   };
 
   Handlebars.AST.ContentNode = function(string) {
@@ -595,7 +699,10 @@ Handlebars.log = function(level, str) { Handlebars.logger.log(level, str); };
     this.parts    = dig;
     this.string   = dig.join('.');
     this.depth    = depth;
-    this.isSimple = (dig.length === 1) && (depth === 0);
+
+    // an ID is simple if it only has one part, and that part is not
+    // `..` or `this`.
+    this.isSimple = parts.length === 1 && !this.isScoped && depth === 0;
   };
 
   Handlebars.AST.StringNode = function(string) {
@@ -629,7 +736,7 @@ Handlebars.Exception = function(message) {
 
   this.message = tmp.message;
 };
-Handlebars.Exception.prototype = new Error;
+Handlebars.Exception.prototype = new Error();
 
 // Build out our basic SafeString type
 Handlebars.SafeString = function(string) {
@@ -684,88 +791,38 @@ Handlebars.SafeString.prototype.toString = function() {
   };
 })();;
 // lib/handlebars/compiler/compiler.js
+
+/*jshint eqnull:true*/
 Handlebars.Compiler = function() {};
 Handlebars.JavaScriptCompiler = function() {};
 
 (function(Compiler, JavaScriptCompiler) {
-  Compiler.OPCODE_MAP = {
-    appendContent: 1,
-    getContext: 2,
-    lookupWithHelpers: 3,
-    lookup: 4,
-    append: 5,
-    invokeMustache: 6,
-    appendEscaped: 7,
-    pushString: 8,
-    truthyOrFallback: 9,
-    functionOrFallback: 10,
-    invokeProgram: 11,
-    invokePartial: 12,
-    push: 13,
-    assignToHash: 15,
-    pushStringParam: 16
-  };
-
-  Compiler.MULTI_PARAM_OPCODES = {
-    appendContent: 1,
-    getContext: 1,
-    lookupWithHelpers: 2,
-    lookup: 1,
-    invokeMustache: 3,
-    pushString: 1,
-    truthyOrFallback: 1,
-    functionOrFallback: 1,
-    invokeProgram: 3,
-    invokePartial: 1,
-    push: 1,
-    assignToHash: 1,
-    pushStringParam: 1
-  };
-
-  Compiler.DISASSEMBLE_MAP = {};
-
-  for(var prop in Compiler.OPCODE_MAP) {
-    var value = Compiler.OPCODE_MAP[prop];
-    Compiler.DISASSEMBLE_MAP[value] = prop;
-  }
-
-  Compiler.multiParamSize = function(code) {
-    return Compiler.MULTI_PARAM_OPCODES[Compiler.DISASSEMBLE_MAP[code]];
-  };
+  // the foundHelper register will disambiguate helper lookup from finding a
+  // function in a context. This is necessary for mustache compatibility, which
+  // requires that context functions in blocks are evaluated by blockHelperMissing,
+  // and then proceed as if the resulting value was provided to blockHelperMissing.
 
   Compiler.prototype = {
     compiler: Compiler,
 
     disassemble: function() {
-      var opcodes = this.opcodes, opcode, nextCode;
-      var out = [], str, name, value;
+      var opcodes = this.opcodes, opcode, out = [], params, param;
 
-      for(var i=0, l=opcodes.length; i<l; i++) {
+      for (var i=0, l=opcodes.length; i<l; i++) {
         opcode = opcodes[i];
 
-        if(opcode === 'DECLARE') {
-          name = opcodes[++i];
-          value = opcodes[++i];
-          out.push("DECLARE " + name + " = " + value);
+        if (opcode.opcode === 'DECLARE') {
+          out.push("DECLARE " + opcode.name + "=" + opcode.value);
         } else {
-          str = Compiler.DISASSEMBLE_MAP[opcode];
-
-          var extraParams = Compiler.multiParamSize(opcode);
-          var codes = [];
-
-          for(var j=0; j<extraParams; j++) {
-            nextCode = opcodes[++i];
-
-            if(typeof nextCode === "string") {
-              nextCode = "\"" + nextCode.replace("\n", "\\n") + "\"";
+          params = [];
+          for (var j=0; j<opcode.args.length; j++) {
+            param = opcode.args[j];
+            if (typeof param === "string") {
+              param = "\"" + param.replace("\n", "\\n") + "\"";
             }
-
-            codes.push(nextCode);
+            params.push(param);
           }
-
-          str = str + " " + codes.join(" ");
-
-          out.push(str);
+          out.push(opcode.opcode + " " + params.join(" "));
         }
       }
 
@@ -822,7 +879,7 @@ Handlebars.JavaScriptCompiler = function() {};
 
     compileProgram: function(program) {
       var result = new this.compiler().compile(program, this.options);
-      var guid = this.guid++;
+      var guid = this.guid++, depth;
 
       this.usePartial = this.usePartial || result.usePartial;
 
@@ -839,32 +896,42 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     block: function(block) {
-      var mustache = block.mustache;
-      var depth, child, inverse, inverseGuid;
+      var mustache = block.mustache,
+          program = block.program,
+          inverse = block.inverse;
 
-      var params = this.setupStackForMustache(mustache);
-
-      var programGuid = this.compileProgram(block.program);
-
-      if(block.program.inverse) {
-        inverseGuid = this.compileProgram(block.program.inverse);
-        this.declare('inverse', inverseGuid);
+      if (program) {
+        program = this.compileProgram(program);
       }
 
-      this.opcode('invokeProgram', programGuid, params.length, !!mustache.hash);
-      this.declare('inverse', null);
-      this.opcode('append');
-    },
+      if (inverse) {
+        inverse = this.compileProgram(inverse);
+      }
 
-    inverse: function(block) {
-      var params = this.setupStackForMustache(block.mustache);
+      var type = this.classifyMustache(mustache);
 
-      var programGuid = this.compileProgram(block.program);
+      if (type === "helper") {
+        this.helperMustache(mustache, program, inverse);
+      } else if (type === "simple") {
+        this.simpleMustache(mustache);
 
-      this.declare('inverse', programGuid);
+        // now that the simple mustache is resolved, we need to
+        // evaluate it by executing `blockHelperMissing`
+        this.opcode('pushProgram', program);
+        this.opcode('pushProgram', inverse);
+        this.opcode('pushLiteral', '{}');
+        this.opcode('blockValue');
+      } else {
+        this.ambiguousMustache(mustache, program, inverse);
 
-      this.opcode('invokeProgram', null, params.length, !!block.mustache.hash);
-      this.declare('inverse', null);
+        // now that the simple mustache is resolved, we need to
+        // evaluate it by executing `blockHelperMissing`
+        this.opcode('pushProgram', program);
+        this.opcode('pushProgram', inverse);
+        this.opcode('pushLiteral', '{}');
+        this.opcode('ambiguousBlockValue');
+      }
+
       this.opcode('append');
     },
 
@@ -901,23 +968,69 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     mustache: function(mustache) {
-      var params = this.setupStackForMustache(mustache);
+      var options = this.options;
+      var type = this.classifyMustache(mustache);
 
-      this.opcode('invokeMustache', params.length, mustache.id.original, !!mustache.hash);
+      if (type === "simple") {
+        this.simpleMustache(mustache);
+      } else if (type === "helper") {
+        this.helperMustache(mustache);
+      } else {
+        this.ambiguousMustache(mustache);
+      }
 
-      if(mustache.escaped && !this.options.noEscape) {
+      if(mustache.escaped && !options.noEscape) {
         this.opcode('appendEscaped');
       } else {
         this.opcode('append');
       }
     },
 
-    ID: function(id) {
-      this.addDepth(id.depth);
+    ambiguousMustache: function(mustache, program, inverse) {
+      var id = mustache.id, name = id.parts[0];
 
       this.opcode('getContext', id.depth);
 
-      this.opcode('lookupWithHelpers', id.parts[0] || null, id.isScoped || false);
+      this.opcode('pushProgram', program);
+      this.opcode('pushProgram', inverse);
+
+      this.opcode('invokeAmbiguous', name);
+    },
+
+    simpleMustache: function(mustache, program, inverse) {
+      var id = mustache.id;
+
+      this.addDepth(id.depth);
+      this.opcode('getContext', id.depth);
+
+      if (id.parts.length) {
+        this.opcode('lookupOnContext', id.parts[0]);
+        for(var i=1, l=id.parts.length; i<l; i++) {
+          this.opcode('lookup', id.parts[i]);
+        }
+      } else {
+        this.opcode('pushContext');
+      }
+      this.opcode('resolvePossibleLambda');
+    },
+
+    helperMustache: function(mustache, program, inverse) {
+      var params = this.setupFullMustacheParams(mustache, program, inverse),
+          name = mustache.id.parts[0];
+
+      if (this.options.knownHelpers[name]) {
+        this.opcode('invokeKnownHelper', params.length, name);
+      } else if (this.knownHelpersOnly) {
+        throw new Error("You specified knownHelpersOnly, but used the unknown helper " + name);
+      } else {
+        this.opcode('invokeHelper', params.length, name);
+      }
+    },
+
+    ID: function(id) {
+      this.addDepth(id.depth);
+      this.opcode('getContext', id.depth);
+      this.opcode('lookupOnContext', id.parts[0]);
 
       for(var i=1, l=id.parts.length; i<l; i++) {
         this.opcode('lookup', id.parts[i]);
@@ -929,16 +1042,54 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     INTEGER: function(integer) {
-      this.opcode('push', integer.integer);
+      this.opcode('pushLiteral', integer.integer);
     },
 
     BOOLEAN: function(bool) {
-      this.opcode('push', bool.bool);
+      this.opcode('pushLiteral', bool.bool);
     },
 
     comment: function() {},
 
     // HELPERS
+    opcode: function(name) {
+      this.opcodes.push({ opcode: name, args: [].slice.call(arguments, 1) });
+    },
+
+    declare: function(name, value) {
+      this.opcodes.push({ opcode: 'DECLARE', name: name, value: value });
+    },
+
+    addDepth: function(depth) {
+      if(depth === 0) { return; }
+
+      if(!this.depths[depth]) {
+        this.depths[depth] = true;
+        this.depths.list.push(depth);
+      }
+    },
+
+    classifyMustache: function(mustache) {
+      var isHelper   = mustache.isHelper;
+      var isEligible = mustache.eligibleHelper;
+      var options    = this.options;
+
+      // if ambiguous, we can possibly resolve the ambiguity now
+      if (isEligible && !isHelper) {
+        var name = mustache.id.parts[0];
+
+        if (options.knownHelpers[name]) {
+          isHelper = true;
+        } else if (options.knownHelpersOnly) {
+          isEligible = false;
+        }
+      }
+
+      if (isHelper) { return "helper"; }
+      else if (isEligible) { return "ambiguous"; }
+      else { return "simple"; }
+    },
+
     pushParams: function(params) {
       var i = params.length, param;
 
@@ -958,54 +1109,52 @@ Handlebars.JavaScriptCompiler = function() {};
       }
     },
 
-    opcode: function(name, val1, val2, val3) {
-      this.opcodes.push(Compiler.OPCODE_MAP[name]);
-      if(val1 !== undefined) { this.opcodes.push(val1); }
-      if(val2 !== undefined) { this.opcodes.push(val2); }
-      if(val3 !== undefined) { this.opcodes.push(val3); }
-    },
-
-    declare: function(name, value) {
-      this.opcodes.push('DECLARE');
-      this.opcodes.push(name);
-      this.opcodes.push(value);
-    },
-
-    addDepth: function(depth) {
-      if(depth === 0) { return; }
-
-      if(!this.depths[depth]) {
-        this.depths[depth] = true;
-        this.depths.list.push(depth);
-      }
-    },
-
-    setupStackForMustache: function(mustache) {
+    setupMustacheParams: function(mustache) {
       var params = mustache.params;
-
       this.pushParams(params);
 
       if(mustache.hash) {
         this.hash(mustache.hash);
+      } else {
+        this.opcode('pushLiteral', '{}');
       }
 
-      this.ID(mustache.id);
+      return params;
+    },
+
+    // this will replace setupMustacheParams when we're done
+    setupFullMustacheParams: function(mustache, program, inverse) {
+      var params = mustache.params;
+      this.pushParams(params);
+
+      this.opcode('pushProgram', program);
+      this.opcode('pushProgram', inverse);
+
+      if(mustache.hash) {
+        this.hash(mustache.hash);
+      } else {
+        this.opcode('pushLiteral', '{}');
+      }
 
       return params;
     }
+  };
+
+  var Literal = function(value) {
+    this.value = value;
   };
 
   JavaScriptCompiler.prototype = {
     // PUBLIC API: You can override these methods in a subclass to provide
     // alternative compiled forms for name lookup and buffering semantics
     nameLookup: function(parent, name, type) {
-			if (/^[0-9]+$/.test(name)) {
+      if (/^[0-9]+$/.test(name)) {
         return parent + "[" + name + "]";
       } else if (JavaScriptCompiler.isValidJavaScriptVariableName(name)) {
-	    	return parent + "." + name;
-			}
-			else {
-				return parent + "['" + name + "']";
+        return parent + "." + name;
+      }
+      else {
+        return parent + "['" + name + "']";
       }
     },
 
@@ -1028,18 +1177,21 @@ Handlebars.JavaScriptCompiler = function() {};
       this.environment = environment;
       this.options = options || {};
 
+      Handlebars.log(Handlebars.logger.DEBUG, this.environment.disassemble() + "\n\n");
+
       this.name = this.environment.name;
       this.isChild = !!context;
       this.context = context || {
         programs: [],
-        aliases: { self: 'this' },
-        registers: {list: []}
+        aliases: { }
       };
 
       this.preamble();
 
       this.stackSlot = 0;
       this.stackVars = [];
+      this.registers = { list: [] };
+      this.compileStack = [];
 
       this.compileChildren(environment, options);
 
@@ -1048,54 +1200,29 @@ Handlebars.JavaScriptCompiler = function() {};
       this.i = 0;
 
       for(l=opcodes.length; this.i<l; this.i++) {
-        opcode = this.nextOpcode(0);
+        opcode = opcodes[this.i];
 
-        if(opcode[0] === 'DECLARE') {
-          this.i = this.i + 2;
-          this[opcode[1]] = opcode[2];
+        if(opcode.opcode === 'DECLARE') {
+          this[opcode.name] = opcode.value;
         } else {
-          this.i = this.i + opcode[1].length;
-          this[opcode[0]].apply(this, opcode[1]);
+          this[opcode.opcode].apply(this, opcode.args);
         }
       }
 
       return this.createFunctionContext(asObject);
     },
 
-    nextOpcode: function(n) {
-      var opcodes = this.environment.opcodes, opcode = opcodes[this.i + n], name, val;
-      var extraParams, codes;
-
-      if(opcode === 'DECLARE') {
-        name = opcodes[this.i + 1];
-        val  = opcodes[this.i + 2];
-        return ['DECLARE', name, val];
-      } else {
-        name = Compiler.DISASSEMBLE_MAP[opcode];
-
-        extraParams = Compiler.multiParamSize(opcode);
-        codes = [];
-
-        for(var j=0; j<extraParams; j++) {
-          codes.push(opcodes[this.i + j + 1 + n]);
-        }
-
-        return [name, codes];
-      }
+    nextOpcode: function() {
+      var opcodes = this.environment.opcodes, opcode = opcodes[this.i + 1];
+      return opcodes[this.i + 1];
     },
 
     eat: function(opcode) {
-      this.i = this.i + opcode.length;
+      this.i = this.i + 1;
     },
 
     preamble: function() {
       var out = [];
-
-      // this register will disambiguate helper lookup from finding a function in
-      // a context. This is necessary for mustache compatibility, which requires
-      // that context functions in blocks are evaluated by blockHelperMissing, and
-      // then proceed as if the resulting value was provided to blockHelperMissing.
-      this.useRegister('foundHelper');
 
       if (!this.isChild) {
         var namespace = this.namespace;
@@ -1119,10 +1246,7 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     createFunctionContext: function(asObject) {
-      var locals = this.stackVars;
-      if (!this.isChild) {
-        locals = locals.concat(this.context.registers.list);
-      }
+      var locals = this.stackVars.concat(this.registers.list);
 
       if(locals.length > 0) {
         this.source[1] = this.source[1] + ", " + locals.join(", ");
@@ -1130,7 +1254,7 @@ Handlebars.JavaScriptCompiler = function() {};
 
       // Generate minimizer alias mappings
       if (!this.isChild) {
-        var aliases = []
+        var aliases = [];
         for (var alias in this.context.aliases) {
           this.source[1] = this.source[1] + ', ' + alias + '=' + this.context.aliases[alias];
         }
@@ -1166,10 +1290,64 @@ Handlebars.JavaScriptCompiler = function() {};
       }
     },
 
+    // [blockValue]
+    //
+    // On stack, before: hash, inverse, program, value
+    // On stack, after: return value of blockHelperMissing
+    //
+    // The purpose of this opcode is to take a block of the form
+    // `{{#foo}}...{{/foo}}`, resolve the value of `foo`, and
+    // replace it on the stack with the result of properly
+    // invoking blockHelperMissing.
+    blockValue: function() {
+      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
+
+      var params = ["depth0"];
+      this.setupParams(0, params);
+
+      this.replaceStack(function(current) {
+        params.splice(1, 0, current);
+        return current + " = blockHelperMissing.call(" + params.join(", ") + ")";
+      });
+    },
+
+    // [ambiguousBlockValue]
+    //
+    // On stack, before: hash, inverse, program, value
+    // Compiler value, before: lastHelper=value of last found helper, if any
+    // On stack, after, if no lastHelper: same as [blockValue]
+    // On stack, after, if lastHelper: value
+    ambiguousBlockValue: function() {
+      this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
+
+      var params = ["depth0"];
+      this.setupParams(0, params);
+
+      var current = this.topStack();
+      params.splice(1, 0, current);
+
+      this.source.push("if (!" + this.lastHelper + ") { " + current + " = blockHelperMissing.call(" + params.join(", ") + "); }");
+    },
+
+    // [appendContent]
+    //
+    // On stack, before: ...
+    // On stack, after: ...
+    //
+    // Appends the string value of `content` to the current buffer
     appendContent: function(content) {
       this.source.push(this.appendToBuffer(this.quotedString(content)));
     },
 
+    // [append]
+    //
+    // On stack, before: value, ...
+    // On stack, after: ...
+    //
+    // Coerces `value` to a String and appends it to the current buffer.
+    //
+    // If `value` is truthy, or 0, it is coerced into a string and appended
+    // Otherwise, the empty string is appended
     append: function() {
       var local = this.popStack();
       this.source.push("if(" + local + " || " + local + " === 0) { " + this.appendToBuffer(local) + " }");
@@ -1178,163 +1356,232 @@ Handlebars.JavaScriptCompiler = function() {};
       }
     },
 
+    // [appendEscaped]
+    //
+    // On stack, before: value, ...
+    // On stack, after: ...
+    //
+    // Escape `value` and append it to the buffer
     appendEscaped: function() {
-      var opcode = this.nextOpcode(1), extra = "";
+      var opcode = this.nextOpcode(), extra = "";
       this.context.aliases.escapeExpression = 'this.escapeExpression';
 
-      if(opcode[0] === 'appendContent') {
-        extra = " + " + this.quotedString(opcode[1][0]);
+      if(opcode && opcode.opcode === 'appendContent') {
+        extra = " + " + this.quotedString(opcode.args[0]);
         this.eat(opcode);
       }
 
       this.source.push(this.appendToBuffer("escapeExpression(" + this.popStack() + ")" + extra));
     },
 
+    // [getContext]
+    //
+    // On stack, before: ...
+    // On stack, after: ...
+    // Compiler value, after: lastContext=depth
+    //
+    // Set the value of the `lastContext` compiler value to the depth
     getContext: function(depth) {
       if(this.lastContext !== depth) {
         this.lastContext = depth;
       }
     },
 
-    lookupWithHelpers: function(name, isScoped) {
-      if(name) {
-        var topStack = this.nextStack();
-
-        this.usingKnownHelper = false;
-
-        var toPush;
-        if (!isScoped && this.options.knownHelpers[name]) {
-          toPush = topStack + " = " + this.nameLookup('helpers', name, 'helper');
-          this.usingKnownHelper = true;
-        } else if (isScoped || this.options.knownHelpersOnly) {
-          toPush = topStack + " = " + this.nameLookup('depth' + this.lastContext, name, 'context');
-        } else {
-          this.register('foundHelper', this.nameLookup('helpers', name, 'helper'));
-          toPush = topStack + " = foundHelper || " + this.nameLookup('depth' + this.lastContext, name, 'context');
-        }
-
-        toPush += ';';
-        this.source.push(toPush);
-      } else {
-        this.pushStack('depth' + this.lastContext);
-      }
+    // [lookupOnContext]
+    //
+    // On stack, before: ...
+    // On stack, after: currentContext[name], ...
+    //
+    // Looks up the value of `name` on the current context and pushes
+    // it onto the stack.
+    lookupOnContext: function(name) {
+      this.pushStack(this.nameLookup('depth' + this.lastContext, name, 'context'));
     },
 
+    // [pushContext]
+    //
+    // On stack, before: ...
+    // On stack, after: currentContext, ...
+    //
+    // Pushes the value of the current context onto the stack.
+    pushContext: function() {
+      this.pushStackLiteral('depth' + this.lastContext);
+    },
+
+    // [resolvePossibleLambda]
+    //
+    // On stack, before: value, ...
+    // On stack, after: resolved value, ...
+    //
+    // If the `value` is a lambda, replace it on the stack by
+    // the return value of the lambda
+    resolvePossibleLambda: function() {
+      this.context.aliases.functionType = '"function"';
+
+      this.replaceStack(function(current) {
+        return "typeof " + current + " === functionType ? " + current + "() : " + current;
+      });
+    },
+
+    // [lookup]
+    //
+    // On stack, before: value, ...
+    // On stack, after: value[name], ...
+    //
+    // Replace the value on the stack with the result of looking
+    // up `name` on `value`
     lookup: function(name) {
-      var topStack = this.topStack();
-      this.source.push(topStack + " = (" + topStack + " === null || " + topStack + " === undefined || " + topStack + " === false ? " +
- 				topStack + " : " + this.nameLookup(topStack, name, 'context') + ");");
+      this.replaceStack(function(current) {
+        return current + " == null || " + current + " === false ? " + current + " : " + this.nameLookup(current, name, 'context');
+      });
     },
 
+    // [pushStringParam]
+    //
+    // On stack, before: ...
+    // On stack, after: string, currentContext, ...
+    //
+    // This opcode is designed for use in string mode, which
+    // provides the string value of a parameter along with its
+    // depth rather than resolving it immediately.
     pushStringParam: function(string) {
-      this.pushStack('depth' + this.lastContext);
+      this.pushStackLiteral('depth' + this.lastContext);
       this.pushString(string);
     },
 
+    // [pushString]
+    //
+    // On stack, before: ...
+    // On stack, after: quotedString(string), ...
+    //
+    // Push a quoted version of `string` onto the stack
     pushString: function(string) {
-      this.pushStack(this.quotedString(string));
+      this.pushStackLiteral(this.quotedString(string));
     },
 
-    push: function(name) {
-      this.pushStack(name);
+    // [push]
+    //
+    // On stack, before: ...
+    // On stack, after: expr, ...
+    //
+    // Push an expression onto the stack
+    push: function(expr) {
+      this.pushStack(expr);
     },
 
-    invokeMustache: function(paramSize, original, hasHash) {
-      this.populateParams(paramSize, this.quotedString(original), "{}", null, hasHash, function(nextStack, helperMissingString, id) {
-        if (!this.usingKnownHelper) {
-          this.context.aliases.helperMissing = 'helpers.helperMissing';
-          this.context.aliases.undef = 'void 0';
-          this.source.push("else if(" + id + "=== undef) { " + nextStack + " = helperMissing.call(" + helperMissingString + "); }");
-          if (nextStack !== id) {
-            this.source.push("else { " + nextStack + " = " + id + "; }");
-          }
-        }
-      });
+    // [pushLiteral]
+    //
+    // On stack, before: ...
+    // On stack, after: value, ...
+    //
+    // Pushes a value onto the stack. This operation prevents
+    // the compiler from creating a temporary variable to hold
+    // it.
+    pushLiteral: function(value) {
+      this.pushStackLiteral(value);
     },
 
-    invokeProgram: function(guid, paramSize, hasHash) {
-      var inverse = this.programExpression(this.inverse);
-      var mainProgram = this.programExpression(guid);
-
-      this.populateParams(paramSize, null, mainProgram, inverse, hasHash, function(nextStack, helperMissingString, id) {
-        if (!this.usingKnownHelper) {
-          this.context.aliases.blockHelperMissing = 'helpers.blockHelperMissing';
-          this.source.push("else { " + nextStack + " = blockHelperMissing.call(" + helperMissingString + "); }");
-        }
-      });
-    },
-
-    populateParams: function(paramSize, helperId, program, inverse, hasHash, fn) {
-      var needsRegister = hasHash || this.options.stringParams || inverse || this.options.data;
-      var id = this.popStack(), nextStack;
-      var params = [], param, stringParam, stringOptions;
-
-      if (needsRegister) {
-        this.register('tmp1', program);
-        stringOptions = 'tmp1';
+    // [pushProgram]
+    //
+    // On stack, before: ...
+    // On stack, after: program(guid), ...
+    //
+    // Push a program expression onto the stack. This takes
+    // a compile-time guid and converts it into a runtime-accessible
+    // expression.
+    pushProgram: function(guid) {
+      if (guid != null) {
+        this.pushStackLiteral(this.programExpression(guid));
       } else {
-        stringOptions = '{ hash: {} }';
+        this.pushStackLiteral(null);
       }
-
-      if (needsRegister) {
-        var hash = (hasHash ? this.popStack() : '{}');
-        this.source.push('tmp1.hash = ' + hash + ';');
-      }
-
-      if(this.options.stringParams) {
-        this.source.push('tmp1.contexts = [];');
-      }
-
-      for(var i=0; i<paramSize; i++) {
-        param = this.popStack();
-        params.push(param);
-
-        if(this.options.stringParams) {
-          this.source.push('tmp1.contexts.push(' + this.popStack() + ');');
-        }
-      }
-
-      if(inverse) {
-        this.source.push('tmp1.fn = tmp1;');
-        this.source.push('tmp1.inverse = ' + inverse + ';');
-      }
-
-      if(this.options.data) {
-        this.source.push('tmp1.data = data;');
-      }
-
-      params.push(stringOptions);
-
-      this.populateCall(params, id, helperId || id, fn, program !== '{}');
     },
 
-    populateCall: function(params, id, helperId, fn, program) {
-      var paramString = ["depth0"].concat(params).join(", ");
-      var helperMissingString = ["depth0"].concat(helperId).concat(params).join(", ");
+    // [invokeHelper]
+    //
+    // On stack, before: hash, inverse, program, params..., ...
+    // On stack, after: result of helper invocation
+    //
+    // Pops off the helper's parameters, invokes the helper,
+    // and pushes the helper's return value onto the stack.
+    //
+    // If the helper is not found, `helperMissing` is called.
+    invokeHelper: function(paramSize, name) {
+      this.context.aliases.helperMissing = 'helpers.helperMissing';
 
+      var helper = this.lastHelper = this.setupHelper(paramSize, name);
+      this.register('foundHelper', helper.name);
+
+      this.pushStack("foundHelper ? foundHelper.call(" +
+        helper.callParams + ") " + ": helperMissing.call(" +
+        helper.helperMissingParams + ")");
+    },
+
+    // [invokeKnownHelper]
+    //
+    // On stack, before: hash, inverse, program, params..., ...
+    // On stack, after: result of helper invocation
+    //
+    // This operation is used when the helper is known to exist,
+    // so a `helperMissing` fallback is not required.
+    invokeKnownHelper: function(paramSize, name) {
+      var helper = this.setupHelper(paramSize, name);
+      this.pushStack(helper.name + ".call(" + helper.callParams + ")");
+    },
+
+    // [invokeAmbiguous]
+    //
+    // On stack, before: hash, inverse, program, params..., ...
+    // On stack, after: result of disambiguation
+    //
+    // This operation is used when an expression like `{{foo}}`
+    // is provided, but we don't know at compile-time whether it
+    // is a helper or a path.
+    //
+    // This operation emits more code than the other options,
+    // and can be avoided by passing the `knownHelpers` and
+    // `knownHelpersOnly` flags at compile-time.
+    invokeAmbiguous: function(name) {
+      this.context.aliases.functionType = '"function"';
+
+      this.pushStackLiteral('{}');
+      var helper = this.setupHelper(0, name);
+
+      var helperName = this.lastHelper = this.nameLookup('helpers', name, 'helper');
+      this.register('foundHelper', helperName);
+
+      var nonHelper = this.nameLookup('depth' + this.lastContext, name, 'context');
       var nextStack = this.nextStack();
 
-      if (this.usingKnownHelper) {
-        this.source.push(nextStack + " = " + id + ".call(" + paramString + ");");
-      } else {
-        this.context.aliases.functionType = '"function"';
-        var condition = program ? "foundHelper && " : ""
-        this.source.push("if(" + condition + "typeof " + id + " === functionType) { " + nextStack + " = " + id + ".call(" + paramString + "); }");
-      }
-      fn.call(this, nextStack, helperMissingString, id);
-      this.usingKnownHelper = false;
+      this.source.push('if (foundHelper) { ' + nextStack + ' = foundHelper.call(' + helper.callParams + '); }');
+      this.source.push('else { ' + nextStack + ' = ' + nonHelper + '; ' + nextStack + ' = typeof ' + nextStack + ' === functionType ? ' + nextStack + '() : ' + nextStack + '; }');
     },
 
-    invokePartial: function(context) {
-      params = [this.nameLookup('partials', context, 'partial'), "'" + context + "'", this.popStack(), "helpers", "partials"];
+    // [invokePartial]
+    //
+    // On stack, before: context, ...
+    // On stack after: result of partial invocation
+    //
+    // This operation pops off a context, invokes a partial with that context,
+    // and pushes the result of the invocation back.
+    invokePartial: function(name) {
+      var params = [this.nameLookup('partials', name, 'partial'), "'" + name + "'", this.popStack(), "helpers", "partials"];
 
       if (this.options.data) {
         params.push("data");
       }
 
+      this.context.aliases.self = "this";
       this.pushStack("self.invokePartial(" + params.join(", ") + ");");
     },
 
+    // [assignToHash]
+    //
+    // On stack, before: value, hash, ...
+    // On stack, after: hash, ...
+    //
+    // Pops a value and hash off the stack, assigns `hash[key] = value`
+    // and pushes the hash back onto the stack.
     assignToHash: function(key) {
       var value = this.popStack();
       var hash = this.topStack();
@@ -1362,10 +1609,15 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     programExpression: function(guid) {
-      if(guid == null) { return "self.noop"; }
+      this.context.aliases.self = "this";
+
+      if(guid == null) {
+        return "self.noop";
+      }
 
       var child = this.environment.children[guid],
-          depths = child.depths.list;
+          depths = child.depths.list, depth;
+
       var programParams = [child.index, child.name, "data"];
 
       for(var i=0, l = depths.length; i<l; i++) {
@@ -1389,29 +1641,61 @@ Handlebars.JavaScriptCompiler = function() {};
     },
 
     useRegister: function(name) {
-      if(!this.context.registers[name]) {
-        this.context.registers[name] = true;
-        this.context.registers.list.push(name);
+      if(!this.registers[name]) {
+        this.registers[name] = true;
+        this.registers.list.push(name);
       }
     },
 
+    pushStackLiteral: function(item) {
+      this.compileStack.push(new Literal(item));
+      return item;
+    },
+
     pushStack: function(item) {
-      this.source.push(this.nextStack() + " = " + item + ";");
+      this.source.push(this.incrStack() + " = " + item + ";");
+      this.compileStack.push("stack" + this.stackSlot);
       return "stack" + this.stackSlot;
     },
 
-    nextStack: function() {
+    replaceStack: function(callback) {
+      var item = callback.call(this, this.topStack());
+
+      this.source.push(this.topStack() + " = " + item + ";");
+      return "stack" + this.stackSlot;
+    },
+
+    nextStack: function(skipCompileStack) {
+      var name = this.incrStack();
+      this.compileStack.push("stack" + this.stackSlot);
+      return name;
+    },
+
+    incrStack: function() {
       this.stackSlot++;
       if(this.stackSlot > this.stackVars.length) { this.stackVars.push("stack" + this.stackSlot); }
       return "stack" + this.stackSlot;
     },
 
     popStack: function() {
-      return "stack" + this.stackSlot--;
+      var item = this.compileStack.pop();
+
+      if (item instanceof Literal) {
+        return item.value;
+      } else {
+        this.stackSlot--;
+        return item;
+      }
     },
 
     topStack: function() {
-      return "stack" + this.stackSlot;
+      var item = this.compileStack[this.compileStack.length - 1];
+
+      if (item instanceof Literal) {
+        return item.value;
+      } else {
+        return item;
+      }
     },
 
     quotedString: function(str) {
@@ -1420,6 +1704,67 @@ Handlebars.JavaScriptCompiler = function() {};
         .replace(/"/g, '\\"')
         .replace(/\n/g, '\\n')
         .replace(/\r/g, '\\r') + '"';
+    },
+
+    setupHelper: function(paramSize, name) {
+      var params = [];
+      this.setupParams(paramSize, params);
+      var foundHelper = this.nameLookup('helpers', name, 'helper');
+
+      return {
+        params: params,
+        name: foundHelper,
+        callParams: ["depth0"].concat(params).join(", "),
+        helperMissingParams: ["depth0", this.quotedString(name)].concat(params).join(", ")
+      };
+    },
+
+    // the params and contexts arguments are passed in arrays
+    // to fill in
+    setupParams: function(paramSize, params) {
+      var options = [], contexts = [], param, inverse, program;
+
+      options.push("hash:" + this.popStack());
+
+      inverse = this.popStack();
+      program = this.popStack();
+
+      // Avoid setting fn and inverse if neither are set. This allows
+      // helpers to do a check for `if (options.fn)`
+      if (program || inverse) {
+        if (!program) {
+          this.context.aliases.self = "this";
+          program = "self.noop";
+        }
+
+        if (!inverse) {
+         this.context.aliases.self = "this";
+          inverse = "self.noop";
+        }
+
+        options.push("inverse:" + inverse);
+        options.push("fn:" + program);
+      }
+
+      for(var i=0; i<paramSize; i++) {
+        param = this.popStack();
+        params.push(param);
+
+        if(this.options.stringParams) {
+          contexts.push(this.popStack());
+        }
+      }
+
+      if (this.options.stringParams) {
+        options.push("contexts:[" + contexts.join(",") + "]");
+      }
+
+      if(this.options.data) {
+        options.push("data:data");
+      }
+
+      params.push("{" + options.join(",") + "}");
+      return params.join(", ");
     }
   };
 
@@ -1447,12 +1792,12 @@ Handlebars.JavaScriptCompiler = function() {};
     compilerWords[reservedWords[i]] = true;
   }
 
-	JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
-		if(!JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]+$/.test(name)) {
-			return true;
-		}
-		return false;
-	}
+  JavaScriptCompiler.isValidJavaScriptVariableName = function(name) {
+    if(!JavaScriptCompiler.RESERVED_WORDS[name] && /^[a-zA-Z_$][0-9a-zA-Z_$]+$/.test(name)) {
+      return true;
+    }
+    return false;
+  };
 
 })(Handlebars.Compiler, Handlebars.JavaScriptCompiler);
 
@@ -1531,7 +1876,7 @@ Handlebars.VM = {
   },
   noop: function() { return ""; },
   invokePartial: function(partial, name, context, helpers, partials, data) {
-    options = { helpers: helpers, partials: partials, data: data };
+    var options = { helpers: helpers, partials: partials, data: data };
 
     if(partial === undefined) {
       throw new Handlebars.Exception("The partial " + name + " could not be found");

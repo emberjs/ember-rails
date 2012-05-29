@@ -27,7 +27,7 @@ module Ember
             ember = File.read(config.ember_location)
             precompiler = File.read(precompiler_path)
 
-            [precompiler, handlebars, ember, File.read(path)].join("\n")
+            [precompiler, handlebars, ember].join("\n")
           end
         end
 
