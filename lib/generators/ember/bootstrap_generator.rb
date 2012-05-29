@@ -30,7 +30,7 @@ module Ember
       end
 
       def create_dir_layout
-        %W{models controllers views states helpers templates}.each do |dir|
+        %W{models controllers views routes helpers templates}.each do |dir|
           empty_directory "#{ember_path}/#{dir}"
           create_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
         end
@@ -40,8 +40,12 @@ module Ember
         template "app.js", "#{ember_path}/#{application_name.underscore}.js"
       end
 
-      def create_state_manager_file
-        template "states.js", "#{ember_path}/states/app_states.js"
+      def create_router_file
+        template "router.js", "#{ember_path}/routes/app_router.js"
+      end
+      
+      def create_app_template
+        template "application.handlebars", "#{ember_path}/templates/application.handlebars"
       end
 
       def inject_proper_ember_version
