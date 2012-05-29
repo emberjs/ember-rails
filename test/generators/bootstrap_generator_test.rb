@@ -46,8 +46,8 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
     end
 
-    assert_directory "#{ember_path}/states"
-    assert_file "#{ember_path}/states/app_states.js"
+    assert_directory "#{ember_path}/routes"
+    assert_file "#{ember_path}/routes/app_router.js"
   end
 
   def ember_path
