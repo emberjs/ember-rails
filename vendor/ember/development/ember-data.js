@@ -1073,7 +1073,7 @@ DS.Store = Ember.Object.extend({
 
       // create a new instance of the model type in the
       // 'isLoading' state
-      record = this.materializeRecord(type, clientId);
+      record = this.materializeRecord(type, clientId, id);
 
       // let the adapter set the data, possibly async
       var adapter = get(this, '_adapter');
@@ -1578,12 +1578,13 @@ DS.Store = Ember.Object.extend({
   // . RECORD MATERIALIZATION .
   // ..........................
 
-  materializeRecord: function(type, clientId) {
+  materializeRecord: function(type, clientId, id) {
     var record;
 
     get(this, 'recordCache')[clientId] = record = type._create({
       store: this,
-      clientId: clientId
+      clientId: clientId,
+      _id: id
     });
 
     get(this, 'defaultTransaction').adoptRecord(record);
@@ -2464,11 +2465,53 @@ DS.StateManager = Ember.StateManager.extend({
 (function() {
 var get = Ember.get, set = Ember.set;
 
-// This object is a regular JS object for performance. It is only
-// used internally for bookkeeping purposes.
+//  When a record is changed on the client, it is considered "dirty"--there are
+//  pending changes that need to be saved to a persistence layer, such as a
+//  server.
+//
+//  If the record is rolled back, it re-enters a clean state, any changes are
+//  discarded, and its attributes are reset back to the last known good copy
+//  of the data that came from the server.
+//
+//  If the record is committed, the changes are sent to the server to be saved,
+//  and once the server confirms that they are valid, the record's "canonical"
+//  data becomes the original canonical data plus the changes merged in.
+//
+//  A DataProxy is an object that encapsulates this change tracking. It
+//  contains three buckets:
+//
+//  * `savedData` - the last-known copy of the data from the server
+//  * `unsavedData` - a hash that contains any changes that have not yet
+//     been committed
+//  * `associations` - this is similar to `savedData`, but holds the client
+//    ids of associated records
+//
+//  When setting a property on the object, the value is placed into the
+//  `unsavedData` bucket:
+//
+//      proxy.set('key', 'value');
+//
+//      // unsavedData:
+//      {
+//        key: "value"
+//      }
+//
+//  When retrieving a property from the object, it first looks to see
+//  if that value exists in the `unsavedData` bucket, and returns it if so.
+//  Otherwise, it returns the value from the `savedData` bucket.
+//
+//  When the adapter notifies a record that it has been saved, it merges the
+//  `unsavedData` bucket into the `savedData` bucket. If the record's
+//  transaction is rolled back, the `unsavedData` hash is simply discarded.
+//
+//  This object is a regular JS object for performance. It is only
+//  used internally for bookkeeping purposes.
+
 var DataProxy = DS._DataProxy = function(record) {
   this.record = record;
+
   this.unsavedData = {};
+
   this.associations = {};
 };
 
@@ -2600,7 +2643,8 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
       return value;
     }
 
-    return data && get(data, primaryKey);
+    var id = get(data, primaryKey);
+    return id ? id : this._id;
   }).property('primaryKey', 'data'),
 
   // The following methods are callbacks invoked by `toJSON`. You
