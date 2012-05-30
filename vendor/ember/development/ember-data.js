@@ -1073,7 +1073,7 @@ DS.Store = Ember.Object.extend({
 
       // create a new instance of the model type in the
       // 'isLoading' state
-      record = this.materializeRecord(type, clientId);
+      record = this.materializeRecord(type, clientId, id);
 
       // let the adapter set the data, possibly async
       var adapter = get(this, '_adapter');
@@ -1578,12 +1578,13 @@ DS.Store = Ember.Object.extend({
   // . RECORD MATERIALIZATION .
   // ..........................
 
-  materializeRecord: function(type, clientId) {
+  materializeRecord: function(type, clientId, id) {
     var record;
 
     get(this, 'recordCache')[clientId] = record = type._create({
       store: this,
-      clientId: clientId
+      clientId: clientId,
+      _id: id
     });
 
     get(this, 'defaultTransaction').adoptRecord(record);
@@ -2642,7 +2643,8 @@ DS.Model = Ember.Object.extend(Ember.Evented, {
       return value;
     }
 
-    return data && get(data, primaryKey);
+    var id = get(data, primaryKey);
+    return id ? id : this._id;
   }).property('primaryKey', 'data'),
 
   // The following methods are callbacks invoked by `toJSON`. You

@@ -43,9 +43,13 @@ module Ember
       def create_router_file
         template "router.js", "#{ember_path}/routes/app_router.js"
       end
-      
-      def create_app_template
-        template "application.handlebars", "#{ember_path}/templates/application.handlebars"
+
+      def create_store_file
+        template "store.js", "#{ember_path}/store.js"
+      end
+
+      def create_app_stubs
+        generate "ember:view", "application"
       end
 
       def inject_proper_ember_version
