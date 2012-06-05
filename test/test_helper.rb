@@ -7,6 +7,9 @@ require "rails/test_help"
 require "fileutils"
 
 Rails.backtrace_cleaner.remove_silencers!
+Rails.application.config.ember.handlebars_location = File.expand_path("../../vendor/ember/development/handlebars.js", __FILE__)
+Rails.application.config.ember.ember_location = File.expand_path("../../vendor/ember/development/ember.js", __FILE__)
+
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
