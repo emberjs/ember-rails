@@ -8,6 +8,16 @@ module Ember
     class Railtie < ::Rails::Railtie
       config.ember = ActiveSupport::OrderedOptions.new
 
+      generators do |app|
+        app ||= ::Rails.application # Rails 3.0.x does not yield `app`
+
+        app.config.generators.assets = false
+
+        ::Rails::Generators.configure!(app.config.generators)
+        ::Rails::Generators.hidden_namespaces.uniq!
+        require "generators/ember/resource_override"
+      end
+
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
         # Add the gem's vendored ember to the end of the asset search path
         variant = app.config.ember.variant
