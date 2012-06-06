@@ -1,3 +1,6 @@
-[submodule "vendor/ember"]
-	path = vendor/ember
+[submodule "ember.js"]
+	path = ember.js
 	url = https://github.com/emberjs/ember.js.git
+[submodule "ember-data"]
+	path = ember-data
+	url = https://github.com/emberjs/data.git
