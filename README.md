@@ -52,7 +52,7 @@ file to setup application namespace and initial requires:
       create  app/assets/javascripts/helpers/.gitkeep
       create  app/assets/javascripts/templates
       create  app/assets/javascripts/templates/.gitkeep
-      create  app/assets/javascripts/app.js.coffee
+      create  app/assets/javascripts/app.js
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
