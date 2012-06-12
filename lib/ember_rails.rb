@@ -20,9 +20,18 @@ module Ember
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
         # Add the gem's vendored ember to the end of the asset search path
-        variant = app.config.ember.variant
-        ember_path = app.root.join("vendor/assets/ember/#{variant}")
-        app.config.assets.paths.unshift(ember_path.to_s) if ember_path.exist?
+        if variant = app.config.ember.variant
+          ember_path = app.root.join("vendor/assets/ember/#{variant}")
+          app.config.assets.paths.unshift(ember_path.to_s) if ember_path.exist?
+        else
+          warn "No ember.js variant was specified in your config environment."
+          warn "You can set a specific variant in your application config in "
+          warn "order for sprockets to locate ember's assets:"
+          warn ""
+          warn "    config.ember.variant = :development"
+          warn ""
+          warn "Valid values are :development and :production"
+        end
       end
 
       initializer "ember_rails.find_ember", :after => "ember_rails.setup_vendor", :group => :all do |app|
