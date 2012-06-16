@@ -5,6 +5,7 @@ module Ember
     class InstallGenerator < ::Rails::Generators::Base
       desc "Install Ember.js into your vendor folder"
       class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
+      class_option :data, :type => :boolean, :default => true, :desc => "Download latest Ember.js Data from GitHub and copy it into your project"
 
       def copy_ember
         if options.head?
@@ -39,6 +40,38 @@ module Ember
 
           copy_file "ember.js", "vendor/assets/ember/development/ember.js"
           copy_file "ember.min.js", "vendor/assets/ember/production/ember.js"
+
+          if options.data?
+            git_root = File.expand_path "~/.ember-data"
+            gem_file = File.join git_root, "Gemfile"
+
+            unless File.exist?(git_root)
+              command = %{git clone git://github.com/emberjs/data.git "#{git_root}"}
+              say_status("downloading", command, :green)
+
+              cmd command
+            else
+              Dir.chdir git_root do
+                command = "git fetch --force --quiet --tags && git reset origin/master --hard"
+                say_status("updating", command, :green)
+
+                cmd command
+              end
+            end
+
+            Dir.chdir git_root do
+              say_status("building", "bundle && bundle exec rake", :green)
+              Bundler.with_clean_env do
+                cmd "bundle --gemfile #{gem_file}"
+                cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake}
+              end
+            end
+
+            source_paths << File.join(git_root, "dist")
+
+            copy_file "ember-data.js", "vendor/assets/ember/development/ember-data.js"
+            copy_file "ember-data.min.js", "vendor/assets/ember/production/ember-data.js"
+          end
         end
       end
 
