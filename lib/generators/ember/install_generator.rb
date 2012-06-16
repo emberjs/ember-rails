@@ -20,7 +20,7 @@ module Ember
             cmd command
           else
             Dir.chdir git_root do
-              command = "git fetch --force --quiet --tags && git reset origin/master --hard"
+              command = "git fetch origin && git reset origin/master --hard"
               say_status("updating", command, :green)
 
               cmd command
