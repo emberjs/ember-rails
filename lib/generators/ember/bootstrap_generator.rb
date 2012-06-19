@@ -51,20 +51,6 @@ module Ember
       def create_app_stubs
         generate "ember:view", "application"
       end
-
-      def inject_proper_ember_version
-        environment <<-RUBY.strip_heredoc, :env => :development
-          config.ember.variant = :development
-        RUBY
-
-        environment <<-RUBY.strip_heredoc, :env => :test
-          config.ember.variant = :development
-        RUBY
-
-        environment <<-RUBY.strip_heredoc, :env => :production
-          config.ember.variant = :production
-        RUBY
-      end
     end
   end
 end
