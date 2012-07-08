@@ -22,10 +22,12 @@ module Ember
             "//= require ember",
             "//= require ember-data",
             "//= require_self",
-            "//= require #{application_name.underscore}",
-            "#{application_name.camelize} = Ember.Application.create();"
+            "//= require #{application_name.underscore}"
           ]
           dependencies.join("\n").concat("\n")
+        end
+        inject_into_file(application_file, :after => "//= require_tree .") do
+          "\n#{application_name.camelize} = Ember.Application.create();"
         end
       end
 
