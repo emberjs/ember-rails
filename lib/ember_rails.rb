@@ -1,3 +1,4 @@
+require 'rails'
 require 'ember/rails/version'
 require 'ember/version'
 require 'ember/handlebars/version'
