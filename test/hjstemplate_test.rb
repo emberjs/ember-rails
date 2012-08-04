@@ -69,7 +69,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
   test "ensure new lines inside the anon function are persisted" do
     get "/assets/templates/new_lines.js"
     assert_response :success
-    assert @response.body.include?("helpers['if'];\n"), @response.body.inspect
+    assert @response.body.include?("helpers;\n"), @response.body.inspect
   end
 
 end
