@@ -20,8 +20,12 @@ module Ember
       end
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
-        # Add the gem's vendored ember to the end of the asset search path
         if variant = app.config.ember.variant
+          # Add the gem's vendored ember to the end of the asset search path
+          ember_path = File.expand_path("../../vendor/ember/#{variant}", __FILE__)
+          app.config.assets.paths.push(ember_path.to_s)
+
+          # Allow a local variant override
           ember_path = app.root.join("vendor/assets/ember/#{variant}")
           app.config.assets.paths.unshift(ember_path.to_s) if ember_path.exist?
         else
@@ -36,8 +40,8 @@ module Ember
       end
 
       initializer "ember_rails.find_ember", :after => "ember_rails.setup_vendor", :group => :all do |app|
-        config.ember.ember_location = location_for(app, "ember.js")
-        config.ember.handlebars_location = location_for(app, "handlebars.js")
+        config.ember.ember_location ||= location_for(app, "ember.js")
+        config.ember.handlebars_location ||= location_for(app, "handlebars.js")
       end
 
       def location_for(app, file)
