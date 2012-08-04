@@ -27,7 +27,7 @@ to use `rails g ember:bootstrap` to create the following directory structure und
     controllers/
     helpers/
     models/
-    states/
+    routes/
     templates/
     views/
 
