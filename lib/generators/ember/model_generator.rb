@@ -13,12 +13,30 @@ module Ember
       end
 
     private
+      EMBER_TYPE_LOOKUP = {
+        nil       => 'string',
+
+        binary:      'string',
+        string:      'string',
+        text:        'string',
+        boolean:     'boolean',
+        date:        'date',
+        datetime:    'date',
+        time:        'date',
+        timestamp:   'date',
+        decimal:     'number',
+        float:       'number',
+        integer:     'number',
+        primary_key: 'number'
+      }
 
       def parse_attributes!
         self.attributes = (attributes || []).map do |attr|
           name, type = attr.split(':')
-          type = 'string' if type == 'text'
-          { name: name, type: type }
+          key = type.try(:to_sym)
+          ember_type = EMBER_TYPE_LOOKUP[key] || type
+
+          { name: name, type: ember_type }
         end
       end
     end
