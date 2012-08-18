@@ -14,9 +14,9 @@ module Ember
         require 'ember/filters/slim' if defined? Slim
         require 'ember/filters/haml' if defined? Haml
 
-        app.config.assets.register_engine '.handlebars', Ember::Handlebars::Template
-        app.config.assets.register_engine '.hbs', Ember::Handlebars::Template
-        app.config.assets.register_engine '.hjs', Ember::Handlebars::Template
+        app.assets.register_engine '.handlebars', Ember::Handlebars::Template
+        app.assets.register_engine '.hbs', Ember::Handlebars::Template
+        app.assets.register_engine '.hjs', Ember::Handlebars::Template
       end
     end
   end
