@@ -1,5 +1,5 @@
-// Version: v0.9.1-1490-g0dc82cc
-// Last commit: 0dc82cc (2012-07-31 14:13:27 +0200)
+// Version: v1.0.pre
+// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
 
 
 (function() {
@@ -142,8 +142,8 @@ window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprec
 
 })();
 
-// Version: v0.9.1-1502-g870f0af
-// Last commit: 870f0af (2012-08-03 15:59:10 -0700)
+// Version: v1.0.pre
+// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
 
 
 (function() {
@@ -20694,8 +20694,8 @@ Ember.onLoad('application', bootstrap);
 
 })();
 
-// Version: v0.9.1-1502-g870f0af
-// Last commit: 870f0af (2012-08-03 15:59:10 -0700)
+// Version: v1.0.pre
+// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
 
 
 (function() {
