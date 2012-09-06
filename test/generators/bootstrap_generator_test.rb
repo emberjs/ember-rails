@@ -3,6 +3,7 @@ require 'generators/ember/bootstrap_generator'
 
 class BootstrapGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::BootstrapGenerator
+
   destination File.join(Rails.root, "tmp")
 
   setup :prepare_destination
@@ -38,6 +39,18 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
+  %w(js coffee).each do |engine|
+
+    test "create bootstrap with #{engine} engine" do
+      run_generator ["--javascript-engine=#{engine}"]
+
+      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/routes/app_router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/#{application_name.underscore}.js"
+    end
+
+  end
+
   private
 
   def assert_new_dirs(options = {})
@@ -47,11 +60,14 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     end
 
     assert_directory "#{ember_path}/routes"
-    assert_file "#{ember_path}/routes/app_router.js"
   end
 
   def ember_path
-   "app/assets/javascripts"
+    "app/assets/javascripts"
   end
+  def application_name
+    "Dummy"
+  end
+
 
 end

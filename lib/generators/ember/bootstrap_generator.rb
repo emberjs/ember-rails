@@ -10,6 +10,7 @@ module Ember
       desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
 
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
+      class_option :javascript_engine, :desc => "Engine for JavaScripts"
 
       def inject_ember
         application_file = "app/assets/javascripts/application.js"
@@ -41,16 +42,22 @@ module Ember
       end
 
       def create_router_file
-        template "router.js", "#{ember_path}/routes/app_router.js"
+        template "router.#{engine_extension}", "#{ember_path}/routes/app_router.#{engine_extension}"
       end
 
       def create_store_file
-        template "store.js", "#{ember_path}/store.js"
+        template "store.#{engine_extension}", "#{ember_path}/store.#{engine_extension}"
       end
 
       def create_app_stubs
         generate "ember:view", "application"
       end
+      
+      private
+      def engine_extension
+        "js.#{options[:javascript_engine]}".sub('js.js','js')
+      end
+      
     end
   end
 end
