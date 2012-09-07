@@ -16,20 +16,19 @@ module Ember
 
     private
       EMBER_TYPE_LOOKUP = {
-        nil       => 'string',
-
-        binary:      'string',
-        string:      'string',
-        text:        'string',
-        boolean:     'boolean',
-        date:        'date',
-        datetime:    'date',
-        time:        'date',
-        timestamp:   'date',
-        decimal:     'number',
-        float:       'number',
-        integer:     'number',
-        primary_key: 'number'
+        nil  => 'string',
+        :binary => 'string',
+        :string => 'string',
+        :text => 'string',
+        :boolean => 'boolean',
+        :date => 'date',
+        :datetime =>'date',
+        :time => 'date',
+        :timestamp => 'date',
+        :decimal => 'number',
+        :float => 'number',
+        :integer => 'number',
+        :primary_key => 'number'
       }
 
       def parse_attributes!
@@ -38,7 +37,7 @@ module Ember
           key = type.try(:to_sym)
           ember_type = EMBER_TYPE_LOOKUP[key] || type
 
-          { name: name, type: ember_type }
+          { :name =>  name, :type =>  ember_type }
         end
       end
     end
