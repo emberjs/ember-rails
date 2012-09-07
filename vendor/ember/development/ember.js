@@ -1,5 +1,5 @@
-// Version: v1.0.pre
-// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
+// Version: v1.0.pre-89-gf7b3c0b
+// Last commit: f7b3c0b (2012-09-06 14:24:20 -0700)
 
 
 (function() {
@@ -142,8 +142,8 @@ window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprec
 
 })();
 
-// Version: v1.0.pre
-// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
+// Version: v1.0.pre-89-gf7b3c0b
+// Last commit: f7b3c0b (2012-09-06 14:24:20 -0700)
 
 
 (function() {
@@ -351,6 +351,27 @@ if ('undefined' === typeof ember_deprecateFunc) {
   Override this to provide more robust logging functionality.
 */
 Ember.Logger = window.console || { log: Ember.K, warn: Ember.K, error: Ember.K, info: Ember.K, debug: Ember.K };
+
+
+// ..........................................................
+// ERROR HANDLING
+//
+
+Ember.onerror = null;
+
+Ember.handleErrors = function(func, context) {
+  // Unfortunately in some browsers we lose the backtrace if we rethrow the existing error,
+  // so in the event that we don't have an `onerror` handler we don't wrap in a try/catch
+  if ('function' === typeof Ember.onerror) {
+    try {
+      return func.apply(context || this);
+    } catch (error) {
+      Ember.onerror(error);
+    }
+  } else {
+    return func.apply(context || this);
+  }
+};
 
 })();
 
@@ -1033,7 +1054,7 @@ Ember.canInvoke = canInvoke;
 */
 Ember.tryInvoke = function(obj, methodName, args) {
   if (canInvoke(obj, methodName)) {
-    return obj[methodName].apply(obj, args);
+    return obj[methodName].apply(obj, args || []);
   }
 };
 
@@ -1128,6 +1149,13 @@ OrderedSet.prototype = {
 
   isEmpty: function() {
     return this.list.length === 0;
+  },
+
+  has: function(obj) {
+    var guid = guidFor(obj),
+        presenceSet = this.presenceSet;
+
+    return guid in presenceSet;
   },
 
   forEach: function(fn, self) {
@@ -1960,6 +1988,18 @@ Ember._suspendBeforeObserver = function(obj, path, target, method, callback) {
 
 Ember._suspendObserver = function(obj, path, target, method, callback) {
   return Ember._suspendListener(obj, changeEvent(path), target, method, callback);
+};
+
+var map = Ember.ArrayPolyfills.map;
+
+Ember._suspendBeforeObservers = function(obj, paths, target, method, callback) {
+  var events = map.call(paths, beforeEvent);
+  return Ember._suspendListeners(obj, events, target, method, callback);
+};
+
+Ember._suspendObservers = function(obj, paths, target, method, callback) {
+  var events = map.call(paths, changeEvent);
+  return Ember._suspendListeners(obj, events, target, method, callback);
 };
 
 /** @private */
@@ -3248,6 +3288,37 @@ function suspendListener(obj, eventName, target, method, callback) {
   }
 }
 
+function suspendListeners(obj, eventNames, target, method, callback) {
+  if (!method && 'function' === typeof target) {
+    method = target;
+    target = null;
+  }
+
+  var oldActions = [],
+      actionSets = [],
+      eventName, actionSet, methodGuid, action, i, l;
+
+  for (i=0, l=eventNames.length; i<l; i++) {
+    eventName = eventNames[i];
+    actionSet = actionSetFor(obj, eventName, target, true),
+    methodGuid = guidFor(method);
+
+    oldActions.push(actionSet && actionSet[methodGuid]);
+    actionSets.push(actionSet);
+
+    actionSet[methodGuid] = null;
+  }
+
+  try {
+    return callback.call(target);
+  } finally {
+    for (i=0, l=oldActions.length; i<l; i++) {
+      eventName = eventNames[i];
+      actionSets[i][methodGuid] = oldActions[i];
+    }
+  }
+}
+
 // returns a list of currently watched events
 /** @memberOf Ember */
 function watchedEvents(obj) {
@@ -3319,6 +3390,7 @@ function listenersFor(obj, eventName) {
 Ember.addListener = addListener;
 Ember.removeListener = removeListener;
 Ember._suspendListener = suspendListener;
+Ember._suspendListeners = suspendListeners;
 Ember.sendEvent = sendEvent;
 Ember.hasListeners = hasListeners;
 Ember.watchedEvents = watchedEvents;
@@ -3363,19 +3435,10 @@ function invoke(target, method, args, ignore) {
     args = args.length > ignore ? slice.call(args, ignore) : null;
   }
 
-  // Unfortunately in some browsers we lose the backtrace if we rethrow the existing error,
-  // so in the event that we don't have an `onerror` handler we don't wrap in a try/catch
-  if ('function' === typeof Ember.onerror) {
-    try {
-      // IE8's Function.prototype.apply doesn't accept undefined/null arguments.
-      return method.apply(target || this, args || []);
-    } catch (error) {
-      Ember.onerror(error);
-    }
-  } else {
+  return Ember.handleErrors(function() {
     // IE8's Function.prototype.apply doesn't accept undefined/null arguments.
     return method.apply(target || this, args || []);
-  }
+  }, this);
 }
 
 
@@ -3801,8 +3864,37 @@ Ember.run.later = function(target, method) {
 /** @private */
 function invokeOnceTimer(guid, onceTimers) {
   if (onceTimers[this.tguid]) { delete onceTimers[this.tguid][this.mguid]; }
-  if (timers[guid]) { invoke(this.target, this.method, this.args, 2); }
+  if (timers[guid]) { invoke(this.target, this.method, this.args); }
   delete timers[guid];
+}
+
+function scheduleOnce(queue, target, method, args) {
+  var tguid = Ember.guidFor(target),
+    mguid = Ember.guidFor(method),
+    onceTimers = run.autorun().onceTimers,
+    guid = onceTimers[tguid] && onceTimers[tguid][mguid],
+    timer;
+
+  if (guid && timers[guid]) {
+    timers[guid].args = args; // replace args
+  } else {
+    timer = {
+      target: target,
+      method: method,
+      args:   args,
+      tguid:  tguid,
+      mguid:  mguid
+    };
+
+    guid  = Ember.guidFor(timer);
+    timers[guid] = timer;
+    if (!onceTimers[tguid]) { onceTimers[tguid] = {}; }
+    onceTimers[tguid][mguid] = guid; // so it isn't scheduled more than once
+
+    run.schedule(queue, timer, invokeOnceTimer, guid, onceTimers);
+  }
+
+  return guid;
 }
 
 /**
@@ -3834,32 +3926,11 @@ function invokeOnceTimer(guid, onceTimers) {
   @returns {Object} timer
 */
 Ember.run.once = function(target, method) {
-  var tguid = Ember.guidFor(target),
-      mguid = Ember.guidFor(method),
-      onceTimers = run.autorun().onceTimers,
-      guid = onceTimers[tguid] && onceTimers[tguid][mguid],
-      timer;
+  return scheduleOnce('actions', target, method, slice.call(arguments, 2));
+};
 
-  if (guid && timers[guid]) {
-    timers[guid].args = slice.call(arguments); // replace args
-  } else {
-    timer = {
-      target: target,
-      method: method,
-      args:   slice.call(arguments),
-      tguid:  tguid,
-      mguid:  mguid
-    };
-
-    guid  = Ember.guidFor(timer);
-    timers[guid] = timer;
-    if (!onceTimers[tguid]) { onceTimers[tguid] = {}; }
-    onceTimers[tguid][mguid] = guid; // so it isn't scheduled more than once
-
-    run.schedule('actions', timer, invokeOnceTimer, guid, onceTimers);
-  }
-
-  return guid;
+Ember.run.scheduleOnce = function(queue, target, method, args) {
+  return scheduleOnce(queue, target, method, slice.call(arguments, 3));
 };
 
 var scheduledNext;
@@ -4936,6 +5007,24 @@ Alias = function(methodName) {
 };
 Alias.prototype = new Ember.Descriptor();
 
+/**
+  Makes a property or method available via an additional name.
+
+      App.PaintSample = Ember.Object.extend({
+        color: 'red',
+        colour: Ember.alias('color'),
+        name: function(){
+          return "Zed";
+        },
+        moniker: Ember.alias("name")
+      });
+      var paintSample = App.PaintSample.create()
+      paintSample.get('colour'); //=> 'red'
+      paintSample.moniker(); //=> 'Zed'
+
+  @param {String} methodName name of the method or property to alias
+  @returns {Ember.Descriptor}
+*/
 Ember.alias = function(methodName) {
   return new Alias(methodName);
 };
@@ -5130,7 +5219,7 @@ Ember.none = function(obj) {
   @returns {Boolean}
 */
 Ember.empty = function(obj) {
-  return obj === null || obj === undefined || (obj.length === 0 && typeof obj !== 'function');
+  return obj === null || obj === undefined || (obj.length === 0 && typeof obj !== 'function') || (typeof obj === 'object' && Ember.get(obj, 'length') === 0);
 };
 
 /**
@@ -5380,6 +5469,8 @@ if (!Ember.keys) {
 // ERROR
 //
 
+var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
 /**
   @class
 
@@ -5388,10 +5479,10 @@ if (!Ember.keys) {
 Ember.Error = function() {
   var tmp = Error.prototype.constructor.apply(this, arguments);
 
-  for (var p in tmp) {
-    if (tmp.hasOwnProperty(p)) { this[p] = tmp[p]; }
+  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+  for (var idx = 0; idx < errorProps.length; idx++) {
+    this[errorProps[idx]] = tmp[errorProps[idx]];
   }
-  this.message = tmp.message;
 };
 
 Ember.Error.prototype = Ember.create(Error.prototype);
@@ -7553,6 +7644,26 @@ Ember.MutableArray = Ember.Mixin.create(Ember.Array, Ember.MutableEnumerable,
     return this;
   },
 
+  /**
+    Replace all the the receiver's content with content of the argument.
+    If argument is an empty array receiver will be cleared.
+
+        var colors = ["red", "green", "blue"];
+        colors.setObjects(["black", "white"]); => ["black", "white"]
+        colors.setObjects([]); => []
+
+    @param {Ember.Array} objects array whose content will be used for replacing
+        the content of the receiver
+    @return {Ember.Array} receiver with the new content
+   */
+  setObjects: function(objects) {
+    if (objects.length === 0) return this.clear();
+
+    var len = get(this, 'length');
+    this.replace(0, len, objects);
+    return this;
+  },
+
   // ..........................................................
   // IMPLEMENT Ember.MutableEnumerable
   //
@@ -8213,17 +8324,23 @@ Ember.Evented = Ember.Mixin.create(
 // Ember.Object.  We only define this separately so that Ember.Set can depend on it
 
 
-
-var classToString = Ember.Mixin.prototype.toString;
-var set = Ember.set, get = Ember.get;
-var o_create = Ember.create,
+var set = Ember.set, get = Ember.get,
+    o_create = Ember.create,
     o_defineProperty = Ember.platform.defineProperty,
     a_slice = Array.prototype.slice,
+    GUID_KEY = Ember.GUID_KEY,
+    guidFor = Ember.guidFor,
+    generateGuid = Ember.generateGuid,
     meta = Ember.meta,
     rewatch = Ember.rewatch,
     finishChains = Ember.finishChains,
-    finishPartial = Ember.Mixin.finishPartial,
-    reopen = Ember.Mixin.prototype.reopen;
+    destroy = Ember.destroy,
+    schedule = Ember.run.schedule,
+    Mixin = Ember.Mixin,
+    applyMixin = Mixin._apply,
+    finishPartial = Mixin.finishPartial,
+    reopen = Mixin.prototype.reopen,
+    classToString = Mixin.prototype.toString;
 
 var undefinedDescriptor = {
   configurable: true,
@@ -8245,14 +8362,14 @@ function makeCtor() {
     if (!wasApplied) {
       Class.proto(); // prepare prototype...
     }
-    var m = Ember.meta(this);
+    o_defineProperty(this, GUID_KEY, undefinedDescriptor);
+    o_defineProperty(this, '_super', undefinedDescriptor);
+    var m = meta(this);
     m.proto = this;
     if (initMixins) {
       this.reopen.apply(this, initMixins);
       initMixins = null;
     }
-    o_defineProperty(this, Ember.GUID_KEY, undefinedDescriptor);
-    o_defineProperty(this, '_super', undefinedDescriptor);
     finishPartial(this, m);
     delete m.proto;
     finishChains(this);
@@ -8262,7 +8379,7 @@ function makeCtor() {
   Class.toString = classToString;
   Class.willReopen = function() {
     if (wasApplied) {
-      Class.PrototypeMixin = Ember.Mixin.create(Class.PrototypeMixin);
+      Class.PrototypeMixin = Mixin.create(Class.PrototypeMixin);
     }
 
     wasApplied = false;
@@ -8288,11 +8405,11 @@ function makeCtor() {
 
 var CoreObject = makeCtor();
 
-CoreObject.PrototypeMixin = Ember.Mixin.create(
+CoreObject.PrototypeMixin = Mixin.create(
 /** @scope Ember.CoreObject.prototype */ {
 
   reopen: function() {
-    Ember.Mixin._apply(this, arguments, true);
+    applyMixin(this, arguments, true);
     return this;
   },
 
@@ -8327,7 +8444,7 @@ CoreObject.PrototypeMixin = Ember.Mixin.create(
     if (this.willDestroy) { this.willDestroy(); }
 
     set(this, 'isDestroyed', true);
-    Ember.run.schedule('destroy', this, this._scheduledDestroy);
+    schedule('destroy', this, this._scheduledDestroy);
     return this;
   },
 
@@ -8338,7 +8455,7 @@ CoreObject.PrototypeMixin = Ember.Mixin.create(
     @private
   */
   _scheduledDestroy: function() {
-    Ember.destroy(this);
+    destroy(this);
     if (this.didDestroy) { this.didDestroy(); }
   },
 
@@ -8349,7 +8466,7 @@ CoreObject.PrototypeMixin = Ember.Mixin.create(
   },
 
   toString: function() {
-    return '<'+this.constructor.toString()+':'+Ember.guidFor(this)+'>';
+    return '<'+this.constructor.toString()+':'+guidFor(this)+'>';
   }
 });
 
@@ -8359,7 +8476,7 @@ if (Ember.config.overridePrototypeMixin) {
 
 CoreObject.__super__ = null;
 
-var ClassMixin = Ember.Mixin.create(
+var ClassMixin = Mixin.create(
 /** @scope Ember.ClassMixin.prototype */ {
 
   ClassMixin: Ember.required(),
@@ -8372,8 +8489,8 @@ var ClassMixin = Ember.Mixin.create(
 
   extend: function() {
     var Class = makeCtor(), proto;
-    Class.ClassMixin = Ember.Mixin.create(this.ClassMixin);
-    Class.PrototypeMixin = Ember.Mixin.create(this.PrototypeMixin);
+    Class.ClassMixin = Mixin.create(this.ClassMixin);
+    Class.PrototypeMixin = Mixin.create(this.PrototypeMixin);
 
     Class.ClassMixin.ownerConstructor = Class;
     Class.PrototypeMixin.ownerConstructor = Class;
@@ -8385,7 +8502,7 @@ var ClassMixin = Ember.Mixin.create(
 
     proto = Class.prototype = o_create(this.prototype);
     proto.constructor = Class;
-    Ember.generateGuid(proto, 'ember');
+    generateGuid(proto, 'ember');
     meta(proto).proto = proto; // this will disable observers on prototype
 
     Class.ClassMixin.apply(Class);
@@ -8406,7 +8523,7 @@ var ClassMixin = Ember.Mixin.create(
 
   reopenClass: function() {
     reopen.apply(this.ClassMixin, arguments);
-    Ember.Mixin._apply(this, arguments, false);
+    applyMixin(this, arguments, false);
     return this;
   },
 
@@ -9137,6 +9254,10 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
     entire array content will change.
   */
   _contentWillChange: Ember.beforeObserver(function() {
+    this._teardownContent();
+  }, 'content'),
+
+  _teardownContent: function() {
     var content = get(this, 'content');
 
     if (content) {
@@ -9145,8 +9266,7 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
         didChange: 'contentArrayDidChange'
       });
     }
-  }, 'content'),
-
+  },
 
   contentArrayWillChange: Ember.K,
   contentArrayDidChange: Ember.K,
@@ -9156,10 +9276,15 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
     entire array content has changed.
   */
   _contentDidChange: Ember.observer(function() {
-    var content = get(this, 'content'),
-        len     = content ? get(content, 'length') : 0;
+    var content = get(this, 'content');
 
     Ember.assert("Can't set ArrayProxy's content to itself", content !== this);
+
+    this._setupContent();
+  }, 'content'),
+
+  _setupContent: function() {
+    var content = get(this, 'content');
 
     if (content) {
       content.addArrayObserver(this, {
@@ -9167,20 +9292,16 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
         didChange: 'contentArrayDidChange'
       });
     }
-  }, 'content'),
+  },
 
   _arrangedContentWillChange: Ember.beforeObserver(function() {
     var arrangedContent = get(this, 'arrangedContent'),
         len = arrangedContent ? get(arrangedContent, 'length') : 0;
 
     this.arrangedContentArrayWillChange(this, 0, len, undefined);
+    this.arrangedContentWillChange(this);
 
-    if (arrangedContent) {
-      arrangedContent.removeArrayObserver(this, {
-        willChange: 'arrangedContentArrayWillChange',
-        didChange: 'arrangedContentArrayDidChange'
-      });
-    }
+    this._teardownArrangedContent(arrangedContent);
   }, 'arrangedContent'),
 
   _arrangedContentDidChange: Ember.observer(function() {
@@ -9189,15 +9310,36 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
 
     Ember.assert("Can't set ArrayProxy's content to itself", arrangedContent !== this);
 
+    this._setupArrangedContent();
+
+    this.arrangedContentDidChange(this);
+    this.arrangedContentArrayDidChange(this, 0, undefined, len);
+  }, 'arrangedContent'),
+
+  _setupArrangedContent: function() {
+    var arrangedContent = get(this, 'arrangedContent');
+
     if (arrangedContent) {
       arrangedContent.addArrayObserver(this, {
         willChange: 'arrangedContentArrayWillChange',
         didChange: 'arrangedContentArrayDidChange'
       });
     }
+  },
 
-    this.arrangedContentArrayDidChange(this, 0, undefined, len);
-  }, 'arrangedContent'),
+  _teardownArrangedContent: function() {
+    var arrangedContent = get(this, 'arrangedContent');
+
+    if (arrangedContent) {
+      arrangedContent.removeArrayObserver(this, {
+        willChange: 'arrangedContentArrayWillChange',
+        didChange: 'arrangedContentArrayDidChange'
+      });
+    }
+  },
+
+  arrangedContentWillChange: Ember.K,
+  arrangedContentDidChange: Ember.K,
 
   /** @private (nodoc) */
   objectAt: function(idx) {
@@ -9230,15 +9372,15 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
   /** @private (nodoc) */
   init: function() {
     this._super();
-    this._contentWillChange();
-    this._contentDidChange();
-    this._arrangedContentWillChange();
-    this._arrangedContentDidChange();
+    this._setupContent();
+    this._setupArrangedContent();
+  },
+
+  willDestroy: function() {
+    this._teardownArrangedContent();
+    this._teardownContent();
   }
-
 });
-
-
 
 
 })();
@@ -9823,6 +9965,33 @@ Ember.runLoadHooks = function(name, object) {
 
 
 (function() {
+/**
+  @class
+  
+  Ember.ControllerMixin provides a standard interface for all classes
+  that compose Ember's controller layer: Ember.Controller, Ember.ArrayController,
+  and Ember.ObjectController.
+  
+  Within an Ember.Router-managed application single shared instaces of every
+  Controller object in your application's namespace will be added to the
+  application's Ember.Router instance. See `Ember.Application#initialize`
+  for additional information.
+  
+  ## Views
+  By default a controller instance will be the rendering context
+  for its associated Ember.View. This connection is made during calls to
+  `Ember.ControllerMixin#connectOutlet`.
+  
+  Within the view's template, the Ember.View instance can be accessed
+  through the controller with `{{view}}`.
+  
+  ## Target Forwarding
+  By default a controller will target your application's Ember.Router instance.
+  Calls to `{{action}}` within the template of a controller's view are forwarded
+  to the router. See `Ember.Handlebars.helpers.action` for additional information.
+  
+  @extends Ember.Mixin
+*/
 Ember.ControllerMixin = Ember.Mixin.create({
   /**
     The object to which events from the view should be sent.
@@ -9848,7 +10017,29 @@ var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach;
 
 /**
  @class
+ 
+ Ember.SortableMixin provides a standard interface for array proxies
+ to specify a sort order and maintain this sorting when objects are added,
+ removed, or updated without changing the implicit order of their underlying
+ content array:
+ 
+      songs = [ 
+        {trackNumber: 4, title: 'Ob-La-Di, Ob-La-Da'},
+        {trackNumber: 2, title: 'Back in the U.S.S.R.'},
+        {trackNumber: 3, title: 'Glass Onion'},
+      ];  
 
+      songsController = Ember.ArrayController.create({
+        content: songs,
+        sortProperties: ['trackNumber']
+      });
+      
+      songsController.get('firstObject'); // {trackNumber: 2, title: 'Back in the U.S.S.R.'}
+      
+      songsController.addObject({trackNumber: 1, title: 'Dear Prudence'});
+      songsController.get('firstObject'); // {trackNumber: 1, title: 'Dear Prudence'}
+      
+ 
  @extends Ember.Mixin
  @extends Ember.MutableEnumerable
 */
@@ -10082,6 +10273,8 @@ var get = Ember.get, set = Ember.set;
   controller, use this class.
 
   @extends Ember.ArrayProxy
+  @extends Ember.SortableMixin
+  @extends Ember.ControllerMixin
 */
 
 Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
@@ -10092,6 +10285,20 @@ Ember.ArrayController = Ember.ArrayProxy.extend(Ember.ControllerMixin,
 
 
 (function() {
+/**
+  @class
+  
+  Ember.ObjectController is part of Ember's Controller layer. A single
+  shared instance of each Ember.ObjectController subclass in your application's
+  namespace will be created at application initialization and be stored on your
+  application's Ember.Router instance.
+  
+  Ember.ObjectController derives its functionality from its superclass
+  Ember.ObjectProxy and the Ember.ControllerMixin mixin.
+  
+  @extends Ember.ObjectProxy
+  @extends Ember.ControllerMixin
+**/
 Ember.ObjectController = Ember.ObjectProxy.extend(Ember.ControllerMixin);
 
 })();
@@ -10126,36 +10333,193 @@ var get = Ember.get, set = Ember.set;
 /**
   @class
 
-  An Ember.Application instance serves as the namespace in which you define your
-  application's classes. You can also override the configuration of your
+  An instance of `Ember.Application` is the starting point for every Ember.js
+  application. It helps to instantiate, initialize and coordinate the many
+  objects that make up your app.
+
+  Each Ember.js app has one and only one `Ember.Application` object. In fact, the very
+  first thing you should do in your application is create the instance:
+
+  ```javascript
+  window.App = Ember.Application.create();
+  ```
+
+  Typically, the application object is the only global variable. All other
+  classes in your app should be properties on the `Ember.Application` instance,
+  which highlights its first role: a global namespace.
+
+  For example, if you define a view class, it might look like this:
+
+  ```javascript
+  App.MyView = Ember.View.extend();
+  ```
+
+  After all of your classes are defined, call `App.initialize()` to start the
   application.
 
-  By default, Ember.Application will begin listening for events on the document.
-  If your application is embedded inside a page, instead of controlling the
-  entire document, you can specify which DOM element to attach to by setting
-  the `rootElement` property:
+  Because `Ember.Application` inherits from `Ember.Namespace`, any classes
+  you create will have useful string representations when calling `toString()`;
+  see the `Ember.Namespace` documentation for more information.
 
-      MyApp = Ember.Application.create({
-        rootElement: $('#my-app')
-      });
+  While you can think of your `Ember.Application` as a container that holds the
+  other classes in your application, there are several other responsibilities
+  going on under-the-hood that you may want to understand.
 
-  The root of an Ember.Application must not be removed during the course of the
-  page's lifetime. If you have only a single conceptual application for the
-  entire page, and are not embedding any third-party Ember applications
-  in your page, use the default document root for your application.
+  ### Event Delegation
 
-  You only need to specify the root if your page contains multiple instances
-  of Ember.Application.
+  Ember.js uses a technique called _event delegation_. This allows the framework
+  to set up a global, shared event listener instead of requiring each view to do
+  it manually. For example, instead of each view registering its own `mousedown`
+  listener on its associated element, Ember.js sets up a `mousedown` listener on
+  the `body`.
 
-  @extends Ember.Object
+  If a `mousedown` event occurs, Ember.js will look at the target of the event and
+  start walking up the DOM node tree, finding corresponding views and invoking their
+  `mouseDown` method as it goes.
+
+  `Ember.Application` has a number of default events that it listens for, as well
+  as a mapping from lowercase events to camel-cased view method names. For
+  example, the `keypress` event causes the `keyPress` method on the view to be
+  called, the `dblclick` event causes `doubleClick` to be called, and so on.
+
+  If there is a browser event that Ember.js does not listen for by default, you
+  can specify custom events and their corresponding view method names by setting
+  the application's `customEvents` property:
+
+  ```javascript
+  App = Ember.Application.create({
+    customEvents: {
+      // add support for the loadedmetadata media
+      // player event
+      'loadedmetadata': "loadedMetadata"
+    }
+  });
+  ```
+
+  By default, the application sets up these event listeners on the document body.
+  However, in cases where you are embedding an Ember.js application inside an
+  existing page, you may want it to set up the listeners on an element inside
+  the body.
+
+  For example, if only events inside a DOM element with the ID of `ember-app` should
+  be delegated, set your application's `rootElement` property:
+
+  ```javascript
+  window.App = Ember.Application.create({
+    rootElement: '#ember-app'
+  });
+  ```
+
+  The `rootElement` can be either a DOM element or a jQuery-compatible selector
+  string. Note that *views appended to the DOM outside the root element will not
+  receive events.* If you specify a custom root element, make sure you only append
+  views inside it!
+
+  To learn more about the advantages of event delegation and the Ember.js view layer,
+  and a list of the event listeners that are setup by default, visit the
+  [Ember.js View Layer guide](http://emberjs.com/guides/view_layer#toc_event-delegation).
+
+  ### Dependency Injection
+
+  One thing you may have noticed while using Ember.js is that you define *classes*, not
+  *instances*. When your application loads, all of the instances are created for you.
+  Creating these instances is the responsibility of `Ember.Application`.
+
+  When the `Ember.Application` initializes, it will look for an `Ember.Router` class
+  defined on the applications's `Router` property, like this:
+
+  ```javascript
+  App.Router = Ember.Router.extend({
+  // ...
+  });
+  ```
+
+  If found, the router is instantiated and saved on the application's `router`
+  property (note the lowercase 'r'). While you should *not* reference this router
+  instance directly from your application code, having access to `App.router`
+  from the console can be useful during debugging.
+
+  After the router is created, the application loops through all of the
+  registered _injections_ and invokes them once for each property on the
+  `Ember.Application` object.
+
+  An injection is a function that is responsible for instantiating objects from
+  classes defined on the application. By default, the only injection registered
+  instantiates controllers and makes them available on the router.
+
+  For example, if you define a controller class:
+
+  ```javascript
+  App.MyController = Ember.Controller.extend({
+    // ...
+  });
+  ```
+
+  Your router will receive an instance of `App.MyController` saved on its
+  `myController` property.
+
+  Libraries on top of Ember.js can register additional injections. For example,
+  if your application is using Ember Data, it registers an injection that
+  instantiates `DS.Store`:
+
+  ```javascript
+  Ember.Application.registerInjection({
+    name: 'store',
+    before: 'controllers',
+
+    injection: function(app, router, property) {
+      if (property === 'Store') {
+        set(router, 'store', app[property].create());
+      }
+    }
+  });
+  ```
+
+  ### Routing
+
+  In addition to creating your application's router, `Ember.Application` is also
+  responsible for telling the router when to start routing.
+
+  By default, the router will begin trying to translate the current URL into
+  application state once the browser emits the `DOMContentReady` event. If you
+  need to defer routing, you can call the application's `deferReadiness()` method.
+  Once routing can begin, call the `advanceReadiness()` method.
+
+  If there is any setup required before routing begins, you can implement a `ready()`
+  method on your app that will be invoked immediately before routing begins:
+
+  ```javascript
+  window.App = Ember.Application.create({
+    ready: function() {
+      this.set('router.enableLogging', true);
+    }
+  });
+
+  To begin routing, you must have at a minimum a top-level controller and view.
+  You define these as `App.ApplicationController` and `App.ApplicationView`,
+  respectively. Your application will not work if you do not define these two
+  mandatory classes. For example:
+
+  ```javascript
+  App.ApplicationView = Ember.View.extend({
+    templateName: 'application'
+  });
+  App.ApplicationController = Ember.Controller.extend();
+  ```
+
+  @extends Ember.Namespace
 */
 Ember.Application = Ember.Namespace.extend(
 /** @scope Ember.Application.prototype */{
 
   /**
-    The root DOM element of the Application.
+    The root DOM element of the Application. This can be specified as an
+    element or a
+    [jQuery-compatible selector string](http://api.jquery.com/category/selectors/).
 
-    Can be specified as DOMElement or a selector string.
+    This is the element that will be passed to the Application's,
+    `eventDispatcher`, which sets up the listeners for event delegation. Every
+    view in your application should be a child of the element you specify here.
 
     @type DOMElement
     @default 'body'
@@ -10163,12 +10527,41 @@ Ember.Application = Ember.Namespace.extend(
   rootElement: 'body',
 
   /**
+    The `Ember.EventDispatcher` responsible for delegating events to this
+    application's views.
+
+    The event dispatcher is created by the application at initialization time
+    and sets up event listeners on the DOM element described by the
+    application's `rootElement` property.
+
+    See the documentation for `Ember.EventDispatcher` for more information.
+
     @type Ember.EventDispatcher
     @default null
   */
   eventDispatcher: null,
 
   /**
+    The DOM events for which the event dispatcher should listen.
+
+    By default, the application's `Ember.EventDispatcher` listens
+    for a set of standard DOM events, such as `mousedown` and
+    `keyup`, and delegates them to your application's `Ember.View`
+    instances.
+
+    If you would like additional events to be delegated to your
+    views, set your `Ember.Application`'s `customEvents` property
+    to a hash containing the DOM event name as the key and the
+    corresponding view method name as the value. For example:
+
+        App = Ember.Application.create({
+          customEvents: {
+            // add support for the loadedmetadata media
+            // player event
+            'loadedmetadata': "loadedMetadata"
+          }
+        });
+
     @type Object
     @default null
   */
@@ -10176,6 +10569,8 @@ Ember.Application = Ember.Namespace.extend(
 
   /** @private */
   init: function() {
+    if (!this.$) { this.$ = Ember.$; }
+
     var eventDispatcher,
         rootElement = get(this, 'rootElement');
     this._super();
@@ -10186,14 +10581,32 @@ Ember.Application = Ember.Namespace.extend(
 
     set(this, 'eventDispatcher', eventDispatcher);
 
-    // jQuery 1.7 doesn't call the ready callback if already ready
-    if (Ember.$.isReady) {
+    // Start off the number of deferrals at 1. This will be
+    // decremented by the Application's own `initialize` method.
+    this._readinessDeferrals = 1;
+
+    this.waitForDOMContentLoaded();
+  },
+
+  waitForDOMContentLoaded: function() {
+    this.deferReadiness();
+
+    var self = this;
+    this.$().ready(function() {
+      self.advanceReadiness();
+    });
+  },
+
+  deferReadiness: function() {
+    Ember.assert("You cannot defer readiness since the `ready()` hook has already been called.", this._readinessDeferrals > 0);
+    this._readinessDeferrals++;
+  },
+
+  advanceReadiness: function() {
+    this._readinessDeferrals--;
+
+    if (this._readinessDeferrals === 0) {
       Ember.run.once(this, this.didBecomeReady);
-    } else {
-      var self = this;
-      Ember.$(document).ready(function() {
-        Ember.run.once(self, self.didBecomeReady);
-      });
     }
   },
 
@@ -10239,27 +10652,36 @@ Ember.Application = Ember.Namespace.extend(
       set(router, 'namespace', this);
     }
 
-    Ember.runLoadHooks('application', this);
-
     injections.forEach(function(injection) {
       properties.forEach(function(property) {
         injection[1](namespace, router, property);
       });
     });
 
-    if (router && router instanceof Ember.Router) {
-      this.startRouting(router);
-    }
+    Ember.runLoadHooks('application', this);
+
+    // At this point, any injections or load hooks that would have wanted
+    // to defer readiness have fired.
+    this.advanceReadiness();
+
+    return this;
   },
 
   /** @private */
   didBecomeReady: function() {
     var eventDispatcher = get(this, 'eventDispatcher'),
-        customEvents    = get(this, 'customEvents');
+        customEvents    = get(this, 'customEvents'),
+        router;
 
     eventDispatcher.setup(customEvents);
 
     this.ready();
+
+    router = get(this, 'router');
+
+    if (router && router instanceof Ember.Router) {
+      this.startRouting(router);
+    }
   },
 
   /**
@@ -10347,296 +10769,8 @@ Ember.Application.registerInjection({
   }
 });
 
-})();
+Ember.runLoadHooks('Ember.Application', Ember.Application);
 
-
-
-(function() {
-var get = Ember.get, set = Ember.set;
-
-/**
-  This file implements the `location` API used by Ember's router.
-
-  That API is:
-
-  getURL: returns the current URL
-  setURL(path): sets the current URL
-  onUpdateURL(callback): triggers the callback when the URL changes
-  formatURL(url): formats `url` to be placed into `href` attribute
-
-  Calling setURL will not trigger onUpdateURL callbacks.
-
-  TODO: This, as well as the Ember.Location documentation below, should
-  perhaps be moved so that it's visible in the JsDoc output.
-*/
-/**
-  @class
-
-  Ember.Location returns an instance of the correct implementation of
-  the `location` API.
-
-  You can pass it a `implementation` ('hash', 'history', 'none') to force a
-  particular implementation.
-*/
-Ember.Location = {
-  create: function(options) {
-    var implementation = options && options.implementation;
-    Ember.assert("Ember.Location.create: you must specify a 'implementation' option", !!implementation);
-
-    var implementationClass = this.implementations[implementation];
-    Ember.assert("Ember.Location.create: " + implementation + " is not a valid implementation", !!implementationClass);
-
-    return implementationClass.create.apply(implementationClass, arguments);
-  },
-
-  registerImplementation: function(name, implementation) {
-    this.implementations[name] = implementation;
-  },
-
-  implementations: {}
-};
-
-})();
-
-
-
-(function() {
-var get = Ember.get, set = Ember.set;
-
-/**
-  @class
-
-  Ember.HashLocation implements the location API using the browser's
-  hash. At present, it relies on a hashchange event existing in the
-  browser.
-
-  @extends Ember.Object
-*/
-Ember.HashLocation = Ember.Object.extend(
-/** @scope Ember.HashLocation.prototype */ {
-
-  /** @private */
-  init: function() {
-    set(this, 'location', get(this, 'location') || window.location);
-  },
-
-  /**
-    @private
-
-    Returns the current `location.hash`, minus the '#' at the front.
-  */
-  getURL: function() {
-    return get(this, 'location').hash.substr(1);
-  },
-
-  /**
-    @private
-
-    Set the `location.hash` and remembers what was set. This prevents
-    `onUpdateURL` callbacks from triggering when the hash was set by
-    `HashLocation`.
-  */
-  setURL: function(path) {
-    get(this, 'location').hash = path;
-    set(this, 'lastSetURL', path);
-  },
-
-  /**
-    @private
-
-    Register a callback to be invoked when the hash changes. These
-    callbacks will execute when the user presses the back or forward
-    button, but not after `setURL` is invoked.
-  */
-  onUpdateURL: function(callback) {
-    var self = this;
-    var guid = Ember.guidFor(this);
-
-    Ember.$(window).bind('hashchange.ember-location-'+guid, function() {
-      var path = location.hash.substr(1);
-      if (get(self, 'lastSetURL') === path) { return; }
-
-      set(self, 'lastSetURL', null);
-
-      callback(location.hash.substr(1));
-    });
-  },
-
-  /**
-    @private
-
-    Given a URL, formats it to be placed into the page as part
-    of an element's `href` attribute.
-
-    This is used, for example, when using the {{action}} helper
-    to generate a URL based on an event.
-  */
-  formatURL: function(url) {
-    return '#'+url;
-  },
-
-  /** @private */
-  willDestroy: function() {
-    var guid = Ember.guidFor(this);
-
-    Ember.$(window).unbind('hashchange.ember-location-'+guid);
-  }
-});
-
-Ember.Location.registerImplementation('hash', Ember.HashLocation);
-
-})();
-
-
-
-(function() {
-var get = Ember.get, set = Ember.set;
-
-/**
-  @class
-
-  Ember.HistoryLocation implements the location API using the browser's
-  history.pushState API.
-
-  @extends Ember.Object
-*/
-Ember.HistoryLocation = Ember.Object.extend(
-/** @scope Ember.HistoryLocation.prototype */ {
-
-  /** @private */
-  init: function() {
-    set(this, 'location', get(this, 'location') || window.location);
-    set(this, '_initialURL', get(this, 'location').pathname);
-  },
-
-  /**
-    Will be pre-pended to path upon state change
-   */
-  rootURL: '/',
-
-  /**
-    @private
-
-    Used to give history a starting reference
-   */
-  _initialURL: null,
-
-  /**
-    @private
-
-    Returns the current `location.pathname`.
-  */
-  getURL: function() {
-    return get(this, 'location').pathname;
-  },
-
-  /**
-    @private
-
-    Uses `history.pushState` to update the url without a page reload.
-  */
-  setURL: function(path) {
-    var state = window.history.state,
-        initialURL = get(this, '_initialURL');
-
-    path = this.formatPath(path);
-
-    if ((initialURL !== path && !state) || (state && state.path !== path)) {
-      window.history.pushState({ path: path }, null, path);
-    }
-  },
-
-  /**
-    @private
-
-    Register a callback to be invoked whenever the browser
-    history changes, including using forward and back buttons.
-  */
-  onUpdateURL: function(callback) {
-    var guid = Ember.guidFor(this);
-
-    Ember.$(window).bind('popstate.ember-location-'+guid, function(e) {
-      callback(location.pathname);
-    });
-  },
-
-  /**
-    @private
-
-    returns the given path appended to rootURL
-   */
-  formatPath: function(path) {
-    var rootURL = get(this, 'rootURL');
-
-    if (path !== '') {
-      rootURL = rootURL.replace(/\/$/, '');
-    }
-
-    return rootURL + path;
-  },
-
-  /**
-    @private
-
-    Used when using {{action}} helper.  Since no formatting
-    is required we just return the url given.
-  */
-  formatURL: function(url) {
-    return url;
-  },
-
-  /** @private */
-  willDestroy: function() {
-    var guid = Ember.guidFor(this);
-
-    Ember.$(window).unbind('popstate.ember-location-'+guid);
-  }
-});
-
-Ember.Location.registerImplementation('history', Ember.HistoryLocation);
-
-})();
-
-
-
-(function() {
-var get = Ember.get, set = Ember.set;
-
-/**
-  @class
-
-  Ember.NoneLocation does not interact with the browser. It is useful for
-  testing, or when you need to manage state with your Router, but temporarily
-  don't want it to muck with the URL (for example when you embed your
-  application in a larger page).
-
-  @extends Ember.Object
-*/
-Ember.NoneLocation = Ember.Object.extend(
-/** @scope Ember.NoneLocation.prototype */ {
-  path: '',
-
-  getURL: function() {
-    return get(this, 'path');
-  },
-
-  setURL: function(path) {
-    set(this, 'path', path);
-  },
-
-  onUpdateURL: function(callback) {
-    // We are not wired up to the browser, so we'll never trigger the callback.
-  },
-
-  formatURL: function(url) {
-    // The return value is not overly meaningful, but we do not want to throw
-    // errors when test code renders templates containing {{action href=true}}
-    // helpers.
-    return url;
-  }
-});
-
-Ember.Location.registerImplementation('none', Ember.NoneLocation);
 
 })();
 
@@ -10660,7 +10794,7 @@ Ember.Location.registerImplementation('none', Ember.NoneLocation);
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
-Ember.assert("Ember Views require jQuery 1.7", window.jQuery && (window.jQuery().jquery.match(/^1\.7(\.\d+)?(pre|rc\d?)?/) || Ember.ENV.FORCE_JQUERY));
+Ember.assert("Ember Views require jQuery 1.7 or 1.8", window.jQuery && (window.jQuery().jquery.match(/^1\.[78](\.\d+)?(pre|rc\d?)?/) || Ember.ENV.FORCE_JQUERY));
 Ember.$ = window.jQuery;
 
 })();
@@ -11224,31 +11358,34 @@ Ember.EventDispatcher = Ember.Object.extend(
     var self = this;
 
     rootElement.delegate('.ember-view', event + '.ember', function(evt, triggeringManager) {
+      return Ember.handleErrors(function() {
+        var view = Ember.View.views[this.id],
+            result = true, manager = null;
 
-      var view = Ember.View.views[this.id],
-          result = true, manager = null;
+        manager = self._findNearestEventManager(view,eventName);
 
-      manager = self._findNearestEventManager(view,eventName);
+        if (manager && manager !== triggeringManager) {
+          result = self._dispatchEvent(manager, evt, eventName, view);
+        } else if (view) {
+          result = self._bubbleEvent(view,evt,eventName);
+        } else {
+          evt.stopPropagation();
+        }
 
-      if (manager && manager !== triggeringManager) {
-        result = self._dispatchEvent(manager, evt, eventName, view);
-      } else if (view) {
-        result = self._bubbleEvent(view,evt,eventName);
-      } else {
-        evt.stopPropagation();
-      }
-
-      return result;
+        return result;
+      }, this);
     });
 
     rootElement.delegate('[data-ember-action]', event + '.ember', function(evt) {
-      var actionId = Ember.$(evt.currentTarget).attr('data-ember-action'),
-          action   = Ember.Handlebars.ActionHelper.registeredActions[actionId],
-          handler  = action.handler;
+      return Ember.handleErrors(function() {
+        var actionId = Ember.$(evt.currentTarget).attr('data-ember-action'),
+            action   = Ember.Handlebars.ActionHelper.registeredActions[actionId],
+            handler  = action.handler;
 
-      if (action.eventName === eventName) {
-        return handler(evt);
-      }
+        if (action.eventName === eventName) {
+          return handler(evt);
+        }
+      }, this);
     });
   },
 
@@ -11322,7 +11459,8 @@ queues.splice(Ember.$.inArray('actions', queues)+1, 0, 'render');
 (function() {
 var get = Ember.get, set = Ember.set;
 
-Ember.ControllerMixin.reopen({
+// @class declaration and documentation in runtime/lib/controllers/controller.js
+Ember.ControllerMixin.reopen(/** @scope Ember.ControllerMixin.prototype */ {
 
   target: null,
   controllers: null,
@@ -11439,7 +11577,7 @@ Ember.ControllerMixin.reopen({
 
     outletName = outletName || 'view';
 
-    Ember.assert("You must supply a name or a view class to connectOutlets, but not both", (!!name && !viewClass && !controller) || (!name && !!viewClass));
+    Ember.assert("You must supply a name or a view class to connectOutlet, but not both", (!!name && !viewClass && !controller) || (!name && !!viewClass));
 
     if (name) {
       var namespace = get(this, 'namespace'),
@@ -11453,8 +11591,10 @@ Ember.ControllerMixin.reopen({
       Ember.assert("The name you supplied " + name + " did not resolve to a controller " + name + 'Controller', (!!controller && !!context) || !context);
     }
 
-    if (controller && context) { controller.set('content', context); }
-    view = viewClass.create();
+    if (controller && context) { set(controller, 'content', context); }
+
+    view = this.createOutletView(outletName, viewClass);
+
     if (controller) { set(view, 'controller', controller); }
     set(this, outletName, view);
 
@@ -11481,9 +11621,28 @@ Ember.ControllerMixin.reopen({
       controllerName = controllerNames[i] + 'Controller';
       set(this, controllerName, get(controllers, controllerName));
     }
+  },
+
+  /**
+    `disconnectOutlet` removes previously attached view from given outlet.
+
+    @param  {String} outletName the outlet name. (optional)
+   */
+  disconnectOutlet: function(outletName) {
+    outletName = outletName || 'view';
+
+    set(this, outletName, null);
+  },
+
+  /**
+    `createOutletView` is a hook you may want to override if you need to do
+    something special with the view created for the outlet. For example
+    you may want to implement views sharing across outlets.
+  */
+  createOutletView: function(outletName, viewClass) {
+    return viewClass.create();
   }
 });
-
 
 })();
 
@@ -11658,11 +11817,11 @@ var invokeForState = {
   and a different class name if it evaluates to false, you can pass a binding
   like this:
 
-    // Applies 'enabled' class when isEnabled is true and 'disabled' when isEnabled is false
-    Ember.View.create({
-      classNameBindings: ['isEnabled:enabled:disabled']
-      isEnabled: true
-    });
+      // Applies 'enabled' class when isEnabled is true and 'disabled' when isEnabled is false
+      Ember.View.create({
+        classNameBindings: ['isEnabled:enabled:disabled']
+        isEnabled: true
+      });
 
   Will result in view instances with an HTML representation of:
 
@@ -11674,21 +11833,20 @@ var invokeForState = {
 
   This syntax offers the convenience to add a class if a property is `false`:
 
-    // Applies no class when isEnabled is true and class 'disabled' when isEnabled is false
-    Ember.View.create({
-      classNameBindings: ['isEnabled::disabled']
-      isEnabled: true
-    });
+      // Applies no class when isEnabled is true and class 'disabled' when isEnabled is false
+      Ember.View.create({
+        classNameBindings: ['isEnabled::disabled']
+        isEnabled: true
+      });
 
   Will result in view instances with an HTML representation of:
 
-    <div id="ember1" class="ember-view"></div>
+      <div id="ember1" class="ember-view"></div>
 
   When the `isEnabled` property on the view is set to `false`, it will result
   in view instances with an HTML representation of:
 
-    <div id="ember1" class="ember-view disabled"></div>
-
+      <div id="ember1" class="ember-view disabled"></div>
 
   Updates to the the value of a class name binding will result in automatic update 
   of the  HTML `class` attribute in the view's rendered HTML representation.
@@ -12099,7 +12257,7 @@ Ember.View = Ember.Object.extend(Ember.Evented,
     } else {
       return get(this, '_context');
     }
-  }).cacheable(),
+  }).volatile(),
 
   /**
     @private
@@ -12348,7 +12506,7 @@ Ember.View = Ember.Object.extend(Ember.Evented,
     var template = get(this, 'layout') || get(this, 'template');
 
     if (template) {
-      var context = get(this, '_context');
+      var context = get(this, 'context');
       var keywords = this.cloneKeywords();
 
       var data = {
@@ -12708,8 +12866,15 @@ Ember.View = Ember.Object.extend(Ember.Evented,
     @param {Function} fn the function that inserts the element into the DOM
   */
   _insertElementLater: function(fn) {
-    this._lastInsert = Ember.guidFor(fn);
-    Ember.run.schedule('render', this, this.invokeForState, 'insertElement', fn);
+    this._scheduledInsert = Ember.run.scheduleOnce('render', this, '_insertElement', fn);
+  },
+
+  /**
+   @private
+  */
+  _insertElement: function (fn) {
+    this._scheduledInsert = null;
+    this.invokeForState('insertElement', fn);
   },
 
   /**
@@ -13020,6 +13185,10 @@ Ember.View = Ember.Object.extend(Ember.Evented,
     this.lengthAfterRender = this._childViews.length;
 
     return buffer;
+  },
+
+  renderToBufferIfNeeded: function () {
+    return this.invokeForState('renderToBufferIfNeeded', this);
   },
 
   beforeRender: function(buffer) {
@@ -13477,18 +13646,16 @@ Ember.View = Ember.Object.extend(Ember.Evented,
 
 /** @private */
 var DOMManager = {
-  prepend: function(view, childView) {
-    childView._insertElementLater(function() {
-      var element = view.$();
-      element.prepend(childView.$());
-    });
+  prepend: function(view, html) {
+    view.$().prepend(html);
   },
 
-  after: function(view, nextView) {
-    nextView._insertElementLater(function() {
-      var element = view.$();
-      element.after(nextView.$());
-    });
+  after: function(view, html) {
+    view.$().after(html);
+  },
+
+  html: function(view, html) {
+    view.$().html(html);
   },
 
   replace: function(view) {
@@ -13502,12 +13669,7 @@ var DOMManager = {
   },
 
   remove: function(view) {
-    var elem = get(view, 'element');
-
-    set(view, 'element', null);
-    view._lastInsert = null;
-
-    Ember.$(elem).remove();
+    view.$().remove();
   },
 
   empty: function(view) {
@@ -13539,7 +13701,7 @@ Ember.View.reopenClass({
 
   */
   _parsePropertyPath: function(path) {
-    var split = path.split(/:/),
+    var split = path.split(':'),
         propertyPath = split[0],
         classNames = "",
         className,
@@ -13669,8 +13831,15 @@ Ember.View.states = {
 
     destroyElement: function(view) {
       set(view, 'element', null);
-      view._lastInsert = null;
+      if (view._scheduledInsert) {
+        Ember.run.cancel(view._scheduledInsert);
+        view._scheduledInsert = null;
+      }
       return view;
+    },
+
+    renderToBufferIfNeeded: function () {
+      return false;
     }
   }
 };
@@ -13696,15 +13865,16 @@ Ember.View.states.preRender = {
   // a view leaves the preRender state once its element has been
   // created (createElement).
   insertElement: function(view, fn) {
-    if (view._lastInsert !== Ember.guidFor(fn)){
-      return;
-    }
     view.createElement();
     view._notifyWillInsertElement();
     // after createElement, the view will be in the hasElement state.
     fn.call(view);
     view.transitionTo('inDOM');
     view._notifyDidInsertElement();
+  },
+
+  renderToBufferIfNeeded: function(view) {
+    return view.renderToBuffer();
   },
 
   empty: Ember.K,
@@ -13784,6 +13954,10 @@ Ember.View.states.inBuffer = {
     Ember.assert("Emptying a view in the inBuffer state is not allowed and should not happen under normal circumstances. Most likely there is a bug in your application. This may be due to excessive property change notifications.");
   },
 
+  renderToBufferIfNeeded: function (view) {
+    return view.buffer;
+  },
+
   // It should be impossible for a rendered view to be scheduled for
   // insertion.
   insertElement: function() {
@@ -13859,6 +14033,11 @@ Ember.View.states.hasElement = {
   destroyElement: function(view) {
     view._notifyWillDestroyElement();
     view.domManager.remove(view);
+    set(view, 'element', null);
+    if (view._scheduledInsert) {
+      Ember.run.cancel(view._scheduledInsert);
+      view._scheduledInsert = null;
+    }
     return view;
   },
 
@@ -13889,9 +14068,6 @@ Ember.View.states.inDOM = {
   parentState: Ember.View.states.hasElement,
 
   insertElement: function(view, fn) {
-    if (view._lastInsert !== Ember.guidFor(fn)){
-      return;
-    }
     throw "You can't insert an element into the DOM that has already been inserted";
   }
 };
@@ -13927,6 +14103,10 @@ Ember.View.states.destroyed = {
 
   setElement: function() {
     throw fmt(destroyedError, ["set('element', ...)"]);
+  },
+
+  renderToBufferIfNeeded: function() {
+    throw fmt(destroyedError, ["renderToBufferIfNeeded"]);
   },
 
   // Since element insertion is scheduled, don't do anything if
@@ -14283,23 +14463,6 @@ Ember.ContainerView = Ember.View.extend({
     });
   },
 
-  /**
-    Schedules a child view to be inserted into the DOM after bindings have
-    finished syncing for this run loop.
-
-    @param {Ember.View} view the child view to insert
-    @param {Ember.View} prev the child view after which the specified view should
-                     be inserted
-    @private
-  */
-  _scheduleInsertion: function(view, prev) {
-    if (prev) {
-      prev.domManager.after(prev, view);
-    } else {
-      this.domManager.prepend(this, view);
-    }
-  },
-
   currentView: null,
 
   _currentViewWillChange: Ember.beforeObserver(function() {
@@ -14319,7 +14482,11 @@ Ember.ContainerView = Ember.View.extend({
     if (currentView) {
       childViews.pushObject(currentView);
     }
-  }, 'currentView')
+  }, 'currentView'),
+
+  _ensureChildrenAreInDOM: function () {
+    this.invokeForState('ensureChildrenAreInDOM', this);
+  }
 });
 
 // Ember.ContainerView extends the default view states to provide different
@@ -14365,15 +14532,26 @@ Ember.ContainerView.states = {
     },
 
     childViewsDidChange: function(view, views, start, added) {
-      // If the DOM element for this container view already exists,
-      // schedule each child view to insert its DOM representation after
-      // bindings have finished syncing.
-      var prev = start === 0 ? null : views[start-1];
+      Ember.run.scheduleOnce('render', this, '_ensureChildrenAreInDOM');
+    },
 
-      for (var i=start; i<start+added; i++) {
-        view = views[i];
-        this._scheduleInsertion(view, prev);
-        prev = view;
+    ensureChildrenAreInDOM: function(view) {
+      var childViews = view.get('childViews'), i, len, childView, previous, buffer;
+      for (i = 0, len = childViews.length; i < len; i++) {
+        childView = childViews[i];
+        buffer = childView.renderToBufferIfNeeded();
+        if (buffer) {
+          childView._notifyWillInsertElement();
+          if (previous) {
+            previous.domManager.after(previous, buffer.string());
+          } else {
+            view.domManager.prepend(view, buffer.string());
+          }
+          childView.transitionTo('inDOM');
+          childView.propertyDidChange('element');
+          childView._notifyDidInsertElement();
+        }
+        previous = childView;
       }
     }
   }
@@ -15542,6 +15720,17 @@ Ember.StateManager = Ember.State.extend(
   currentState: null,
 
   /**
+   The path of the current state. Returns a string representation of the current
+   state.
+
+   @type String
+   @readOnly
+  */
+  currentPath: Ember.computed('currentState', function() {
+    return get(this, 'currentState.path');
+  }).cacheable(),
+
+  /**
     The name of transitionEvent that this stateManager will dispatch
 
     @property {String}
@@ -16309,6 +16498,7 @@ Ember.Routable = Ember.Mixin.create({
 (function() {
 /**
   @class
+  @extends Ember.State
   @extends Ember.Routable
 */
 Ember.Route = Ember.State.extend(Ember.Routable);
@@ -16374,6 +16564,303 @@ Ember._RouteMatcher = Ember.Object.extend({
     return route;
   }
 });
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+
+/**
+  This file implements the `location` API used by Ember's router.
+
+  That API is:
+
+  getURL: returns the current URL
+  setURL(path): sets the current URL
+  onUpdateURL(callback): triggers the callback when the URL changes
+  formatURL(url): formats `url` to be placed into `href` attribute
+
+  Calling setURL will not trigger onUpdateURL callbacks.
+
+  TODO: This, as well as the Ember.Location documentation below, should
+  perhaps be moved so that it's visible in the JsDoc output.
+*/
+/**
+  @class
+
+  Ember.Location returns an instance of the correct implementation of
+  the `location` API.
+
+  You can pass it a `implementation` ('hash', 'history', 'none') to force a
+  particular implementation.
+*/
+Ember.Location = {
+  create: function(options) {
+    var implementation = options && options.implementation;
+    Ember.assert("Ember.Location.create: you must specify a 'implementation' option", !!implementation);
+
+    var implementationClass = this.implementations[implementation];
+    Ember.assert("Ember.Location.create: " + implementation + " is not a valid implementation", !!implementationClass);
+
+    return implementationClass.create.apply(implementationClass, arguments);
+  },
+
+  registerImplementation: function(name, implementation) {
+    this.implementations[name] = implementation;
+  },
+
+  implementations: {}
+};
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+
+/**
+  @class
+
+  Ember.NoneLocation does not interact with the browser. It is useful for
+  testing, or when you need to manage state with your Router, but temporarily
+  don't want it to muck with the URL (for example when you embed your
+  application in a larger page).
+
+  @extends Ember.Object
+*/
+Ember.NoneLocation = Ember.Object.extend(
+/** @scope Ember.NoneLocation.prototype */ {
+  path: '',
+
+  getURL: function() {
+    return get(this, 'path');
+  },
+
+  setURL: function(path) {
+    set(this, 'path', path);
+  },
+
+  onUpdateURL: function(callback) {
+    // We are not wired up to the browser, so we'll never trigger the callback.
+  },
+
+  formatURL: function(url) {
+    // The return value is not overly meaningful, but we do not want to throw
+    // errors when test code renders templates containing {{action href=true}}
+    // helpers.
+    return url;
+  }
+});
+
+Ember.Location.registerImplementation('none', Ember.NoneLocation);
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+
+/**
+  @class
+
+  Ember.HashLocation implements the location API using the browser's
+  hash. At present, it relies on a hashchange event existing in the
+  browser.
+
+  @extends Ember.Object
+*/
+Ember.HashLocation = Ember.Object.extend(
+/** @scope Ember.HashLocation.prototype */ {
+
+  /** @private */
+  init: function() {
+    set(this, 'location', get(this, 'location') || window.location);
+  },
+
+  /**
+    @private
+
+    Returns the current `location.hash`, minus the '#' at the front.
+  */
+  getURL: function() {
+    return get(this, 'location').hash.substr(1);
+  },
+
+  /**
+    @private
+
+    Set the `location.hash` and remembers what was set. This prevents
+    `onUpdateURL` callbacks from triggering when the hash was set by
+    `HashLocation`.
+  */
+  setURL: function(path) {
+    get(this, 'location').hash = path;
+    set(this, 'lastSetURL', path);
+  },
+
+  /**
+    @private
+
+    Register a callback to be invoked when the hash changes. These
+    callbacks will execute when the user presses the back or forward
+    button, but not after `setURL` is invoked.
+  */
+  onUpdateURL: function(callback) {
+    var self = this;
+    var guid = Ember.guidFor(this);
+
+    Ember.$(window).bind('hashchange.ember-location-'+guid, function() {
+      var path = location.hash.substr(1);
+      if (get(self, 'lastSetURL') === path) { return; }
+
+      set(self, 'lastSetURL', null);
+
+      callback(location.hash.substr(1));
+    });
+  },
+
+  /**
+    @private
+
+    Given a URL, formats it to be placed into the page as part
+    of an element's `href` attribute.
+
+    This is used, for example, when using the {{action}} helper
+    to generate a URL based on an event.
+  */
+  formatURL: function(url) {
+    return '#'+url;
+  },
+
+  /** @private */
+  willDestroy: function() {
+    var guid = Ember.guidFor(this);
+
+    Ember.$(window).unbind('hashchange.ember-location-'+guid);
+  }
+});
+
+Ember.Location.registerImplementation('hash', Ember.HashLocation);
+
+})();
+
+
+
+(function() {
+var get = Ember.get, set = Ember.set;
+
+/**
+  @class
+
+  Ember.HistoryLocation implements the location API using the browser's
+  history.pushState API.
+
+  @extends Ember.Object
+*/
+Ember.HistoryLocation = Ember.Object.extend(
+/** @scope Ember.HistoryLocation.prototype */ {
+
+  /** @private */
+  init: function() {
+    set(this, 'location', get(this, 'location') || window.location);
+    set(this, '_initialURL', get(this, 'location').pathname);
+  },
+
+  /**
+    Will be pre-pended to path upon state change
+   */
+  rootURL: '/',
+
+  /**
+    @private
+
+    Used to give history a starting reference
+   */
+  _initialURL: null,
+
+  /**
+    @private
+
+    Returns the current `location.pathname`.
+  */
+  getURL: function() {
+    return get(this, 'location').pathname;
+  },
+
+  /**
+    @private
+
+    Uses `history.pushState` to update the url without a page reload.
+  */
+  setURL: function(path) {
+    var state = window.history.state,
+        initialURL = get(this, '_initialURL');
+
+    path = this.formatPath(path);
+
+    if ((initialURL !== path && !state) || (state && state.path !== path)) {
+      window.history.pushState({ path: path }, null, path);
+    }
+  },
+
+  /**
+    @private
+
+    Register a callback to be invoked whenever the browser
+    history changes, including using forward and back buttons.
+  */
+  onUpdateURL: function(callback) {
+    var guid = Ember.guidFor(this);
+
+    Ember.$(window).bind('popstate.ember-location-'+guid, function(e) {
+      callback(location.pathname);
+    });
+  },
+
+  /**
+    @private
+
+    returns the given path appended to rootURL
+   */
+  formatPath: function(path) {
+    var rootURL = get(this, 'rootURL');
+
+    if (path !== '') {
+      rootURL = rootURL.replace(/\/$/, '');
+    }
+
+    return rootURL + path;
+  },
+
+  /**
+    @private
+
+    Used when using {{action}} helper.  Since no formatting
+    is required we just return the url given.
+  */
+  formatURL: function(url) {
+    return url;
+  },
+
+  /** @private */
+  willDestroy: function() {
+    var guid = Ember.guidFor(this);
+
+    Ember.$(window).unbind('popstate.ember-location-'+guid);
+  }
+});
+
+Ember.Location.registerImplementation('history', Ember.HistoryLocation);
+
+})();
+
+
+
+(function() {
 
 })();
 
@@ -16468,7 +16955,7 @@ var merge = function(original, hash) {
   Respectively, loading the page at the URL '#/alphabeta' would detect the route property of
   'root.bRoute' ('/alphabeta') and transition the router first to the state named 'root' and
   then to the substate 'bRoute'.
-  
+
   ## Adding Nested Routes to a Router
   Routes can contain nested subroutes each with their own `route` property describing the nested
   portion of the URL they would like to detect and handle. Router, like all instances of StateManager,
@@ -16476,27 +16963,27 @@ var merge = function(original, hash) {
   intermediary state when detecting URLs, a Route with nested routes must define both a base `route`
   property for itself and a child Route with a `route` property of `'/'` which will be transitioned
   to when the base route is detected in the URL:
-  
+
   Given the following application code:
 
       App = Ember.Application.create({
         Router: Ember.Router.extend({
           root: Ember.Route.extend({
             aRoute: Ember.Route.extend({
-              route: '/theBaseRouteForThisSet', 
-              
+              route: '/theBaseRouteForThisSet',
+
               indexSubRoute: Ember.Route.extend({
-                route: '/',
+                route: '/'
               }),
-              
+
               subRouteOne: Ember.Route.extend({
-                route: '/subroute1
+                route: '/subroute1'
               }),
-              
+
               subRouteTwo: Ember.Route.extend({
                 route: '/subRoute2'
               })
-              
+
             })
           })
         })
@@ -16505,10 +16992,10 @@ var merge = function(original, hash) {
 
   When the application is loaded at '/theBaseRouteForThisSet' the Router will transition to the route
   at path 'root.aRoute' and then transition to state 'indexSubRoute'.
-  
+
   When the application is loaded at '/theBaseRouteForThisSet/subRoute1' the Router will transition to
   the route at path 'root.aRoute' and then transition to state 'subRouteOne'.
-  
+
   ## Route Transition Events
   Transitioning between Ember.Route instances (including the transition into the detected
   route when loading the application)  triggers the same transition events as state transitions for
@@ -16555,7 +17042,7 @@ var merge = function(original, hash) {
   ### Deserializing A URL's Dynamic Segments
   When an application is first loaded or the URL is changed manually (e.g. through the browser's
   back button) the `deserialize` method of the URL's matching Ember.Route will be called with
-  the application's router as its first argument and a hash of the URLs dynamic segments and values
+  the application's router as its first argument and a hash of the URL's dynamic segments and values
   as its second argument.
 
   The following route structure when loaded with the URL "#/fixed/thefirstvalue/anotherFixed/thesecondvalue":
@@ -16591,8 +17078,8 @@ var merge = function(original, hash) {
   ### Serializing An Object For URLs with Dynamic Segments
   When transitioning into a Route whose `route` property contains dynamic segments the Route's
   `serialize` method is called with the Route's router as the first argument and the Route's
-  context as the second argument.  The return value of `serialize` will be use to populate the
-  dynamic segments and should be a object with keys that match the names of the dynamic sections.
+  context as the second argument.  The return value of `serialize` will be used to populate the
+  dynamic segments and should be an object with keys that match the names of the dynamic sections.
 
   Given the following route structure:
 
@@ -16681,7 +17168,7 @@ var merge = function(original, hash) {
 
   ## Injection of Controller Singletons
   During application initialization Ember will detect properties of the application ending in 'Controller',
-  create singleton instances of each class, and assign them as a properties on the router.  The property name
+  create singleton instances of each class, and assign them as properties on the router.  The property name
   will be the UpperCamel name converted to lowerCamel format. These controller classes should be subclasses
   of Ember.ObjectController, Ember.ArrayController, Ember.Controller, or a custom Ember.Object that includes the
   Ember.ControllerMixin mixin.
@@ -16695,7 +17182,7 @@ var merge = function(original, hash) {
 
   The controller singletons will have their `namespace` property set to the application and their `target`
   property set to the application's router singleton for easy integration with Ember's user event system.
-  See 'Changing View Hierarchy in Response To State Change' and 'Responding to User-initiated Events'
+  See 'Changing View Hierarchy in Response To State Change' and 'Responding to User-initiated Events.'
 
   ## Responding to User-initiated Events
   Controller instances injected into the router at application initialization have their `target` property
@@ -16836,6 +17323,7 @@ Ember.Router = Ember.StateManager.extend(
     var routableState;
 
     try {
+      path = path.replace(get(this, 'rootURL'), '');
       path = path.replace(/^(?=[^\/])/, "/");
 
       this.send('navigateAway');
@@ -16973,351 +17461,6 @@ Ember.Router = Ember.StateManager.extend(
 // ==========================================================================
 // Project:  Ember Routing
 // Copyright: ©2012 Tilde Inc. and contributors.
-// License:   Licensed under MIT license (see license.js)
-// ==========================================================================
-
-})();
-
-(function() {
-var get = Ember.get;
-
-Ember.StateManager.reopen(
-/** @scope Ember.StateManager.prototype */ {
-
-  /**
-    If the current state is a view state or the descendent of a view state,
-    this property will be the view associated with it. If there is no
-    view state active in this state manager, this value will be null.
-
-    @type Ember.View
-  */
-  currentView: Ember.computed(function() {
-    var currentState = get(this, 'currentState'),
-        view;
-
-    while (currentState) {
-      // TODO: Remove this when view state is removed
-      if (get(currentState, 'isViewState')) {
-        view = get(currentState, 'view');
-        if (view) { return view; }
-      }
-
-      currentState = get(currentState, 'parentState');
-    }
-
-    return null;
-  }).property('currentState').cacheable()
-
-});
-
-})();
-
-
-
-(function() {
-var get = Ember.get, set = Ember.set;
-/**
-  @class
-  @deprecated
-
-  Ember.ViewState extends Ember.State to control the presence of a childView within a
-  container based on the current state of the ViewState's StateManager.
-
-  ## Interactions with Ember's View System.
-  When combined with instances of `Ember.StateManager`, ViewState is designed to
-  interact with Ember's view system to control which views are added to
-  and removed from the DOM based on the manager's current state.
-
-  By default, a StateManager will manage views inside the 'body' element. This can be
-  customized by setting the `rootElement` property to a CSS selector of an existing
-  HTML element you would prefer to receive view rendering.
-
-
-      viewStates = Ember.StateManager.create({
-        rootElement: '#some-other-element'
-      })
-
-  You can also specify a particular instance of `Ember.ContainerView` you would like to receive
-  view rendering by setting the `rootView` property. You will be responsible for placing
-  this element into the DOM yourself.
-
-      aLayoutView = Ember.ContainerView.create()
-
-      // make sure this view instance is added to the browser
-      aLayoutView.appendTo('body')
-
-      App.viewStates = Ember.StateManager.create({
-        rootView: aLayoutView
-      })
-
-
-  Once you have an instance of StateManager controlling a view, you can provide states
-  that are instances of `Ember.ViewState`.  When the StateManager enters a state
-  that is an instance of `Ember.ViewState` that `ViewState`'s `view` property will be
-  instantiated and inserted into the StateManager's `rootView` or `rootElement`.
-  When a state is exited, the `ViewState`'s view will be removed from the StateManager's
-  view.
-
-      ContactListView = Ember.View.extend({
-        classNames: ['my-contacts-css-class'],
-        template: Ember.Handlebars.compile('<h2>People</h2>')
-      })
-
-      PhotoListView = Ember.View.extend({
-        classNames: ['my-photos-css-class'],
-        template: Ember.Handlebars.compile('<h2>Photos</h2>')
-      })
-
-      viewStates = Ember.StateManager.create({
-        showingPeople: Ember.ViewState.create({
-          view: ContactListView
-        }),
-        showingPhotos: Ember.ViewState.create({
-          view: PhotoListView
-        })
-      })
-
-      viewStates.transitionTo('showingPeople')
-
-  The above code will change the rendered HTML from
-
-      <body></body>
-
-  to
-
-      <body>
-        <div id="ember1" class="ember-view my-contacts-css-class">
-          <h2>People</h2>
-        </div>
-      </body>
-
-  Changing the current state via `transitionTo` from `showingPeople` to
-  `showingPhotos` will remove the `showingPeople` view and add the `showingPhotos` view:
-
-      viewStates.transitionTo('showingPhotos')
-
-  will change the rendered HTML to
-
-      <body>
-        <div id="ember2" class="ember-view my-photos-css-class">
-          <h2>Photos</h2>
-        </div>
-      </body>
-
-
-  When entering nested `ViewState`s, each state's view will be draw into the the StateManager's
-  `rootView` or `rootElement` as siblings.
-
-
-      ContactListView = Ember.View.extend({
-        classNames: ['my-contacts-css-class'],
-        template: Ember.Handlebars.compile('<h2>People</h2>')
-      })
-
-      EditAContactView = Ember.View.extend({
-        classNames: ['editing-a-contact-css-class'],
-        template: Ember.Handlebars.compile('Editing...')
-      })
-
-      viewStates = Ember.StateManager.create({
-        showingPeople: Ember.ViewState.create({
-          view: ContactListView,
-
-          withEditingPanel: Ember.ViewState.create({
-            view: EditAContactView
-          })
-        })
-      })
-
-
-      viewStates.transitionTo('showingPeople.withEditingPanel')
-
-
-  Will result in the following rendered HTML:
-
-      <body>
-        <div id="ember2" class="ember-view my-contacts-css-class">
-          <h2>People</h2>
-        </div>
-
-        <div id="ember2" class="ember-view editing-a-contact-css-class">
-          Editing...
-        </div>
-      </body>
-
-
-  ViewState views are added and removed from their StateManager's view via their
-  `enter` and `exit` methods. If you need to override these methods, be sure to call
-  `_super` to maintain the adding and removing behavior:
-
-      viewStates = Ember.StateManager.create({
-        aState: Ember.ViewState.create({
-          view: Ember.View.extend({}),
-          enter: function(manager){
-            // calling _super ensures this view will be
-            // properly inserted
-            this._super(manager);
-
-            // now you can do other things
-          }
-        })
-      })
-
-  ## Managing Multiple Sections of A Page With States
-  Multiple StateManagers can be combined to control multiple areas of an application's rendered views.
-  Given the following HTML body:
-
-      <body>
-        <div id='sidebar-nav'>
-        </div>
-        <div id='content-area'>
-        </div>
-      </body>
-
-  You could separately manage view state for each section with two StateManagers
-
-      navigationStates = Ember.StateManager.create({
-        rootElement: '#sidebar-nav',
-        userAuthenticated: Em.ViewState.create({
-          view: Ember.View.extend({})
-        }),
-        userNotAuthenticated: Em.ViewState.create({
-          view: Ember.View.extend({})
-        })
-      })
-
-      contentStates = Ember.StateManager.create({
-        rootElement: '#content-area',
-        books: Em.ViewState.create({
-          view: Ember.View.extend({})
-        }),
-        music: Em.ViewState.create({
-          view: Ember.View.extend({})
-        })
-      })
-
-
-  If you prefer to start with an empty body and manage state programmatically you
-  can also take advantage of StateManager's `rootView` property and the ability of
-  `Ember.ContainerView`s to manually manage their child views.
-
-
-      dashboard = Ember.ContainerView.create({
-        childViews: ['navigationAreaView', 'contentAreaView'],
-        navigationAreaView: Ember.ContainerView.create({}),
-        contentAreaView: Ember.ContainerView.create({})
-      })
-
-      navigationStates = Ember.StateManager.create({
-        rootView: dashboard.get('navigationAreaView'),
-        userAuthenticated: Em.ViewState.create({
-          view: Ember.View.extend({})
-        }),
-        userNotAuthenticated: Em.ViewState.create({
-          view: Ember.View.extend({})
-        })
-      })
-
-      contentStates = Ember.StateManager.create({
-        rootView: dashboard.get('contentAreaView'),
-        books: Em.ViewState.create({
-          view: Ember.View.extend({})
-        }),
-        music: Em.ViewState.create({
-          view: Ember.View.extend({})
-        })
-      })
-
-      dashboard.appendTo('body')
-
-  ## User Manipulation of State via `{{action}}` Helpers
-  The Handlebars `{{action}}` helper is StateManager-aware and will use StateManager action sending
-  to connect user interaction to action-based state transitions.
-
-  Given the following body and handlebars template
-
-      <body>
-        <script type='text/x-handlebars'>
-          <a href="#" {{action "anAction" target="App.appStates"}}> Go </a>
-        </script>
-      </body>
-
-  And application code
-
-      App = Ember.Application.create()
-      App.appStates = Ember.StateManager.create({
-        initialState: 'aState',
-        aState: Ember.State.create({
-          anAction: function(manager, context){}
-        }),
-        bState: Ember.State.create({})
-      })
-
-  A user initiated click or touch event on "Go" will trigger the 'anAction' method of
-  `App.appStates.aState` with `App.appStates` as the first argument and a
-  `jQuery.Event` object as the second object. The `jQuery.Event` will include a property
-  `view` that references the `Ember.View` object that was interacted with.
-
-**/
-Ember.ViewState = Ember.State.extend(
-/** @scope Ember.ViewState.prototype */ {
-  isViewState: true,
-
-  init: function() {
-    Ember.deprecate("Ember.ViewState is deprecated and will be removed from future releases. Consider using the outlet pattern to display nested views instead. For more information, see http://emberjs.com/guides/outlets/.");
-    return this._super();
-  },
-
-  enter: function(stateManager) {
-    var view = get(this, 'view'), root, childViews;
-
-    if (view) {
-      if (Ember.View.detect(view)) {
-        view = view.create();
-        set(this, 'view', view);
-      }
-
-      Ember.assert('view must be an Ember.View', view instanceof Ember.View);
-
-      root = stateManager.get('rootView');
-
-      if (root) {
-        childViews = get(root, 'childViews');
-        childViews.pushObject(view);
-      } else {
-        root = stateManager.get('rootElement') || 'body';
-        view.appendTo(root);
-      }
-    }
-  },
-
-  exit: function(stateManager) {
-    var view = get(this, 'view');
-
-    if (view) {
-      // If the view has a parent view, then it is
-      // part of a view hierarchy and should be removed
-      // from its parent.
-      if (get(view, 'parentView')) {
-        view.removeFromParent();
-      } else {
-
-        // Otherwise, the view is a "root view" and
-        // was appended directly to the DOM.
-        view.remove();
-      }
-    }
-  }
-});
-
-})();
-
-
-
-(function() {
-// ==========================================================================
-// Project:  Ember Statecharts
-// Copyright: ©2011 Living Social Inc. and contributors.
 // License:   Licensed under MIT license (see license.js)
 // ==========================================================================
 
@@ -17980,31 +18123,25 @@ if (Ember.EXTEND_PROTOTYPES) {
 /*jshint newcap:false*/
 var set = Ember.set, get = Ember.get;
 
+// DOMManager should just abstract dom manipulation between jquery and metamorph
 var DOMManager = {
   remove: function(view) {
-    var morph = view.morph;
-    if (morph.isRemoved()) { return; }
-    set(view, 'element', null);
-    view._lastInsert = null;
-    morph.remove();
+    view.morph.remove();
   },
 
-  prepend: function(view, childView) {
-    childView._insertElementLater(function() {
-      var morph = view.morph;
-      morph.prepend(childView.outerHTML);
-      childView.outerHTML = null;
-    });
+  prepend: function(view, html) {
+    view.morph.prepend(html);
   },
 
-  after: function(view, nextView) {
-    nextView._insertElementLater(function() {
-      var morph = view.morph;
-      morph.after(nextView.outerHTML);
-      nextView.outerHTML = null;
-    });
+  after: function(view, html) {
+    view.morph.after(html);
   },
 
+  html: function(view, html) {
+    view.morph.html(html);
+  },
+
+  // This is messed up.
   replace: function(view) {
     var morph = view.morph;
 
@@ -18316,7 +18453,7 @@ function bind(property, options, preserveContext, shouldDisplay, valueNormalizer
 
     /** @private */
     var observer = function() {
-      Ember.run.once(bindView, 'rerenderIfNeeded');
+      Ember.run.scheduleOnce('render', bindView, 'rerenderIfNeeded');
     };
 
     // Observes the given property on the context and
@@ -18557,7 +18694,7 @@ EmberHandlebars.registerHelper('bindAttr', function(options) {
       // to which we were bound has been removed from the view.
       // In that case, we can assume the template has been re-rendered
       // and we need to clean up the observer.
-      if (elem.length === 0) {
+      if (!elem || elem.length === 0) {
         Ember.removeObserver(pathRoot, path, invoker);
         return;
       }
@@ -18567,7 +18704,7 @@ EmberHandlebars.registerHelper('bindAttr', function(options) {
 
     /** @private */
     invoker = function() {
-      Ember.run.once(observer);
+      Ember.run.scheduleOnce('render', observer);
     };
 
     // Add an observer to the view for when the property changes.
@@ -18672,7 +18809,7 @@ EmberHandlebars.bindClasses = function(context, classBindings, view, bindAttrId,
 
       // If we can't find the element anymore, a parent template has been
       // re-rendered and we've been nuked. Remove the observer.
-      if (elem.length === 0) {
+      if (!elem || elem.length === 0) {
         Ember.removeObserver(pathRoot, path, invoker);
       } else {
         // If we had previously added a class to the element, remove it.
@@ -18693,7 +18830,7 @@ EmberHandlebars.bindClasses = function(context, classBindings, view, bindAttrId,
 
     /** @private */
     invoker = function() {
-      Ember.run.once(observer);
+      Ember.run.scheduleOnce('render', observer);
     };
 
     if (path !== '' && path !== 'this') {
@@ -19062,7 +19199,7 @@ var get = Ember.get, getPath = Ember.Handlebars.getPath, fmt = Ember.String.fmt;
 
       <script type="text/x-handlebars">
         {{#collection contentBinding="App.items"}}
-          Hi {{content.name}}
+          Hi {{view.content.name}}
         {{/collection}}
       </script>
 
@@ -19103,7 +19240,7 @@ var get = Ember.get, getPath = Ember.Handlebars.getPath, fmt = Ember.String.fmt;
       ]
 
       App.AnItemView = Ember.View.extend({
-        template: Ember.Handlebars.compile("Greetings {{content.name}}")
+        template: Ember.Handlebars.compile("Greetings {{view.content.name}}")
       })
 
   Will result in the HTML structure below
@@ -19121,7 +19258,7 @@ var get = Ember.get, getPath = Ember.Handlebars.getPath, fmt = Ember.String.fmt;
 
       <script type="text/x-handlebars">
         {{#collection App.MyCustomCollectionClass contentBinding="App.items"}}
-          Hi {{content.name}}
+          Hi {{view.content.name}}
         {{/collection}}
       </script>
 
@@ -19135,7 +19272,7 @@ var get = Ember.get, getPath = Ember.Handlebars.getPath, fmt = Ember.String.fmt;
           {{#collection contentBinding="App.items"
                         itemTagName="p"
                         itemClassNames="greeting"}}
-            Howdy {{content.name}}
+            Howdy {{view.content.name}}
           {{/collection}}
         </script>
 
@@ -19342,6 +19479,34 @@ Ember.Handlebars.EachView = Ember.CollectionView.extend(Ember._Metamorph, {
   }
 });
 
+/**
+  
+  The `{{#each}}` helper loops over elements in a collection, rendering its block once for each item:
+  
+        Developers = [{name: 'Yehuda'},{name: 'Tom'}, {name: 'Paul'}];
+        
+        {{#each Developers}}
+          {{name}}
+        {{/each}}
+        
+  
+  `{{each}}` supports an alternative syntax with element naming:
+        
+        {{#each person in Developers}}
+          {{person.name}}
+        {{/each}}
+  
+  When looping over objects that do not have properties, `{{this}}` can be used to render the object:
+        
+        DeveloperNames = ['Yehuda', 'Tom', 'Paul']
+        
+        {{#each DeveloperNames}}
+          {{this}}
+        {{/each}}
+        
+  
+  @name Handlebars.helpers.each
+*/
 Ember.Handlebars.registerHelper('each', function(path, options) {
   if (arguments.length === 4) {
     Ember.assert("If you pass more than one argument to the each helper, it must be in the form #each foo in bar", arguments[1] === "in");
@@ -19742,6 +19907,8 @@ Ember.Handlebars.registerHelper('yield', function(options) {
 
 
 (function() {
+Ember.Handlebars.OutletView = Ember.ContainerView.extend(Ember._Metamorph);
+
 /**
   The `outlet` helper allows you to specify that the current
   view's controller will fill in the view for a given area.
@@ -19777,7 +19944,7 @@ Ember.Handlebars.registerHelper('outlet', function(property, options) {
 
   options.hash.currentViewBinding = "controller." + property;
 
-  return Ember.Handlebars.helpers.view.call(this, Ember.ContainerView, options);
+  return Ember.Handlebars.helpers.view.call(this, Ember.Handlebars.OutletView, options);
 });
 
 })();
@@ -20238,15 +20405,157 @@ var indexOf = Ember.EnumerableUtils.indexOf, indexesOf = Ember.EnumerableUtils.i
 
   The Ember.Select view class renders a
   [select](https://developer.mozilla.org/en/HTML/Element/select) HTML element,
-  allowing the user to choose from a list of options. The selected option(s)
-  are updated live in the `selection` property, while the corresponding value
-  is updated in the `value` property.
+  allowing the user to choose from a list of options. 
 
-  ### Using Strings
-  The simplest version of an Ember.Select takes an array of strings for the options
-  of a select box and a valueBinding to set the value.
+  The text and `value` property of each `<option>` element within the `<select>` element
+  are populated from the objects in the Element.Select's `content` property. The
+  underlying data object of the selected `<option>` is stored in the
+  Element.Select's `value` property.
+
+  ### `content` as an array of Strings
+  The simplest version of an Ember.Select takes an array of strings as its `content` property.
+  The string will be used as both the `value` property and the inner text of each `<option>`
+  element inside the rendered `<select>`.
 
   Example:
+
+      App.Names = ["Yehuda", "Tom"]
+
+      {{view Ember.Select contentBinding="App.Names"}}
+
+  Would result in the following HTML:
+
+      <select class="ember-select">
+        <option value="Yehuda">Yehuda</option>
+        <option value="Tom">Tom</option>
+      </select>
+
+  You can control which `<option>` is selected through the Ember.Select's
+  `value` property directly or as a binding:
+
+      App.Names = Ember.Object.create({
+        selected: 'Tom',
+        content: ["Yehuda", "Tom"]
+      })
+
+      {{view Ember.Select
+             contentBinding="App.controller.content"
+             valueBinding="App.controller.selected"
+      }}
+
+  Would result in the following HTML with the `<option>` for 'Tom' selected:
+
+      <select class="ember-select">
+        <option value="Yehuda">Yehuda</option>
+        <option value="Tom" selected="selected">Tom</option>
+      </select>
+
+
+  A user interacting with the rendered `<select>` to choose "Yehuda" would update
+  the value of `App.controller.selected` to "Yehuda". 
+
+  ### `content` as an Array of Objects
+  An Ember.Select can also take an array of JavaScript or Ember objects
+  as its `content` property.
+
+  When using objects you need to tell the Ember.Select which property should be
+  accessed on each object to supply the `value` attribute of the `<option>`
+  and which property should be used to supply the element text.
+
+  The `optionValuePath` option is used to specify the path on each object to
+  the desired property for the `value` attribute.  The `optionLabelPath` 
+  specifies the path on each object to the desired property for the 
+  element's text. Both paths must reference each object itself as 'content':
+
+
+      App.Programmers = [
+          Ember.Object.create({firstName: "Yehuda", id: 1}),
+          Ember.Object.create({firstName: "Tom",    id: 2})
+        ];
+
+      {{view Ember.Select
+             contentBinding="App.Programmers"
+             optionValuePath="content.id"
+             optionLabelPath="content.firstName"}}
+
+  Would result in the following HTML:
+
+      <select class="ember-select">
+        <option value>Please Select</option>
+        <option value="1">Yehuda</option>
+        <option value="2">Tom</option>
+      </select>
+
+
+  The `value` attribute of the selected `<option>` within an Ember.Select
+  can be bound to a property on another object by providing a
+  `valueBinding` option:
+
+
+      App.Programmers = [
+          Ember.Object.create({firstName: "Yehuda", id: 1}),
+          Ember.Object.create({firstName: "Tom",    id: 2})
+        ];
+
+      App.currentProgrammer = Ember.Object.create({
+        id: 2
+      })
+
+      {{view Ember.Select
+             contentBinding="App.controller.content"
+             optionValuePath="content.id"
+             optionLabelPath="content.firstName"
+             valueBinding="App.currentProgrammer.id"}}
+
+  Would result in the following HTML with a selected option:
+
+      <select class="ember-select">
+        <option value>Please Select</option>
+        <option value="1">Yehuda</option>
+        <option value="2" selected="selected">Tom</option>
+      </select>
+
+  Interacting with the rendered element by selecting the first option
+  ('Yehuda') will update the `id` value of `App.currentProgrammer`
+  to match the `value` property of the newly selected `<option>`.
+
+  Alternatively, you can control selection through the underlying objects
+  used to render each object providing a `selectionBinding`. When the selected
+  `<option>` is changed, the property path provided to `selectionBinding`
+  will be updated to match the content object of the rendered `<option>`
+  element: 
+
+      App.controller = Ember.Object.create({
+        selectedPerson: null,
+        content: [
+          Ember.Object.create({firstName: "Yehuda", id: 1}),
+          Ember.Object.create({firstName: "Tom",    id: 2})
+        ]
+      })
+
+      {{view Ember.Select
+             contentBinding="App.controller.content"
+             optionValuePath="content.id"
+             optionLabelPath="content.firstName"
+             selectionBinding="App.controller.selectedPerson"}}
+
+  Would result in the following HTML with a selected option:
+
+      <select class="ember-select">
+        <option value>Please Select</option>
+        <option value="1">Yehuda</option>
+        <option value="2" selected="selected">Tom</option>
+      </select>
+
+
+  Interacting with the rendered element by selecting the first option
+  ('Yehuda') will update the `selectedPerson` value of `App.controller`
+  to match the content object of the newly selected `<option>`. In this
+  case it is the first object in the `App.content.content` 
+
+  ### Supplying a Prompt
+  A `null` value for the Ember.Select's `value` or `selection` property
+  results in there being no `<option>` with a `selected` attribute:
 
       App.controller = Ember.Object.create({
         selected: null,
@@ -20268,56 +20577,33 @@ var indexOf = Ember.EnumerableUtils.indexOf, indexesOf = Ember.EnumerableUtils.i
         <option value="Tom">Tom</option>
       </select>
 
-  Selecting Yehuda from the select box will set `App.controller.selected` to "Yehuda"
-
-  ### Using Objects
-  An Ember.Select can also take an array of JS or Ember objects.
-
-  When using objects you need to supply optionLabelPath and optionValuePath parameters
-  which will be used to get the label and value for each of the options.
-
-  Usually you will bind to either the selection or the value attribute of the select.
-
-  Use selectionBinding if you would like to set the whole object as a property on the target.
-  Use valueBinding if you would like to set just the value.
-
-  Example using selectionBinding:
+  Although `App.controller.selected` is `null` and no `<option>`
+  has a `selected` attribute the rendered HTML will display the
+  first item as though it were selected. You can supply a string
+  value for the Ember.Select to display when there is no selection
+  with the `prompt` option:
 
       App.controller = Ember.Object.create({
-        selectedPerson: null,
-        selectedPersonId: null,
+        selected: null,
         content: [
-          Ember.Object.create({firstName: "Yehuda", id: 1}),
-          Ember.Object.create({firstName: "Tom",    id: 2})
+          "Yehuda",
+          "Tom"
         ]
       })
 
       {{view Ember.Select
              contentBinding="App.controller.content"
-             optionLabelPath="content.firstName"
-             optionValuePath="content.id"
-             selectionBinding="App.controller.selectedPerson"
-             prompt="Please Select"}}
+             valueBinding="App.controller.selected"
+             prompt="Please select a name"
+      }}
+
+  Would result in the following HTML:
 
       <select class="ember-select">
-        <option value>Please Select</option>
-        <option value="1">Yehuda</option>
-        <option value="2">Tom</option>
+        <option>Please select a name</option>
+        <option value="Yehuda">Yehuda</option>
+        <option value="Tom">Tom</option>
       </select>
-
-  Selecting Yehuda here will set `App.controller.selectedPerson` to
-  the Yehuda object.
-
-  Example using valueBinding:
-
-      {{view Ember.Select
-             contentBinding="App.controller.content"
-             optionLabelPath="content.firstName"
-             optionValuePath="content.id"
-             valueBinding="App.controller.selectedPersonId"
-             prompt="Please Select"}}
-
-  Selecting Yehuda in this case will set `App.controller.selectedPersonId` to 1.
 
   @extends Ember.View
 */
@@ -20451,8 +20737,10 @@ Ember.Select = Ember.View.extend(
 
   _triggerChange: function() {
     var selection = get(this, 'selection');
+    var value = get(this, 'value');
 
     if (selection) { this.selectionDidChange(); }
+    if (value) { this.valueDidChange(); }
 
     this._change();
   },
@@ -20541,7 +20829,7 @@ Ember.SelectOption = Ember.View.extend({
     var content = get(this, 'content'),
         selection = get(this, 'parentView.selection');
     if (get(this, 'parentView.multiple')) {
-      return selection && indexOf(selection, content) > -1;
+      return selection && indexOf(selection, content.valueOf()) > -1;
     } else {
       // Primitives get passed through bindings as objects... since
       // `new Number(4) !== 4`, we use `==` below
@@ -20569,7 +20857,6 @@ Ember.SelectOption = Ember.View.extend({
     }).property(valuePath).cacheable());
   }, 'parentView.optionValuePath')
 });
-
 
 })();
 
@@ -20694,8 +20981,8 @@ Ember.onLoad('application', bootstrap);
 
 })();
 
-// Version: v1.0.pre
-// Last commit: 7955b85 (2012-08-03 14:50:17 -0700)
+// Version: v1.0.pre-89-gf7b3c0b
+// Last commit: f7b3c0b (2012-09-06 14:24:20 -0700)
 
 
 (function() {
