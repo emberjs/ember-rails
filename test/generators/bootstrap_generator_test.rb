@@ -25,17 +25,11 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
   test "Assert folder layout and .gitkeep files are properly created" do
     run_generator
-
-    assert_file "app/assets/javascripts/application.js",
-      /Dummy = Ember.Application.create()/
     assert_new_dirs(:skip_git => false)
   end
 
   test "Assert folder layout is properly created without .gitkeep files" do
     run_generator %w(-g)
-
-    assert_file "app/assets/javascripts/application.js",
-      /Dummy = Ember.Application.create()/
     assert_new_dirs(:skip_git => true)
   end
 
@@ -44,12 +38,16 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     test "create bootstrap with #{engine} engine" do
       run_generator ["--javascript-engine=#{engine}"]
 
+      assert_file "app/assets/javascripts/application.js.#{engine}".sub('.js.js','.js'),
+        /Dummy = Ember.Application.create()/
+
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/routes/app_router.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{ember_path}/#{application_name.underscore}.js"
+      assert_file "#{ember_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
     end
 
   end
+
 
   private
 
