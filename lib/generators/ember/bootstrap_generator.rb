@@ -10,9 +10,10 @@ module Ember
       desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
 
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
+      class_option :coffeescript, :type => :boolean, :default => false, :desc => "Generate as coffeescript files"
 
       def inject_ember
-        application_file = "app/assets/javascripts/application.js"
+        application_file  = "app/assets/javascripts/application.js"
 
         inject_into_file(application_file, :before => "//= require_tree") do
           dependencies = [
@@ -37,19 +38,32 @@ module Ember
       end
 
       def create_app_file
-        template "app.js", "#{ember_path}/#{application_name.underscore}.js"
+        if options.coffeescript?
+          template "app.js.coffee", "#{ember_path}/#{application_name.underscore}.js.coffee"
+        else
+          template "app.js", "#{ember_path}/#{application_name.underscore}.js"
+        end
       end
 
       def create_router_file
-        template "router.js", "#{ember_path}/routes/app_router.js"
+        if options.coffeescript?
+          template "router.js.coffee", "#{ember_path}/routes/app_router.js.coffee"
+        else
+          template "router.js", "#{ember_path}/routes/app_router.js"
+        end
       end
 
       def create_store_file
-        template "store.js", "#{ember_path}/store.js"
+        if options.coffeescript?
+          template "store.js.coffee", "#{ember_path}/store.js.coffee"
+        else
+          template "store.js", "#{ember_path}/store.js"
+        end
       end
 
       def create_app_stubs
-        generate "ember:view", "application"
+        invoke('ember:controller', [ 'application' ], options)
+        invoke('ember:view', [ 'application' ], options)
       end
     end
   end
