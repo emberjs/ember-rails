@@ -5,22 +5,8 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::BootstrapGenerator
   destination File.join(Rails.root, "tmp")
 
-  setup :prepare_destination
-
-  def copy_directory(dir)
-    source = Rails.root.join(dir)
-    dest = Rails.root.join("tmp", File.dirname(dir))
-
-    FileUtils.mkdir_p dest
-    FileUtils.cp_r source, dest
-  end
-
-  def prepare_destination
-    super
-
-    copy_directory "app/assets/javascripts"
-    copy_directory "config"
-  end
+  setup :bootstrap
+  teardown :cleanup
 
   test "Assert folder layout and .gitkeep files are properly created" do
     run_generator
@@ -38,6 +24,22 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
+  test "Assert folder layout and .gitkeep files are properly created with coffeescript flag" do
+    run_generator %w{--coffeescipt}
+
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_new_dirs(:skip_git => false, :coffeescrip => true)
+  end
+
+  test "Assert folder layout is properly created without .gitkeep files with coffeescript flag" do
+    run_generator %w(-g --coffeescript)
+
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_new_dirs(:skip_git => true, :coffeescript => true)
+  end
+
   private
 
   def assert_new_dirs(options = {})
@@ -47,7 +49,8 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     end
 
     assert_directory "#{ember_path}/routes"
-    assert_file "#{ember_path}/routes/app_router.js"
+    assert_file "#{ember_path}/routes/app_router.js" unless options[:coffeescript]
+    assert_file "#{ember_path}/routes/app_router.js.coffee" if options[:coffeescript]
   end
 
   def ember_path
