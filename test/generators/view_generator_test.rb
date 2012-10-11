@@ -14,12 +14,21 @@ class ViewGeneratorTest < Rails::Generators::TestCase
       assert_file "app/assets/javascripts/views/post_view.js.#{engine}".sub('.js.js','.js')
     end
 
+    test "create namespaced view with #{engine} engine" do
+      run_generator ["post/index", "--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/views/post/index_view.js.#{engine}".sub('.js.js','.js') , /PostIndexView/
+    end
+
   end
   test 'views_handlebars' do
     run_generator ["post"]
     assert_file "app/assets/javascripts/templates/post.handlebars"
   end
 
+  test 'namsepaced views_handlebars' do
+    run_generator ["post/index"]
+    assert_file "app/assets/javascripts/templates/post/index.handlebars"
+  end
 
 end
 

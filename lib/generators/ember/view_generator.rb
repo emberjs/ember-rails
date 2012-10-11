@@ -3,6 +3,8 @@ require 'ember/version'
 module Ember
   module Generators
     class ViewGenerator < ::Rails::Generators::NamedBase
+      include Ember::Generators::GeneratorHelpers
+
       source_root File.expand_path("../../templates", __FILE__)
 
       desc "Creates a new Ember.js view and associated Handlebars template"
@@ -20,7 +22,9 @@ module Ember
 
         template 'view.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
 
-        invoke('ember:controller', [ file_name ], options)
+        invoke('ember:controller', [ name ], options)
+        
+        puts name
 
       end
 

@@ -27,8 +27,12 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
       assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
     end
 
-  end
+    test "default_controller namespaced with #{engine} engine" do
+      run_generator ["post/index","--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/controllers/post/index_controller.js.#{engine}".sub('.js.js','.js'), /PostIndexController/
+    end
 
+  end
 
 end
 
