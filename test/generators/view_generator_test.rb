@@ -17,6 +17,7 @@ class ViewGeneratorTest < Rails::Generators::TestCase
     test "create namespaced view with #{engine} engine" do
       run_generator ["post/index", "--javascript-engine=#{engine}"]
       assert_file "app/assets/javascripts/views/post/index_view.js.#{engine}".sub('.js.js','.js') , /PostIndexView/
+      assert_file "app/assets/javascripts/views/post/index_view.js.#{engine}".sub('.js.js','.js') , /templateName: 'post\/index'/
     end
 
   end
