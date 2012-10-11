@@ -14,8 +14,8 @@ class ModelGeneratorTest < Rails::Generators::TestCase
     end
 
     test "create namespaced model with #{engine} engine" do
-      run_generator ["post/Doineedthis", "title:string", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/models/post/Doineedthis.js.#{engine}".sub('.js.js','.js'), /PostDoineedthis/
+      run_generator ["post/doineedthis", "title:string", "--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/models/post/doineedthis.js.#{engine}".sub('.js.js','.js'), /PostDoineedthis/
     end
   end
 end
