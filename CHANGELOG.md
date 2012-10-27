@@ -1,3 +1,9 @@
+## 0.8.0 (Oct 27, 2012)
+
+Improvements:
+
+  - Updated Ember.js to version 1.0-pre.2
+
 ## 0.5.0 (Mai 25, 2012)
 
 Improvements:
