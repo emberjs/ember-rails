@@ -1,6 +1,6 @@
 require 'sprockets'
 require 'sprockets/engines'
-require 'ember/handlebars/source'
+require 'barber'
 
 module Ember
   module Handlebars
@@ -18,8 +18,8 @@ module Ember
           template = mustache_to_handlebars(scope, data)
 
           if configuration.precompile
-            func = Ember::Handlebars.compile(template)
-            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.template(#{func});\n"
+            template = Barber::Ember::FilePrecompiler.call(template)
+            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = #{template}\n"
           else
             "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.compile(#{indent(template).inspect});\n"
           end
