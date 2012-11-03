@@ -76,7 +76,7 @@ module Ember
         root = configuration.templates_root
 
         unless root.blank?
-          path.gsub!(/^#{Regexp.quote(root)}\/?/, '')
+          path.gsub!(/^(.*\/)*?#{Regexp.quote(root)}\/?/, '')
         end
 
         path = path.split('/')
