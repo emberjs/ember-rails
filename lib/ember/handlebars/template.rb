@@ -1,6 +1,6 @@
 require 'sprockets'
 require 'sprockets/engines'
-require 'ember/handlebars/source'
+require 'barber'
 
 module Ember
   module Handlebars
@@ -12,21 +12,57 @@ module Ember
       def prepare; end
 
       def evaluate(scope, locals, &block)
-        if scope.pathname.to_s =~ /\.raw\.(handlebars|hjs|hbs)/
-          "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Handlebars.compile(#{indent(data).inspect});\n"
+        target = template_target(scope)
+        raw = handlebars?(scope)
+
+        if raw
+          template = data
         else
           template = mustache_to_handlebars(scope, data)
+        end
 
-          if configuration.precompile
-            func = Ember::Handlebars.compile(template)
-            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.template(#{func});\n"
+        if configuration.precompile
+          if raw
+            template = precompile_handlebars(template)
           else
-            "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}] = Ember.Handlebars.compile(#{indent(template).inspect});\n"
+            template = precompile_ember_handlebars(template)
+          end
+        else
+          if raw
+            template = compile_handlebars(data)
+          else
+            template = compile_ember_handlebars(template)
           end
         end
+
+        "#{target} = #{template}\n"
       end
 
       private
+
+      def handlebars?(scope)
+        scope.pathname.to_s =~ /\.raw\.(handlebars|hjs|hbs)/
+      end
+
+      def template_target(scope)
+        "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}]"
+      end
+
+      def compile_handlebars(string)
+        "Handlebars.compile(#{indent(string).inspect});"
+      end
+
+      def precompile_handlebars(string)
+        Barber::FilePrecompiler.call(string)
+      end
+
+      def compile_ember_handlebars(string)
+        "Ember.Handlebars.compile(#{indent(string).inspect});"
+      end
+
+      def precompile_ember_handlebars(string)
+        Barber::Ember::FilePrecompiler.call(string)
+      end
 
       def mustache_to_handlebars(scope, template)
         if scope.pathname.to_s =~ /\.mustache\.(handlebars|hjs|hbs)/
