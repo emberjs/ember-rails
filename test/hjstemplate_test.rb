@@ -33,7 +33,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
     with_template_root("", "-") do
       t = Ember::Handlebars::Template.new {}
       path = t.send(:template_path, 'app/templates/example')
-      assert_equal path, 'app-templates-example'
+      assert_equal 'app-templates-example', path
     end
   end
 
@@ -41,7 +41,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
     with_template_root("app", "/") do
       t = Ember::Handlebars::Template.new {}
       path = t.send(:template_path, 'app/templates/app/example')
-      assert_equal path, 'templates/app/example'
+      assert_equal 'templates/app/example', path
     end
   end
 
@@ -50,7 +50,18 @@ class HjsTemplateTest < ActionController::IntegrationTest
       t = Ember::Handlebars::Template.new {}
       #old, handlebars.templates_root = handlebars.templates_root, 'app/templates'
       path = t.send(:template_path, 'app/templates/app/example')
-      assert path == 'app/example', path
+      assert 'app/example', path
+    end
+  end
+
+  test "should allow partial templates_root matching" do
+    with_template_root("templates") do
+      t = Ember::Handlebars::Template.new {}
+      path = t.send(:template_path, 'app/templates/example')
+      assert_equal 'example', path
+
+      path = t.send(:template_path, 'admin/templates/admin_example')
+      assert_equal 'admin_example', path
     end
   end
 
