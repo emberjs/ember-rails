@@ -12,6 +12,7 @@ module Ember
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
       class_option :object, :type => :boolean, :default => false, :desc => "Create an Ember.ObjectController to represent a single object"
+      class_option :skip_controller, :type => :boolean, :default => false, :desc => "Skip controller creation"
 
 
 
@@ -23,7 +24,7 @@ module Ember
 
         template 'view.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
 
-        invoke('ember:controller', [ name ], options)
+        invoke('ember:controller', [ name ], options) unless options[:skip_controller]
         
         puts name
 

@@ -20,7 +20,13 @@ class ViewGeneratorTest < Rails::Generators::TestCase
       assert_file "app/assets/javascripts/views/post/index_view.js.#{engine}".sub('.js.js','.js') , /templateName: 'post\/index'/
     end
 
+    test "skip-controller option for #{engine} engine" do
+      run_generator ["post","--skip-controller", "--javascript-engine=#{engine}"]
+      assert_no_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
+    end
+
   end
+
   test 'views_handlebars' do
     run_generator ["post"]
     assert_file "app/assets/javascripts/templates/post.handlebars"
@@ -30,6 +36,7 @@ class ViewGeneratorTest < Rails::Generators::TestCase
     run_generator ["post/index"]
     assert_file "app/assets/javascripts/templates/post/index.handlebars"
   end
+
 
 end
 
