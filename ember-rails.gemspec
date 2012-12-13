@@ -12,11 +12,11 @@ Gem::Specification.new do |s|
   s.summary     = "Ember for Rails 3.1+"
 
   s.add_dependency "execjs", [">= 1.2"]
-  s.add_dependency "railties", ["~> 3.1"]
+  s.add_dependency "railties", [">= 3.1"]
   s.add_dependency "active_model_serializers"
   s.add_dependency "barber"
 
-  s.add_development_dependency "rails", ["~> 3.1"]
+  s.add_development_dependency "rails", [">= 3.1"]
 
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
 
