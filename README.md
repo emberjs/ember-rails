@@ -57,6 +57,9 @@ file to setup application namespace and initial requires:
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
 
+If you want to use the most recent emberjs from git you can download and install the
+latest sources like this: `rails g ember:install --head`
+
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
 (e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
