@@ -44,6 +44,12 @@ module Ember
         config.ember.handlebars_location ||= location_for(app, "handlebars.js")
       end
 
+      initializer "ember_rails.es5_default", :group => :all do |app|
+        if defined?(Closure::Compiler) && app.config.assets.js_compressor == :closure
+          Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
+        end
+      end
+
       def location_for(app, file)
         path = app.config.assets.paths.find do |dir|
           Pathname.new(dir).join(file).exist?
