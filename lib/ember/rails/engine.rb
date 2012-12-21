@@ -14,7 +14,11 @@ module Ember
         require 'ember/filters/slim' if defined? Slim
         require 'ember/filters/haml' if defined? Haml
 
-        sprockets = Sprockets.respond_to?('register_engine') ? Sprockets : app.assets
+        sprockets = if ::Rails::VERSION::MAJOR == 4
+          Sprockets.respond_to?('register_engine') ? Sprockets : app.assets
+        else
+          app.assets
+        end
 
         sprockets.register_engine '.handlebars', Ember::Handlebars::Template
         sprockets.register_engine '.hbs', Ember::Handlebars::Template
