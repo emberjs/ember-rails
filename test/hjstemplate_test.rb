@@ -54,6 +54,18 @@ class HjsTemplateTest < ActionController::IntegrationTest
     end
   end
 
+  test "should strip different template roots" do
+    with_template_root(["templates", "templates_mobile"]) do
+      t = Ember::Handlebars::Template.new {}
+      #old, handlebars.templates_root = handlebars.templates_root, 'app/templates'
+      path = t.send(:template_path, 'templates/app/example')
+      assert path == 'app/example', path
+
+      path = t.send(:template_path, 'templates_mobile/app/example')
+      assert path == 'app/example', path
+    end
+  end
+
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
     assert_response :success

@@ -75,8 +75,14 @@ module Ember
       def template_path(path)
         root = configuration.templates_root
 
-        unless root.blank?
-          path.gsub!(/^#{Regexp.quote(root)}\/?/, '')
+        if root.kind_of? Array
+          root.each do |root|
+            path.gsub!(/^#{Regexp.quote(root)}\//, '')
+          end
+        else
+          unless root.empty?
+            path.gsub!(/^#{Regexp.quote(root)}\/?/, '')
+          end
         end
 
         path = path.split('/')
