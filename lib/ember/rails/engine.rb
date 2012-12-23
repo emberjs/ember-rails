@@ -10,13 +10,19 @@ module Ember
       config.handlebars.templates_root = "templates"
       config.handlebars.templates_path_separator = '/'
 
-      initializer "ember_rails.setup", :group => :all do |app|
+      initializer "ember_rails.setup", :after => :append_assets_path, :group => :all do |app|
         require 'ember/filters/slim' if defined? Slim
         require 'ember/filters/haml' if defined? Haml
 
-        app.assets.register_engine '.handlebars', Ember::Handlebars::Template
-        app.assets.register_engine '.hbs', Ember::Handlebars::Template
-        app.assets.register_engine '.hjs', Ember::Handlebars::Template
+        sprockets = if ::Rails::VERSION::MAJOR == 4
+          Sprockets.respond_to?('register_engine') ? Sprockets : app.assets
+        else
+          app.assets
+        end
+
+        sprockets.register_engine '.handlebars', Ember::Handlebars::Template
+        sprockets.register_engine '.hbs', Ember::Handlebars::Template
+        sprockets.register_engine '.hjs', Ember::Handlebars::Template
       end
     end
   end
