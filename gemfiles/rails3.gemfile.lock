@@ -102,5 +102,6 @@ PLATFORMS
 
 DEPENDENCIES
   appraisal
+  bundler (>= 1.2.2)
   ember-rails!
   rails (~> 3.1)

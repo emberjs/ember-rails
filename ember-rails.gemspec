@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency "active_model_serializers"
   s.add_dependency "barber"
 
+  s.add_development_dependency "bundler", [">= 1.2.2"]
   s.add_development_dependency "appraisal"
 
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]

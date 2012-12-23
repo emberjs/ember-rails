@@ -112,5 +112,6 @@ PLATFORMS
 DEPENDENCIES
   activerecord-deprecated_finders!
   appraisal
+  bundler (>= 1.2.2)
   ember-rails!
   rails!
