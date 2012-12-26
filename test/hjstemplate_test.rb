@@ -5,7 +5,7 @@ class HomeControllerTest < ActionController::TestCase
   test "page header should include link to asset" do
     get :index
     assert_response :success
-    assert_select 'head script[type="text/javascript"][src="/assets/templates/test.js"]', true, @response.body
+    assert_select 'head script[src="/assets/templates/test.js"]', true, @response.body
   end
 
 end
@@ -75,7 +75,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
   test "should unbind mustache templates" do
     get "/assets/templates/hairy.mustache"
     assert_response :success
-    assert_match /Ember\.TEMPLATES\["hairy"\] = Ember\.Handlebars\.template\(function .*unbound/m, @response.body
+    assert_match /Ember\.TEMPLATES\["hairy(\.mustache)?"\] = Ember\.Handlebars\.template\(function .*unbound/m, @response.body
   end
 
   test "ensure new lines inside the anon function are persisted" do
