@@ -13,6 +13,7 @@ module Ember
         template 'view.js', File.join('app/assets/javascripts/views', class_path, "#{file_name}_view.js")
         template 'view.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
         invoke('ember:controller', [ file_name ], options)
+        invoke('ember:route', [ file_name ], options)
       end
 
     end

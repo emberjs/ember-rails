@@ -41,7 +41,7 @@ module Ember
       end
 
       def create_router_file
-        template "router.js", "#{ember_path}/routes/app_router.js"
+        template "router.js", "#{ember_path}/router.js"
       end
 
       def create_store_file
