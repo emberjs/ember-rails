@@ -58,6 +58,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     end
 
     assert_directory "#{ember_path}/routes"
+    assert_file "#{ember_path}/router.js"
   end
 
   def ember_path

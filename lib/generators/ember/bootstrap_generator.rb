@@ -40,6 +40,10 @@ module Ember
         template "store.#{engine_extension}", "#{ember_path}/store.#{engine_extension}"
       end
 
+      def create_store_file
+        template "store.#{engine_extension}", "#{ember_path}/store.#{engine_extension}"
+      end
+
       def create_app_stubs
         generate "ember:view", "application"
       end

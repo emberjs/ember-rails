@@ -5,7 +5,7 @@ class HomeControllerTest < ActionController::TestCase
   test "page header should include link to asset" do
     get :index
     assert_response :success
-    assert_select 'head script[type="text/javascript"][src="/assets/templates/test.js"]', true, @response.body
+    assert_select 'head script[src="/assets/templates/test.js"]', true, @response.body
   end
 
 end
@@ -54,6 +54,18 @@ class HjsTemplateTest < ActionController::IntegrationTest
     end
   end
 
+  test "should strip different template roots" do
+    with_template_root(["templates", "templates_mobile"]) do
+      t = Ember::Handlebars::Template.new {}
+      #old, handlebars.templates_root = handlebars.templates_root, 'app/templates'
+      path = t.send(:template_path, 'templates/app/example')
+      assert path == 'app/example', path
+
+      path = t.send(:template_path, 'templates_mobile/app/example')
+      assert path == 'app/example', path
+    end
+  end
+
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
     assert_response :success
@@ -63,7 +75,7 @@ class HjsTemplateTest < ActionController::IntegrationTest
   test "should unbind mustache templates" do
     get "/assets/templates/hairy.mustache"
     assert_response :success
-    assert_match /Ember\.TEMPLATES\["hairy"\] = Ember\.Handlebars\.template\(function .*unbound/m, @response.body
+    assert_match /Ember\.TEMPLATES\["hairy(\.mustache)?"\] = Ember\.Handlebars\.template\(function .*unbound/m, @response.body
   end
 
   test "ensure new lines inside the anon function are persisted" do
