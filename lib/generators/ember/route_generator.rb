@@ -3,6 +3,8 @@ require 'ember/version'
 module Ember
   module Generators
     class RouteGenerator < ::Rails::Generators::NamedBase
+      include Ember::Generators::GeneratorHelpers
+
       source_root File.expand_path("../../templates", __FILE__)
 
       desc "Creates a new Ember.js route"
