@@ -30,6 +30,10 @@ class ViewGeneratorTest < Rails::Generators::TestCase
       assert_no_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
     end
 
+    test "skip-route option for #{engine} engine" do
+      run_generator ["post","--skip-route", "--javascript-engine=#{engine}"]
+      assert_no_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js')
+    end
   end
 
   test 'views_handlebars' do

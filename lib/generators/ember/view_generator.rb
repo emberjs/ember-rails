@@ -13,6 +13,7 @@ module Ember
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
       class_option :object, :type => :boolean, :default => false, :desc => "Create an Ember.ObjectController to represent a single object"
       class_option :skip_controller, :type => :boolean, :default => false, :desc => "Skip controller creation"
+      class_option :skip_route, :type => :boolean, :default => false, :desc => "Skip route creation"
 
 
 
@@ -25,7 +26,7 @@ module Ember
         template 'view.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
 
         invoke('ember:controller', [ name ], options) unless options[:skip_controller]
-        invoke('ember:route', [ file_name ], options)
+        invoke('ember:route', [ name ], options) unless options[:skip_route]
       end
 
     end
