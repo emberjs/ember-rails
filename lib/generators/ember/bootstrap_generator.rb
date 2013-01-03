@@ -33,7 +33,7 @@ module Ember
       end
 
       def create_router_file
-        template "router.#{engine_extension}", "#{ember_path}/routes/app_router.#{engine_extension}"
+        template "router.#{engine_extension}", "#{ember_path}/router.#{engine_extension}"
       end
 
       def create_store_file
