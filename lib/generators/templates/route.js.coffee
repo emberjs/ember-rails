@@ -1,2 +1,3 @@
-<%= application_name.camelize %>.<%= class_name.camelize %>Route = Ember.Route.extend
-  # model: (params)->
+<%= application_name.camelize %>.<%= class_name.camelize %>Route = Ember.Route.extend({
+
+})
