@@ -4,7 +4,7 @@ ember-rails allows you to include [Ember.JS](http://emberjs.com/) into your Rail
 
 The gem will also pre-compile your handlebars templates when building your asset pipeline. It includes development and production copies of Ember.
 
-You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if your just starting out with Rails and Ember.js
+You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if you're just starting out with Rails and Ember.js
 
 ## Getting started
 
