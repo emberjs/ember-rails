@@ -11,9 +11,6 @@ module Ember
       config.handlebars.templates_path_separator = '/'
 
       initializer "ember_rails.setup", :after => :append_assets_path, :group => :all do |app|
-        require 'ember/filters/slim' if defined? Slim
-        require 'ember/filters/haml' if defined? Haml
-
         sprockets = if ::Rails::VERSION::MAJOR == 4
           Sprockets.respond_to?('register_engine') ? Sprockets : app.assets
         else
