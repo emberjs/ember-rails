@@ -1,6 +1,5 @@
-// Version: v1.0.0-pre.3-19-g015138e
-// Last commit: 015138e (2013-01-17 23:02:17 -0800)
-
+// Version: v1.0.0-pre.4
+// Last commit: 855db1a (2013-01-17 23:06:53 -0800)
 
 (function() {
 /*global __fail__*/
@@ -8107,7 +8106,7 @@ Ember.Array = Ember.Mixin.create(Ember.Enumerable, /** @scope Ember.Array.protot
     This returns the objects at the specified indexes, using `objectAt`.
 
     ```javascript
-    var arr = ['a', 'b', 'c', 'd'];
+    var arr = ['a', 'b', 'c', 'd'];
     arr.objectsAt([0, 1, 2]);  // ["a", "b", "c"]
     arr.objectsAt([2, 3, 4]);  // ["c", "d", undefined]
     ```
@@ -26047,4 +26046,3 @@ Ember
 */
 
 })();
-
