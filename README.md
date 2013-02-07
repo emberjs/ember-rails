@@ -84,6 +84,8 @@ Default behavior for ember-rails is to precompile handlebars templates only in p
 If you don't want this behavior you can turn it off in your application configuration block :
 
     config.handlebars.precompile = false
+    
+(Remember to clear the local sprockets cache if you change the value of precompile, by default at `tmp/cache/assets`)
 
 Bundle all templates together thanks to Sprockets,
 e.g create `app/assets/javascripts/templates/all.js` with:
