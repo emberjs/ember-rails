@@ -7,7 +7,7 @@ module Ember
 
       source_root File.expand_path("../../templates", __FILE__)
 
-      desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
+      desc "Creates a default Ember.js folder layout in app/assets/javascripts"
 
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
 
