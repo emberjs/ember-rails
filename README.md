@@ -12,9 +12,7 @@ Add the gem to your application Gemfile:
 
     gem "ember-rails"
 
-Run `bundle install` and add the following line to `app/assets/javascripts/application.js`:
-
-    //= require ember
+Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
 
 Ember-rails will use the production build of Ember.js when Rails is running in
 production mode, and the development build otherwise.
