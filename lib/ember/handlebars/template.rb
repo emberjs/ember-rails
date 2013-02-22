@@ -77,11 +77,11 @@ module Ember
 
         if root.kind_of? Array
           root.each do |root|
-            path.gsub!(/^#{Regexp.quote(root)}\//, '')
+            path.sub!(/#{Regexp.quote(root)}\//, '')
           end
         else
           unless root.empty?
-            path.gsub!(/^#{Regexp.quote(root)}\/?/, '')
+            path.sub!(/#{Regexp.quote(root)}\/?/, '')
           end
         end
 

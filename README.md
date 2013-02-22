@@ -12,9 +12,7 @@ Add the gem to your application Gemfile:
 
     gem "ember-rails"
 
-Run `bundle install` and add the following line to `app/assets/javascripts/application.js`:
-
-    //= require ember
+Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
 
 Ember-rails will use the production build of Ember.js when Rails is running in
 production mode, and the development build otherwise.
@@ -64,26 +62,20 @@ and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
 
-If you want to strip template root from template names, add `templates_root` option to your application configuration block :
+If you want to strip template root from template names, add `templates_root` option to your application configuration block.
+By default, `templates_root` is `'templates'`.
 
-    config.handlebars.templates_root = 'templates'
+    config.handlebars.templates_root = 'ember_templates'
 
-The result will be like this :
+If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.handlebars` after setting the above config,
+it will be made available to Ember as the `admin_panel` template.
 
-    Ember.TEMPLATES['admin_panel'] = "...";
-
-If you want a different path separator in template names add `templates_path_separator` option to your application configuration block :
-
-    config.handlebars.templates_path_separator = '-'
-
-The result will be like this :
-
-    Ember.TEMPLATES['templates-admin_panel'] = "...";
-
-Default behavior for ember-rails is to precompile handlebars templates only in production environment.
-If you don't want this behavior you can turn it off in your application configuration block :
+Default behavior for ember-rails is to precompile handlebars templates.
+If you don't want this behavior you can turn it off in your application configuration (or per environment in: `config/environments/development.rb`) block:
 
     config.handlebars.precompile = false
+    
+_(Note: you must clear the local sprockets cache if you disable precompilation, stored by default in `tmp/cache/assets`)_
 
 Bundle all templates together thanks to Sprockets,
 e.g create `app/assets/javascripts/templates/all.js` with:
