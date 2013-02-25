@@ -11,13 +11,14 @@ module Ember
       desc "Creates a new Ember.js router, controller, view and template"
 
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
+      class_option :skip_route, :type => :boolean, :default => false, :desc => "Don't create route"
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
       class_option :object, :type => :boolean, :default => false, :desc => "Create an Ember.ObjectController to represent a single object"
 
 
       def create_resource_files
 
-        invoke('ember:route', [ name ], options)
+        invoke('ember:route', [ name ], options) unless options[:skip_route]
         invoke('ember:controller', [ name ], options)
         invoke('ember:view', [ name ], options)
         invoke('ember:template', [ name ], options) 

@@ -29,6 +29,11 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
       assert_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js')
     end
 
+    test "skip route with #{engine} engine" do
+      run_generator ["post", "--javascript-engine=#{engine}", "--skip-route"]
+      assert_no_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js')
+    end
+
 
   end
 end
