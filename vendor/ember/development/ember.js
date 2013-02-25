@@ -1,5 +1,5 @@
-// Version: v1.0.0-pre.4-206-g4f2036f
-// Last commit: 4f2036f (2013-02-12 17:02:00 +0100)
+// Version: v1.0.0-rc.1
+// Last commit: 8b061b4 (2013-02-15 12:10:22 -0800)
 
 
 (function() {
@@ -21076,8 +21076,7 @@ Ember.Select = Ember.View.extend(
 
   tagName: 'select',
   classNames: ['ember-select'],
-  defaultTemplate: Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
-this.compilerInfo = [2,'>= 1.0.0-rc.3'];
+  defaultTemplate: Ember.Handlebars.template(function anonymous(Handlebars, depth0, helpers, partials, data) { this.compilerInfo = [2,'>= 1.0.0-rc.3'];
 helpers = helpers || Ember.Handlebars.helpers; data = data || {};
   var buffer = '', stack1, hashTypes, escapeExpression=this.escapeExpression, self=this;
 
