@@ -11,7 +11,13 @@ class ViewGeneratorTest < Rails::Generators::TestCase
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/views/post_view.js.#{engine}".sub('.js.js','.js'), /templateName: 'post'/
+    end
+
+    test "create view and template with #{engine} engine" do
+      run_generator ["post", "--javascript-engine=#{engine}", "--skip-template=false"]
       assert_file "app/assets/javascripts/views/post_view.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/templates/post.handlebars"
     end
 
     test "create namespaced view with #{engine} engine" do

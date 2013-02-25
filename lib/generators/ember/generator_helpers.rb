@@ -20,7 +20,7 @@ module Ember
       end
 
       def handlebars_template_path
-        File.join( class_path, file_name)
+        File.join(class_path, file_name).gsub(/^\//, '') 
       end
 
       def engine_extension
