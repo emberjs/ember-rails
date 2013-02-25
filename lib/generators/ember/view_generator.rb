@@ -10,12 +10,12 @@ module Ember
 
       desc "Creates a new Ember.js view and associated Handlebars template"
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
-      class_option :skip_template, :type => :boolean, :default => true, :desc => "Skip template creation"
+      class_option :with_template, :type => :boolean, :default => false, :desc => "Create template for this view"
 
       def create_view_files
         template "view.#{engine_extension}", File.join('app/assets/javascripts/views', class_path, "#{file_name}_view.#{engine_extension}")
 
-        invoke('ember:template', [ name ], options) unless options[:skip_template]
+        invoke('ember:template', [ name ], options) if options[:with_template]
       end
 
     end
