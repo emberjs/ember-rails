@@ -13,7 +13,7 @@ module Ember
 
 
       def create_template_files
-        template 'view.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
+        template 'template.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
       end
 
     end
