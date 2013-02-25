@@ -22,6 +22,10 @@ module Ember
       def handlebars_template_path
         File.join( class_path, file_name)
       end
+
+      def engine_extension
+        @engine_extension ||= "js.#{options[:javascript_engine]}".sub('js.js','js')
+      end
     end
   end
 end
