@@ -38,20 +38,31 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
+  test "Assert folder layout is properly created with custom path" do
+    custom_path = ember_path("custom")
+    run_generator [ "-d", custom_path ]
+
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_new_dirs(:skip_git => false, :in_path => custom_path)
+  end
+
   private
 
   def assert_new_dirs(options = {})
+    path = options[:in_path] || ember_path
+
     %W{models controllers views helpers templates}.each do |dir|
-      assert_directory "#{ember_path}/#{dir}"
-      assert_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
+      assert_directory "#{path}/#{dir}"
+      assert_file "#{path}/#{dir}/.gitkeep" unless options[:skip_git]
     end
 
-    assert_directory "#{ember_path}/routes"
-    assert_file "#{ember_path}/router.js"
+    assert_directory "#{path}/routes"
+    assert_file "#{path}/router.js"
   end
 
-  def ember_path
-   "app/assets/javascripts"
+  def ember_path(custom_path = nil)
+   "app/assets/javascripts/#{custom_path}"
   end
 
 end
