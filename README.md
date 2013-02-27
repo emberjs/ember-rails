@@ -33,8 +33,12 @@ Additionally, it will add the following lines to `app/assets/javascripts/applica
 By default, it uses the Rails Application's name and creates an `rails_app_name.js` 
 file to setup application namespace and initial requires:
 
+    //= require handlebars
     //= require ember
-    //= require ember/app
+    //= require ember-data
+    //= require_self
+    //= require rails_app_name
+    RailsAppName = Ember.Application.create();
 
 *Example:*
 
