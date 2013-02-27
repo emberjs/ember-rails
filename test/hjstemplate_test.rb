@@ -83,6 +83,12 @@ class HjsTemplateTest < ActionController::IntegrationTest
     assert_match /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m, @response.body
   end
 
+  test "asset pipeline should serve bundled application.js" do
+    get "/assets/application.js"
+    assert_response :success
+    assert_match /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m, @response.body
+  end
+
   test "should unbind mustache templates" do
     get "/assets/templates/hairy.mustache"
     assert_response :success
