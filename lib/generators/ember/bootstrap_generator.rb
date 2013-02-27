@@ -1,3 +1,4 @@
+require 'ember/version'
 require 'generators/ember/generator_helpers'
 
 module Ember
@@ -9,6 +10,7 @@ module Ember
 
       desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
 
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
 
       def inject_ember
