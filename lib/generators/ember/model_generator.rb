@@ -19,18 +19,18 @@ module Ember
       EMBER_TYPE_LOOKUP = {
         nil       => 'string',
 
-        binary:      'string',
-        string:      'string',
-        text:        'string',
-        boolean:     'boolean',
-        date:        'date',
-        datetime:    'date',
-        time:        'date',
-        timestamp:   'date',
-        decimal:     'number',
-        float:       'number',
-        integer:     'number',
-        primary_key: 'number'
+        :binary      => 'string',
+        :string      => 'string',
+        :text        => 'string',
+        :boolean     => 'boolean',
+        :date        => 'date',
+        :datetime    => 'date',
+        :time        => 'date',
+        :timestamp   => 'date',
+        :decimal     => 'number',
+        :float       => 'number',
+        :integer     => 'number',
+        :primary_key => 'number'
       }
 
       def parse_attributes!
