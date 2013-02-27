@@ -3,13 +3,13 @@ require 'generators/ember/model_generator'
 
 class ModelGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::ModelGenerator
-  destination File.join(Rails.root, "tmp")
+  destination File.join(Rails.root, "tmp", "generator_test_output")
 
   setup :prepare_destination
 
   def copy_directory(dir)
     source = Rails.root.join(dir)
-    dest = Rails.root.join("tmp", File.dirname(dir))
+    dest = Rails.root.join("tmp", "generator_test_output", File.dirname(dir))
 
     FileUtils.mkdir_p dest
     FileUtils.cp_r source, dest
