@@ -1,4 +1,5 @@
 require 'ember/version'
+require 'generators/ember/generator_helpers'
 
 module Ember
   module Generators
