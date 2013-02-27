@@ -39,7 +39,7 @@ module Ember
           key = type.try(:to_sym)
           ember_type = EMBER_TYPE_LOOKUP[key] || type
 
-          { name: name, type: ember_type }
+          { :name => name, :type => ember_type }
         end
       end
     end
