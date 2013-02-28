@@ -51,7 +51,7 @@ module Ember
       end
 
       def create_app_stubs
-        generate "ember:view", "application"
+        invoke "ember:view", ["application", "-d #{ember_path}"]
       end
     end
   end
