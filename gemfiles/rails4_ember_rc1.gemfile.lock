@@ -49,7 +49,7 @@ GIT
 PATH
   remote: /Users/machty/code/gits/ember-rails
   specs:
-    ember-rails (0.10.1)
+    ember-rails (0.11.0)
       active_model_serializers
       barber (>= 0.4.1)
       ember-data-source
