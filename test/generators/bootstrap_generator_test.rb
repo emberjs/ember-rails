@@ -47,7 +47,29 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => false, :in_path => custom_path)
   end
 
+  test "Assert application stubs" do
+    run_generator
+
+    assert_invoked_generators_files
+  end
+
+  test "Assert application stubs with custom path" do
+    custom_path = ember_path("custom")
+    run_generator [ "-d", custom_path ]
+
+    assert_invoked_generators_files(:in_path => custom_path)
+  end
+
   private
+
+  def assert_invoked_generators_files(options = {})
+    path = options[:in_path] || ember_path
+
+    assert_file "#{path}/views/application_view.js"
+    assert_file "#{path}/templates/application.handlebars"
+    assert_file "#{path}/controllers/application_controller.js"
+    assert_file "#{path}/routes/application_route.js"
+  end
 
   def assert_new_dirs(options = {})
     path = options[:in_path] || ember_path
