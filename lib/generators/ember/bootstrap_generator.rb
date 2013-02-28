@@ -1,3 +1,4 @@
+require 'ember/version'
 require 'generators/ember/generator_helpers'
 
 module Ember
@@ -7,8 +8,9 @@ module Ember
 
       source_root File.expand_path("../../templates", __FILE__)
 
-      desc "Creates a default Ember.js folder layout in app/assets/javascripts/ember"
+      desc "Creates a default Ember.js folder layout in app/assets/javascripts"
 
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
 
@@ -56,10 +58,6 @@ module Ember
           source  = File.expand_path(find_in_source_paths("application.#{safe_extension}"))
           ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
         end
-      end
-
-      def engine_extension
-        "js.#{options[:javascript_engine]}".sub('js.js','js')
       end
     end
   end

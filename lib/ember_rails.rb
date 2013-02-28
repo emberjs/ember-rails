@@ -1,8 +1,10 @@
 require 'rails'
 require 'ember/rails/version'
 require 'ember/version'
-require 'ember/handlebars/version'
 require 'ember/rails/engine'
+require 'ember/source'
+require 'ember/data/source'
+require 'handlebars/source'
 
 module Ember
   module Rails
@@ -21,13 +23,23 @@ module Ember
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
         if variant = app.config.ember.variant
-          # Add the gem's vendored ember to the end of the asset search path
-          ember_path = File.expand_path("../../vendor/ember/#{variant}", __FILE__)
-          app.config.assets.paths.push(ember_path.to_s)
+          # Copy over the desired ember, ember-data, and handlebars bundled in
+          # ember-source, ember-data-source, and handlebars-source to a tmp folder. 
+          tmp_path = app.root.join("tmp/cache/ember-rails")
+          ext = variant == :production ? ".prod.js" : ".js"
+          FileUtils.mkdir_p(tmp_path)
+          FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ext}"), tmp_path.join("ember.js"))
+          FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ext}"), tmp_path.join("ember-data.js"))
+          app.assets.append_path(tmp_path)
+
+          # Make the handlebars.js and handlebars.runtime.js bundled
+          # in handlebars-source available.
+          app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path))
 
           # Allow a local variant override
           ember_path = app.root.join("vendor/assets/ember/#{variant}")
-          app.config.assets.paths.unshift(ember_path.to_s) if ember_path.exist?
+          app.assets.prepend_path(ember_path.to_s) if ember_path.exist?
+
         else
           warn "No ember.js variant was specified in your config environment."
           warn "You can set a specific variant in your application config in "
@@ -39,23 +51,10 @@ module Ember
         end
       end
 
-      initializer "ember_rails.find_ember", :after => "ember_rails.setup_vendor", :group => :all do |app|
-        config.ember.ember_location ||= location_for(app, "ember.js")
-        config.ember.handlebars_location ||= location_for(app, "handlebars.js")
-      end
-
       initializer "ember_rails.es5_default", :group => :all do |app|
         if defined?(Closure::Compiler) && app.config.assets.js_compressor == :closure
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
         end
-      end
-
-      def location_for(app, file)
-        path = app.config.assets.paths.find do |dir|
-          Pathname.new(dir).join(file).exist?
-        end
-
-        File.join(path, file) if path
       end
     end
   end

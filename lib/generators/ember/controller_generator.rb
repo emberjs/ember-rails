@@ -12,14 +12,12 @@ module Ember
 
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :object, :type => :boolean, :default => false, :desc => "Create an Ember.ObjectController to represent a single object"
 
 
       def create_controller_files
-
-        engine_extension = "js.#{options[:javascript_engine]}".sub('js.js','js')
-
-        file_path = File.join('app/assets/javascripts/controllers', class_path, "#{file_name}_controller.#{engine_extension}")
+        file_path = File.join(ember_path, 'controllers', class_path, "#{file_name}_controller.#{engine_extension}")
 
         if options.array?
           template "array_controller.#{engine_extension}", file_path
