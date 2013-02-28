@@ -25,7 +25,7 @@ module Ember
         if variant = app.config.ember.variant
           # Copy over the desired ember, ember-data, and handlebars bundled in
           # ember-source, ember-data-source, and handlebars-source to a tmp folder. 
-          tmp_path = app.root.join("tmp/cache/ember-rails")
+          tmp_path = app.root.join("tmp/ember-rails")
           ext = variant == :production ? ".prod.js" : ".js"
           FileUtils.mkdir_p(tmp_path)
           FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ext}"), tmp_path.join("ember.js"))

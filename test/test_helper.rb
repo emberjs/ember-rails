@@ -8,5 +8,8 @@ require File.expand_path("../dummy/config/environment.rb",  __FILE__)
 require "rails/generators"
 require "rails/test_help"
 require "fileutils"
+require "test/unit"
+require "active_support/core_ext/kernel/reporting"
+require "pathname"
 
 Rails.backtrace_cleaner.remove_silencers!
