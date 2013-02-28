@@ -116,7 +116,7 @@ version of one of the above-linked gems in the Gemfile, e.g.:
 
 You can also specify versions of 'handlebars-source' and
 'ember-data-source', but note that an appropriate 'handlebars-source'
-will by automatically chosen depending on the version of 'ember-source'
+will be automatically chosen depending on the version of 'ember-source'
 that's specified. 
 
 You can also override the specific ember.js, handlebars.js, and
