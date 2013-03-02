@@ -74,6 +74,8 @@ By default, `templates_root` is `'templates'`.
 If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.handlebars` after setting the above config,
 it will be made available to Ember as the `admin_panel` template.
 
+_(Note: you must clear the local sprockets cache after modifying `templates_root`, stored by default in `tmp/cache/assets`)_
+
 Default behavior for ember-rails is to precompile handlebars templates.
 If you don't want this behavior you can turn it off in your application configuration (or per environment in: `config/environments/development.rb`) block:
 
