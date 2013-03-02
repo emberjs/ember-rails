@@ -29,10 +29,10 @@ module Ember
           end
 
           Dir.chdir git_root do
-            say_status("building", "bundle && bundle exec rake dist", :green)
+            say_status("building", "bundle && bundle exec rake clean dist", :green)
             Bundler.with_clean_env do
               cmd "bundle --gemfile #{gem_file}"
-              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake dist}
+              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake clean dist}
             end
           end
 
@@ -65,10 +65,10 @@ module Ember
           end
 
           Dir.chdir git_root do
-            say_status("building", "bundle && bundle exec rake", :green)
+            say_status("building", "bundle && bundle exec rake clean dist", :green)
             Bundler.with_clean_env do
               cmd "bundle --gemfile #{gem_file}"
-              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake}
+              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake clean dist}
             end
           end
 
