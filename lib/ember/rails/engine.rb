@@ -1,5 +1,4 @@
 require 'ember/handlebars/template'
-require 'active_model_serializers'
 
 module Ember
   module Rails
