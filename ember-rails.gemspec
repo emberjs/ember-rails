@@ -24,4 +24,25 @@ Gem::Specification.new do |s|
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
 
   s.require_paths = ["lib"]
+
+  # Temporary notification for AMS transition to Gemfile
+  s.post_install_message = <<POSTINSTALL
+# Ember-Rails Release Notes #
+
+If you're upgrading from ember-rails 0.11.1 or earlier, please be aware of the
+ActiveModelSerializers changes that are part of this update:
+
+ActiveModelSerializers will no longer be a hard dependency of ember-rails and
+will not be require'd automatically.  Please add the following line to your
+Gemfile to continue using ActiveModelSerializers with ember-rails:
+
+    gem "active_model_serializers"
+
+In new applications, running the bootstrap generator will append this
+dependency statement to your Gemfile for you:
+
+    rails g ember:bootstrap
+
+Read more about using ember-rails at https://github.com/emberjs/ember-rails
+POSTINSTALL
 end
