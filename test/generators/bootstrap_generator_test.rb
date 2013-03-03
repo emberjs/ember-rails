@@ -20,9 +20,14 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     copy_directory "app/assets/javascripts"
     copy_directory "config"
-
     FileUtils.cp(Rails.root.join("Gemfile"), destination_root)
+  end
+
+  def run_generator(*args)
+    original_gemfile = ENV['BUNDLE_GEMFILE']
     ENV['BUNDLE_GEMFILE'] = File.join(destination_root, "Gemfile")
+    super
+    ENV['BUNDLE_GEMFILE'] = original_gemfile
   end
 
   test "Assert folder layout and .gitkeep files are properly created" do
