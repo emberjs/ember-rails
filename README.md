@@ -17,6 +17,15 @@ Run `bundle install` and use the ember-rails generator to add the necessary depe
 Ember-rails will use the production build of Ember.js when Rails is running in
 production mode, and the development build otherwise.
 
+## Setting Ember Variant
+
+After running `bundle install` make sure you set the ember variant for your enviroments in their respected files with.
+
+    config.ember.variant = :development # or :production
+    
+Without doing so will result in Sprockrets not being able to resolve Ember's dependencies.
+
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you 
