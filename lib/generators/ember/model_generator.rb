@@ -7,30 +7,30 @@ module Ember
       include Ember::Generators::GeneratorHelpers
 
       source_root File.expand_path("../../templates", __FILE__)
+      desc "creates a new ember.js model"
       argument :attributes, :type => :array, :default => [], :banner => "field[:type] field[:type] ..."
-
-      desc "Creates a new Ember.js model"
-      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
+      class_option :javascript_engine, :desc => "engine for javascripts"
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "custom ember app path"
 
       def create_model_files
-        template 'model.js', File.join(ember_path, 'models', class_path, "#{file_name}.js")
+        file_path = File.join(ember_path, 'models', class_path, "#{file_name}.#{engine_extension}")
+        template "model.#{engine_extension}", file_path
       end
 
     private
       EMBER_TYPE_LOOKUP = {
-        nil       => 'string',
-
-        :binary      => 'string',
-        :string      => 'string',
-        :text        => 'string',
-        :boolean     => 'boolean',
-        :date        => 'date',
-        :datetime    => 'date',
-        :time        => 'date',
-        :timestamp   => 'date',
-        :decimal     => 'number',
-        :float       => 'number',
-        :integer     => 'number',
+        nil  => 'string',
+        :binary => 'string',
+        :string => 'string',
+        :text => 'string',
+        :boolean => 'boolean',
+        :date => 'date',
+        :datetime =>'date',
+        :time => 'date',
+        :timestamp => 'date',
+        :decimal => 'number',
+        :float => 'number',
+        :integer => 'number',
         :primary_key => 'number'
       }
 
