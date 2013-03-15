@@ -24,19 +24,25 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
   test "Assert folder layout and .gitkeep files are properly created" do
     run_generator
-
-    assert_file "app/assets/javascripts/application.js",
-      /Dummy = Ember.Application.create()/
     assert_new_dirs(:skip_git => false)
   end
 
   test "Assert folder layout is properly created without .gitkeep files" do
     run_generator %w(-g)
-
-    assert_file "app/assets/javascripts/application.js",
-      /Dummy = Ember.Application.create()/
     assert_new_dirs(:skip_git => true)
   end
+
+  %w(js coffee).each do |engine|
+
+    test "create bootstrap with #{engine} engine" do
+      run_generator ["--javascript-engine=#{engine}"]
+      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
+    end
+
+  end
+
 
   test "Assert folder layout is properly created with custom path" do
     custom_path = ember_path("custom")
@@ -74,17 +80,20 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def assert_new_dirs(options = {})
     path = options[:in_path] || ember_path
 
-    %W{models controllers views helpers templates}.each do |dir|
+    %W{models controllers views helpers templates routes}.each do |dir|
       assert_directory "#{path}/#{dir}"
       assert_file "#{path}/#{dir}/.gitkeep" unless options[:skip_git]
     end
 
-    assert_directory "#{path}/routes"
-    assert_file "#{path}/router.js"
+  end
+
+  def application_name
+    "Dummy"
   end
 
   def ember_path(custom_path = nil)
-   "app/assets/javascripts/#{custom_path}"
+   "app/assets/javascripts/#{custom_path}".chomp('/')
   end
+
 
 end
