@@ -39,31 +39,20 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
+      #assert_file "#{ember_path}/application.js.#{engine}".sub('.js.js','.js'),
+      #  /Dummy = Ember.Application.create()/
     end
 
-  end
+    test "create bootstrap with #{engine} engine and custom path" do
+      custom_path = ember_path("custom")
+      run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
+      assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
+      #assert_file "#{custom_path}/application.js.#{engine}".sub('.js.js','.js'),
+      #  /Dummy = Ember.Application.create()/
+    end
 
-
-  test "Assert folder layout is properly created with custom path" do
-    custom_path = ember_path("custom")
-    run_generator [ "-d", custom_path ]
-
-    assert_file "app/assets/javascripts/application.js",
-      /Dummy = Ember.Application.create()/
-    assert_new_dirs(:skip_git => false, :in_path => custom_path)
-  end
-
-  test "Assert application stubs" do
-    run_generator
-
-    assert_invoked_generators_files
-  end
-
-  test "Assert application stubs with custom path" do
-    custom_path = ember_path("custom")
-    run_generator [ "-d", custom_path ]
-
-    assert_invoked_generators_files(:in_path => custom_path)
   end
 
   private
@@ -71,10 +60,9 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def assert_invoked_generators_files(options = {})
     path = options[:in_path] || ember_path
 
-    assert_file "#{path}/views/application_view.js"
-    assert_file "#{path}/templates/application.handlebars"
-    assert_file "#{path}/controllers/application_controller.js"
-    assert_file "#{path}/routes/application_route.js"
+    assert_file "#{path}/#{application_name}.js"
+    assert_file "#{path}/router.js"
+    assert_file "#{path}/store.js"
   end
 
   def assert_new_dirs(options = {})

@@ -42,14 +42,6 @@ module Ember
         template "store.#{engine_extension}", "#{ember_path}/store.#{engine_extension}"
       end
 
-      def create_store_file
-        template "store.#{engine_extension}", "#{ember_path}/store.#{engine_extension}"
-      end
-
-      def create_app_stubs
-        invoke "ember:view", ["application", "-d #{ember_path}"]
-      end
-
       private
       def inject_into_application_file(safe_extension)
         application_file = "app/assets/javascripts/application.#{safe_extension}"
