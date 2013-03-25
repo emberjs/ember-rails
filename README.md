@@ -23,7 +23,7 @@ After running `bundle install` make sure you set the ember variant for your envi
 
     config.ember.variant = :development # or :production
     
-Without doing so will result in Sprockrets not being able to resolve Ember's dependencies.
+Not doing so will result in Sprockrets not being able to resolve Ember's dependencies.
 
 
 ## Architecture
