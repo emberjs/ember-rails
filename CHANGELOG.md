@@ -1,3 +1,12 @@
+## 0.11.0 (Feb 28, 2013)
+
+  - Use handlebars-source and ember-source gems
+
+## 0.10.0 (Feb 17, 2013)
+
+  - Updated Ember.js to version 1.0-rc.1
+  - Updated Handlebars.js to version 1.0-rc.3
+
 ## 0.9.1 (Jan 23, 2013)
 
   - Updated Ember.js to version 1.0-pre.4

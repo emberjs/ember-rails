@@ -66,8 +66,25 @@ class HjsTemplateTest < ActionController::IntegrationTest
     end
   end
 
+  test "should allow partial templates_root matching" do
+    with_template_root("templates") do
+      t = Ember::Handlebars::Template.new {}
+      path = t.send(:template_path, 'app/templates/example')
+      assert_equal 'app/example', path
+
+      path = t.send(:template_path, 'admin/templates/admin_example')
+      assert_equal 'admin/admin_example', path
+    end
+  end
+
   test "asset pipeline should serve template" do
     get "/assets/templates/test.js"
+    assert_response :success
+    assert_match /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m, @response.body
+  end
+
+  test "asset pipeline should serve bundled application.js" do
+    get "/assets/application.js"
     assert_response :success
     assert_match /Ember\.TEMPLATES\["test"\] = Ember\.Handlebars\.template\(function .*"test"/m, @response.body
   end

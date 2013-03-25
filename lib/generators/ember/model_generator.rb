@@ -1,33 +1,37 @@
 require 'ember/version'
+require 'generators/ember/generator_helpers'
 
 module Ember
   module Generators
     class ModelGenerator < ::Rails::Generators::NamedBase
-      source_root File.expand_path("../../templates", __FILE__)
-      argument :attributes, :type => :array, :default => [], :banner => "field[:type] field[:type] ..."
+      include Ember::Generators::GeneratorHelpers
 
-      desc "Creates a new Ember.js model"
+      source_root File.expand_path("../../templates", __FILE__)
+      desc "creates a new ember.js model"
+      argument :attributes, :type => :array, :default => [], :banner => "field[:type] field[:type] ..."
+      class_option :javascript_engine, :desc => "engine for javascripts"
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "custom ember app path"
 
       def create_model_files
-        template 'model.js', File.join('app/assets/javascripts/models', class_path, "#{file_name}.js")
+        file_path = File.join(ember_path, 'models', class_path, "#{file_name}.#{engine_extension}")
+        template "model.#{engine_extension}", file_path
       end
 
     private
       EMBER_TYPE_LOOKUP = {
-        nil       => 'string',
-
-        binary:      'string',
-        string:      'string',
-        text:        'string',
-        boolean:     'boolean',
-        date:        'date',
-        datetime:    'date',
-        time:        'date',
-        timestamp:   'date',
-        decimal:     'number',
-        float:       'number',
-        integer:     'number',
-        primary_key: 'number'
+        nil  => 'string',
+        :binary => 'string',
+        :string => 'string',
+        :text => 'string',
+        :boolean => 'boolean',
+        :date => 'date',
+        :datetime =>'date',
+        :time => 'date',
+        :timestamp => 'date',
+        :decimal => 'number',
+        :float => 'number',
+        :integer => 'number',
+        :primary_key => 'number'
       }
 
       def parse_attributes!
@@ -36,7 +40,7 @@ module Ember
           key = type.try(:to_sym)
           ember_type = EMBER_TYPE_LOOKUP[key] || type
 
-          { name: name, type: ember_type }
+          { :name => name, :type => ember_type }
         end
       end
     end
