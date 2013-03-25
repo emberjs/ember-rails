@@ -141,6 +141,14 @@ you've specified in your app's configuration, e.g.:
     config.ember.variant = :production
     #config.ember.variant = :development
 
+## Updating Ember
+
+If at any point you need to update Ember.js from master, you can do that with
+
+    rails generate ember:install --head
+
+This will clone both Ember.js and Ember Data from GitHub, build it and copy to the right directory.
+
 ## Note on Patches/Pull Requests
 
 1. Fork the project.
