@@ -44,7 +44,7 @@ module Ember
 
       private
       def inject_into_application_file(safe_extension)
-        application_file = "app/assets/javascripts/application.#{safe_extension}"
+        application_file = "#{ember_path}/application.#{safe_extension}"
         inject_into_file( application_file, :before => /^.*require_tree.*$/) do
           context = instance_eval('binding')
           source  = File.expand_path(find_in_source_paths("application.#{safe_extension}"))
