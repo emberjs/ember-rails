@@ -7,5 +7,3 @@
 #= require_tree ./routes
 #= require ./router
 #= require_self
-
-<%= application_name.camelize %>.initialize()
