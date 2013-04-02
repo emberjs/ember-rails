@@ -68,6 +68,8 @@ file to setup application namespace and initial requires:
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
 
+If you want to use coffee script use like: `rails g ember:bootstrap -g --javascript-engine coffee`
+
 _(CoffeeScript support: just make sure you have `gem 'coffee-rails'` in your application Gemfile.)_
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
