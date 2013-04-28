@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", [">= 3.1"]
   s.add_dependency "active_model_serializers"
   s.add_dependency "barber", [">= 0.4.1"]
-  s.add_dependency "ember-source"
+  s.add_dependency "ember-source", ["<= 1.0.0.rc3.1", ">= 1.0.0.rc2.2"]
   s.add_dependency "ember-data-source"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
