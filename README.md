@@ -11,6 +11,8 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 Add the gem to your application Gemfile:
 
     gem "ember-rails"
+    gem "ember-source", "1.0.0rc3.2" # or whatever release of
+                                     # ember-source you desire
 
 Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
 
@@ -22,13 +24,13 @@ production mode, and the development build otherwise.
 After running `bundle install` make sure you set the ember variant for your enviroments in their respected files with.
 
     config.ember.variant = :development # or :production
-    
+
 Not doing so will result in Sprockets not being able to resolve Ember's dependencies.
 
 
 ## Architecture
 
-Ember does not require an organized file structure. However, ember-rails allows you 
+Ember does not require an organized file structure. However, ember-rails allows you
 to use `rails g ember:bootstrap` to create the following directory structure under `app/assets/javascripts`:
 
     controllers/
@@ -39,7 +41,7 @@ to use `rails g ember:bootstrap` to create the following directory structure und
     views/
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
-By default, it uses the Rails Application's name and creates an `rails_app_name.js` 
+By default, it uses the Rails Application's name and creates an `rails_app_name.js`
 file to setup application namespace and initial requires:
 
     //= require handlebars
@@ -91,7 +93,7 @@ Default behavior for ember-rails is to precompile handlebars templates.
 If you don't want this behavior you can turn it off in your application configuration (or per environment in: `config/environments/development.rb`) block:
 
     config.handlebars.precompile = false
-    
+
 _(Note: you must clear the local sprockets cache if you disable precompilation, stored by default in `tmp/cache/assets`)_
 
 Bundle all templates together thanks to Sprockets,
@@ -116,10 +118,10 @@ It will be translated as :
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
-By default, ember-rails ships with the latest version of 
+By default, ember-rails ships with the latest version of
 [Ember](https://rubygems.org/gems/ember-source/versions) (rc1),
-[Handlebars](https://rubygems.org/gems/handlebars-source/versions) (rc3), 
-and [Ember-Data](https://rubygems.org/gems/ember-data-source/versions). 
+[Handlebars](https://rubygems.org/gems/handlebars-source/versions) (rc3),
+and [Ember-Data](https://rubygems.org/gems/ember-data-source/versions).
 
 To specify a different version that'll be used for both template
 precompilation and serving to the browser, you can specify the desired
@@ -130,7 +132,7 @@ version of one of the above-linked gems in the Gemfile, e.g.:
 You can also specify versions of 'handlebars-source' and
 'ember-data-source', but note that an appropriate 'handlebars-source'
 will be automatically chosen depending on the version of 'ember-source'
-that's specified. 
+that's specified.
 
 You can also override the specific ember.js, handlebars.js, and
 ember-data.js files that'll be `require`d by the Asset pipeline by
