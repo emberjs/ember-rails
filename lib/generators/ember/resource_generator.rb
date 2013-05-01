@@ -1,4 +1,3 @@
-require 'ember/version'
 require 'generators/ember/generator_helpers'
 
 module Ember
@@ -23,7 +22,6 @@ module Ember
         invoke('ember:view', [ name ], options)
         invoke('ember:template', [ name ], options) 
       end
-
 
     end
   end
