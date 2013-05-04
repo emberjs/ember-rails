@@ -10,16 +10,11 @@ module Ember
       config.handlebars.templates_root = "templates"
       config.handlebars.templates_path_separator = '/'
 
-      initializer "ember_rails.setup", :after => :append_assets_path, :group => :all do |app|
-        sprockets = if ::Rails::VERSION::MAJOR == 4
-          Sprockets.respond_to?('register_engine') ? Sprockets : app.assets
-        else
-          app.assets
-        end
-
-        sprockets.register_engine '.handlebars', Ember::Handlebars::Template
-        sprockets.register_engine '.hbs', Ember::Handlebars::Template
-        sprockets.register_engine '.hjs', Ember::Handlebars::Template
+      config.before_initialize do |app|
+        Sprockets::Engines #force autoloading
+        Sprockets.register_engine '.handlebars', Ember::Handlebars::Template
+        Sprockets.register_engine '.hbs', Ember::Handlebars::Template
+        Sprockets.register_engine '.hjs', Ember::Handlebars::Template
       end
     end
   end
