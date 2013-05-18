@@ -12,8 +12,8 @@ Add the gems to your application Gemfile:
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.0.0rc3.3' # or the version you need
-gem 'handlebars-source', '1.0.0rc4' # or the version you need
+gem 'ember-source', '1.0.0.rc3.4' # or the version you need
+gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 ```
 
 Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
