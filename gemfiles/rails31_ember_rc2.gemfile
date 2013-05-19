@@ -3,6 +3,7 @@
 source "https://rubygems.org"
 
 gem "rails", "~> 3.1"
-gem "ember-source", "1.0.0.pre4.2"
+gem "ember-source", "1.0.0.rc2.2"
+gem "handlebars-source", "1.0.0.rc3"
 
 gemspec :path=>"../"
