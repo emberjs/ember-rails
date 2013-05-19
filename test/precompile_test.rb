@@ -1,12 +1,12 @@
 require 'test_helper'
 
-class PrecompileTest < Test::Unit::TestCase
+class PrecompileTest < TestCase
   def setup
     delete_assets!
   end
 
   def teardown
-    ENV["RAILS_ENV"] = "test"
+    ENV['RAILS_ENV'] = 'test'
     delete_assets!
   end
 
@@ -15,14 +15,14 @@ class PrecompileTest < Test::Unit::TestCase
   end
 
   def precompile!(rails_env)
-    ENV["RAILS_ENV"] = rails_env
+    ENV['RAILS_ENV'] = rails_env
 
     quietly do 
       Dir.chdir(app_path){ `bundle exec rake assets:precompile` }
     end
 
     appjs = Dir["#{app_path}/public/assets/application.js"].first
-    assert_not_nil appjs
+    assert !appjs.nil?
     contents = File.read(appjs)
     assert_match /Ember\.VERSION/, contents
     assert_match /Handlebars\.VERSION/, contents
@@ -37,6 +37,6 @@ class PrecompileTest < Test::Unit::TestCase
   end
 
   def test_precompile_succeeds_in_production_environment
-    precompile! "production"
+    precompile! 'production'
   end
 end
