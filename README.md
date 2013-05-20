@@ -122,8 +122,8 @@ It will be translated as :
 
 ![Ember Data Warning](ember-data-in-progress.png)
 By default, ember-rails ships with the latest version of
-[Ember](https://rubygems.org/gems/ember-source/versions) (rc1),
-[Handlebars](https://rubygems.org/gems/handlebars-source/versions) (rc3),
+[Ember](https://rubygems.org/gems/ember-source/versions),
+[Handlebars](https://rubygems.org/gems/handlebars-source/versions),
 and [Ember-Data](https://rubygems.org/gems/ember-data-source/versions).
 
 To specify a different version that'll be used for both template
