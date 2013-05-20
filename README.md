@@ -12,8 +12,8 @@ Add the gems to your application Gemfile:
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.0.0rc3.4' # or the version you need
-gem 'handlebars-source', '1.0.0rc4' # or the version you need
+gem 'ember-source', '1.0.0.rc3.4' # or the version you need
+gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 ```
 
 Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
@@ -122,8 +122,8 @@ It will be translated as :
 
 ![Ember Data Warning](ember-data-in-progress.png)
 By default, ember-rails ships with the latest version of
-[Ember](https://rubygems.org/gems/ember-source/versions),
-[Handlebars](https://rubygems.org/gems/handlebars-source/versions),
+[Ember](https://rubygems.org/gems/ember-source/versions) (rc1),
+[Handlebars](https://rubygems.org/gems/handlebars-source/versions) (rc3),
 and [Ember-Data](https://rubygems.org/gems/ember-data-source/versions).
 
 To specify a different version that'll be used for both template
