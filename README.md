@@ -16,7 +16,11 @@ gem 'ember-source', '1.0.0.rc3.4' # or the version you need
 gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 ```
 
-Run `bundle install` and use the ember-rails generator to add the necessary dependencies.
+Ensure all dependencies are bundled and installed: 
+
+```
+bundle install
+```
 
 Next generate the application structure with:
 
@@ -30,7 +34,7 @@ To see all possible ember generators run:
 bundle exec rails generate ember
 ```
 
-To fetch the latest builds of ember and ember-data:
+Optioanlly you can fetch the latest builds of ember and ember-data:
 ```shell
 bundle exec rails generate ember:install --head
 ```
