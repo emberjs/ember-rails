@@ -18,8 +18,8 @@ module Ember
 
       def fetch_ember_data
         if options.head?
-          fetch 'http://builds.emberjs.com/ember-data-latest.js', 'vendor/assets/ember/development/ember.js'
-          fetch 'http://builds.emberjs.com/ember-data-latest.min.js', 'vendor/assets/ember/production/ember.js'
+          fetch 'http://builds.emberjs.com/ember-data-latest.js', 'vendor/assets/ember/development/ember-data.js'
+          fetch 'http://builds.emberjs.com/ember-data-latest.min.js', 'vendor/assets/ember/production/ember-data.js'
         end
       end
 
