@@ -131,12 +131,12 @@ Now a single line in the layout loads everything:
 If you use Slim or Haml templates, you can use handlebars filter :
 
     handlebars:
-        {{#view Ember.Button}}OK{{/view}}
+        <button {{action anActionName}}>OK</button>
 
 It will be translated as :
 
     <script type="text/x-handlebars">
-        {{#view Ember.Button}}OK{{/view}}
+        <button {{action anActionName}}>OK</button>
     </script>
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
