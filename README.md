@@ -173,7 +173,7 @@ If at any point you need to update Ember.js from master, you can do that with
 
     rails generate ember:install --head
 
-This will clone both Ember.js and Ember Data from GitHub, build it and copy to the right directory.
+This will fetch both Ember.js and Ember Data from [http://builds.emberjs.com/](http://builds.emberjs.com/) and copy to the right directory.
 
 ## Note on Patches/Pull Requests
 
