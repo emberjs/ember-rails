@@ -20,10 +20,22 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     copy_directory "app/assets/javascripts"
     copy_directory "config"
+    FileUtils.cp(Rails.root.join("Gemfile"), destination_root)
+  end
+
+  def run_generator(*args)
+    original_gemfile = ENV['BUNDLE_GEMFILE']
+    ENV['BUNDLE_GEMFILE'] = File.join(destination_root, "Gemfile")
+    super
+    ENV['BUNDLE_GEMFILE'] = original_gemfile
   end
 
   test "Assert folder layout and .gitkeep files are properly created" do
     run_generator
+
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_file "Gemfile", /gem\s+\"active_model_serializers\"/
     assert_new_dirs(:skip_git => false)
   end
 
@@ -32,8 +44,24 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
-  %w(js coffee).each do |engine|
+  test "Assert folder layout is created without ActiveModelSerializers" do
+    run_generator %w(-a)
 
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_file("Gemfile") { |gf| gf !~ /active_model_serializers/ }
+  end
+
+  test "Assert folder layout is properly created with custom path" do
+    custom_path = ember_path("custom")
+    run_generator [ "-d", custom_path ]
+
+    assert_file "app/assets/javascripts/application.js",
+      /Dummy = Ember.Application.create()/
+    assert_new_dirs(:skip_git => false, :in_path => custom_path)
+  end
+
+  %w(js coffee).each do |engine|
     test "create bootstrap with #{engine} engine" do
       run_generator ["--javascript-engine=#{engine}"]
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
