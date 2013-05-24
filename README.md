@@ -7,58 +7,45 @@ The gem will also pre-compile your handlebars templates when building your asset
 You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if you're just starting out with Rails and Ember.js
 
 ## Getting started
-
-Add the gems to your application Gemfile:
-
+1. Add the gem to your application Gemfile:
 ```ruby
 gem 'ember-rails'
 gem 'ember-source', '1.0.0.rc3.4' # or the version you need
 gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 ```
 
-Ensure all dependencies are bundled and installed: 
+2. Run `bundle install`
 
+3. [Optional] Configure the ember variant in your environment files (i.e. development.rb, production.rb). If you don't configure this, the version of Ember used defaults to development when the Rails environment is development, and similarly for production.
+```ruby
+  config.ember.variant = :development # or :production
 ```
-bundle install
-```
 
-Next generate the application structure with:
-
+4. Next, generate the application structure:
 ```shell
-  bundle exec rails generate ember:bootstrap
+bundle exec rails generate ember:bootstrap
 ```
 
-To see all possible ember generators run:
+5. Restart your server (if it's running)
 
-```shell
-bundle exec rails generate ember
-```
 
-Optionally you can fetch the latest builds of ember and ember-data:
+Notes:
+
+To install the latest builds of ember and ember-data:
 ```shell
 bundle exec rails generate ember:install --head
 ```
 
-Ember-rails will use the production build of Ember.js when Rails is running in
-production mode, and the development build otherwise.
-
-## For CoffeeScript support:
+## For CoffeeScript support
+1. Add coffee-rails to the Gemfile
 ```ruby
 gem 'coffee-rails'
 ```
 
+2. Run the bootstrap generator in step 4 with an extra flag instead:
 ```sh
 rails g ember:bootstrap -g --javascript-engine coffee
 ```
-
-## Setting Ember Variant
-
-After running `bundle install` make sure you set the ember variant for your enviroments in their respective files with.
-
-    config.ember.variant = :development # or :production
-
-Not doing so will result in Sprockets not being able to resolve Ember's dependencies.
-
 
 ## Architecture
 
