@@ -34,13 +34,22 @@ To see all possible ember generators run:
 bundle exec rails generate ember
 ```
 
-Optioanlly you can fetch the latest builds of ember and ember-data:
+Optionally you can fetch the latest builds of ember and ember-data:
 ```shell
 bundle exec rails generate ember:install --head
 ```
 
 Ember-rails will use the production build of Ember.js when Rails is running in
 production mode, and the development build otherwise.
+
+## For CoffeeScript support:
+```ruby
+gem 'coffee-rails'
+```
+
+```sh
+rails g ember:bootstrap -g --javascript-engine coffee
+```
 
 ## Setting Ember Variant
 
@@ -92,8 +101,6 @@ file to setup application namespace and initial requires:
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
-
-_(CoffeeScript support: just make sure you have `gem 'coffee-rails'` in your application Gemfile.)_
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
 by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
