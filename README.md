@@ -53,7 +53,7 @@ rails g ember:bootstrap -g --javascript-engine coffee
 
 ## Setting Ember Variant
 
-After running `bundle install` make sure you set the ember variant for your enviroments in their respected files with.
+After running `bundle install` make sure you set the ember variant for your enviroments in their respective files with.
 
     config.ember.variant = :development # or :production
 
