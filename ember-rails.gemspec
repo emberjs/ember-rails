@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "appraisal"
   s.add_development_dependency "tzinfo"
 
-  s.add_development_dependency "ember-source", '1.0.0.rc3.4'
+  s.add_development_dependency "ember-source", '1.0.0.rc4'
   s.add_development_dependency "handlebars-source", '1.0.0.rc4'
 
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
