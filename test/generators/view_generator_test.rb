@@ -55,6 +55,11 @@ class ViewGeneratorTest < Rails::Generators::TestCase
     assert_file "#{custom_path}/views/ember_view.js"
   end
 
+  test "Assert files are properly created with custom app name" do
+    run_generator [ "ember", "-n", "AppName" ]
+    assert_file "app/assets/javascripts/views/ember_view.js", /AppName\.EmberView/
+  end
+
   private
 
   def ember_path(custom_path = nil)

@@ -13,6 +13,7 @@ module Ember
       class_option :array, :type => :boolean, :default => false, :desc => "Create an Ember.ArrayController to represent multiple objects"
       class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :object, :type => :boolean, :default => false, :desc => "Create an Ember.ObjectController to represent a single object"
+      class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
 
       def create_controller_files
