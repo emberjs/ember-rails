@@ -11,6 +11,7 @@ module Ember
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
       class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :with_template, :type => :boolean, :default => false, :desc => "Create template for this view"
+      class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_view_files
         file_path = File.join(ember_path, 'views', class_path, "#{file_name}_view.#{engine_extension}")

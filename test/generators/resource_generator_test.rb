@@ -34,6 +34,13 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
       assert_no_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js')
     end
 
+    test "create all with #{engine} engine and custom name" do
+      run_generator ["post", "--javascript-engine=#{engine}", "-n", "MyApp"]
+      assert_file "app/assets/javascripts/views/post_view.js.#{engine}".sub('.js.js','.js'), /MyApp.PostView/
+      assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostController/
+      assert_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostRoute/
+    end
+
 
   end
 end

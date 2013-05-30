@@ -35,6 +35,11 @@ class RouteGeneratorTest < Rails::Generators::TestCase
     assert_file "#{custom_path}/routes/ember_route.js"
   end
 
+  test "Assert files are properly created with custom app name" do
+    run_generator [ "ember", "-n", "MyApp" ]
+    assert_file "app/assets/javascripts/routes/ember_route.js", /MyApp\.EmberRoute/
+  end
+
   private
 
   def ember_path(custom_path = nil)

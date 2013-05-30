@@ -53,7 +53,15 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       #  /Dummy = Ember.Application.create()/
     end
 
+    test "create bootstrap with #{engine} and custom app name" do
+      run_generator ["--javascript-engine=#{engine}", "-n", "MyApp"]
+      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyApp\.Store/
+      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyApp\.Router\.map/
+      assert_file "#{ember_path}/my_app.js.#{engine}".sub('.js.js','.js')
+    end
+
   end
+
 
   private
 

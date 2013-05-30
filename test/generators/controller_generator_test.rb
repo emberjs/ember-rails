@@ -58,6 +58,11 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
     assert_file "#{custom_path}/controllers/ember_controller.js"
   end
 
+  test "Assert files are properly created with custom app name" do
+    run_generator [ "ember", "-n", "MyApp" ]
+    assert_file "#{ember_path}/controllers/ember_controller.js", /MyApp\.EmberController/
+  end
+
   private
 
   def ember_path(custom_path = nil)

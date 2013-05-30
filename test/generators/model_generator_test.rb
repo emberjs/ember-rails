@@ -55,6 +55,11 @@ class ModelGeneratorTest < Rails::Generators::TestCase
     assert_file "#{custom_path}/models/ember.js"
   end
 
+  test "Assert files are properly created with custom app name" do
+    run_generator [ "ember", "-n", "MyApp" ]
+    assert_file "app/assets/javascripts/models/ember.js", /MyApp\.Ember/
+  end
+
   private
 
   def ember_path(custom_path = nil)
