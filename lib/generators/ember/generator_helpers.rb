@@ -7,10 +7,12 @@ module Ember
       end
 
       def application_name
-        if defined?(::Rails) && ::Rails.application
+        if options[:app_name]
+          options[:app_name]
+        elsif defined?(::Rails) && ::Rails.application
           ::Rails.application.class.name.split('::').first
         else
-          "app"
+          "App"
         end
       end
 
