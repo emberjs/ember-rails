@@ -21,7 +21,9 @@ module Ember
       end
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
-        if variant = app.config.ember.variant
+        if variant = app.config.ember.variant || Rails.env.test?
+          # test environments should default to development
+          variant ||= :development
           # Copy over the desired ember, ember-data, and handlebars bundled in
           # ember-source, ember-data-source, and handlebars-source to a tmp folder. 
           tmp_path = app.root.join("tmp/ember-rails")

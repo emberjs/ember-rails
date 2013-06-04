@@ -39,4 +39,8 @@ class PrecompileTest < TestCase
   def test_precompile_succeeds_in_production_environment
     precompile! 'production'
   end
+
+  def test_precompile_succeeds_in_test_environment
+    precompile! 'test'
+  end
 end
