@@ -23,7 +23,7 @@ gem 'handlebars-source', '1.0.0.rc4' # or the version you need
 
 4. Next, generate the application structure:
 ```shell
-bundle exec rails generate ember:bootstrap
+rails generate ember:bootstrap
 ```
 
 5. Restart your server (if it's running)
@@ -33,7 +33,7 @@ Notes:
 
 To install the latest builds of ember and ember-data:
 ```shell
-bundle exec rails generate ember:install --head
+rails generate ember:install --head
 ```
 
 ## For CoffeeScript support
