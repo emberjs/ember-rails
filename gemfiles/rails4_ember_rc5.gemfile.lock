@@ -51,12 +51,12 @@ GEM
     builder (3.1.4)
     ember-data-source (0.13)
       ember-source
-    ember-source (1.0.0.rc3)
-      handlebars-source (>= 1.0.0.rc3, < 1.0.0.rc4)
+    ember-source (1.0.0.rc5)
+      handlebars-source (= 1.0.0.rc4)
     erubis (2.7.0)
     execjs (1.4.0)
       multi_json (~> 1.0)
-    handlebars-source (1.0.0.rc3)
+    handlebars-source (1.0.0.rc4)
     hike (1.2.3)
     i18n (0.6.4)
     mail (2.5.4)
@@ -108,7 +108,7 @@ DEPENDENCIES
   appraisal
   bundler (>= 1.2.2)
   ember-rails!
-  ember-source (= 1.0.0.rc3)
-  handlebars-source (= 1.0.0.rc3)
+  ember-source (= 1.0.0.rc5)
+  handlebars-source (= 1.0.0.rc4)
   rails (= 4.0.0.rc1)
   tzinfo
