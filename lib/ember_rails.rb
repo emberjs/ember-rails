@@ -21,7 +21,7 @@ module Ember
       end
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
-        if variant = app.config.ember.variant || Rails.env.test?
+        if variant = app.config.ember.variant || ::Rails.env.test?
           # test environments should default to development
           variant ||= :development
           # Copy over the desired ember, ember-data, and handlebars bundled in
