@@ -1,6 +1,3 @@
 # for more details see: http://emberjs.com/guides/controllers/
 
-<%= application_name.camelize %>.<%= class_name %>Controller = Ember.Controller.extend({
-
-})
-
+class <%= application_name.camelize %>.<%= class_name %>Controller extends Ember.Controller

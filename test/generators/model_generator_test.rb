@@ -37,11 +37,6 @@ class ModelGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "leave parentheses when create model w/o attributes (with coffee engine)" do
-    run_generator ["post", "--javascript-engine=coffee"]
-    assert_file "app/assets/javascripts/models/post.js.coffee", /DS.Model.extend\(\)/
-  end
-
   test "Assert files are properly created" do
     run_generator %w(ember)
 
