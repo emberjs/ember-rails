@@ -1,6 +1,6 @@
 # http://emberjs.com/guides/models/defining-a-store/
 
-<%= application_name.camelize %>.Store = DS.Store.extend
+class <%= application_name.camelize %>.Store extends DS.Store
   revision: 11
   adapter: DS.RESTAdapter.create()
 
