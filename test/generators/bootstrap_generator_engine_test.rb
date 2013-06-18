@@ -40,7 +40,7 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
-  %w(js coffee).each do |engine|
+  %w(js coffee em).each do |engine|
 
     test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]

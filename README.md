@@ -48,6 +48,7 @@ rake tmp:clear
 ```
 
 ## For CoffeeScript support
+
 1. Add coffee-rails to the Gemfile
 ```ruby
 gem 'coffee-rails'
@@ -68,6 +69,24 @@ Ember-rails include some flags options for bootstrap generator:
 --javascript-engine  # engine for javascript (js or coffee)
 --app-name or -n # custom ember app name
 ```
+
+### For EmberScript support
+
+[EmberScript](http://www.emberscript.com) is a dialect of CoffeeScript
+with extra support for computed properties (which do not have to be
+explicitly declared), the `class` / `extends` syntax, and extra syntax
+to support observers and mixins.
+
+To get EmberScript support, make sure you have the following in your
+Gemfile:
+
+```ruby
+gem 'ember_script-rails', :github => 'ghempton/ember-script-rails'
+```
+
+You can now use the flag `--javascript-engine=em` to specify EmberScript
+assets in your generators, but all of the generators will default to
+using an EmberScript variant first.
 
 ## Configuration Options
 

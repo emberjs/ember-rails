@@ -7,7 +7,7 @@ class TemplateGeneratorTest < Rails::Generators::TestCase
   setup :prepare_destination
 
 
-  %w(js coffee).each do |engine|
+  %w(js coffee em).each do |engine|
     test "template with #{engine} as current engine" do
       run_generator ["post", "--javascript-engine", engine]
       assert_file "app/assets/javascripts/templates/post.handlebars"
