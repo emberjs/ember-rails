@@ -50,6 +50,17 @@ gem 'coffee-rails'
 rails g ember:bootstrap -g --javascript-engine coffee
 ```
 
+Note:
+
+Ember-rails include some flags options for bootstrap generator:
+
+```
+--ember-path or -d # custom ember path
+--skip-git or -g # skip git keeps
+--javascript-engine  # engine for javascript (js or coffee)
+--app-name or -n # custom ember app name
+```
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
