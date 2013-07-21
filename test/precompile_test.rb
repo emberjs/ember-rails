@@ -21,7 +21,7 @@ class PrecompileTest < TestCase
       Dir.chdir(app_path){ `bundle exec rake assets:precompile` }
     end
 
-    appjs = Dir["#{app_path}/public/assets/application.js"].first
+    appjs = Dir["#{app_path}/public/assets/application-*.js"].first
     assert !appjs.nil?
     contents = File.read(appjs)
     assert_match /Ember\.VERSION/, contents
