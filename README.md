@@ -11,7 +11,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.0.0.rc6.3' # or the version you need
+gem 'ember-source', '1.0.0.rc6.4' # or the version you need
 
 # optional since Handlebars 1.0.0 was released
 #gem 'handlebars-source', '~> 1.0.12' # or the version you need
@@ -38,6 +38,12 @@ To install the latest builds of ember and ember-data:
 ```shell
 rails generate ember:install --head
 ```
+
+You'll probably need to clear out your cache after doing this with
+
+```shell
+rake tmp:clear
+```:
 
 ## For CoffeeScript support
 1. Add coffee-rails to the Gemfile
