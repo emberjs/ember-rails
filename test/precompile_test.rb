@@ -17,15 +17,19 @@ class PrecompileTest < TestCase
   def precompile!(rails_env)
     ENV['RAILS_ENV'] = rails_env
 
-    quietly do 
-      Dir.chdir(app_path){ `bundle exec rake assets:precompile` }
+    FileUtils.cd(app_path) do
+      output = `rake asserts:precompile 2>&1`
+      assert $?.exitstatus == 0, "running: 'rake assets:precompile' failed.\n#{output}"
     end
 
-    appjs = Dir["#{app_path}/public/assets/application.js"].first
-    assert !appjs.nil?
-    contents = File.read(appjs)
-    assert_match /Ember\.VERSION/, contents
-    assert_match /Handlebars\.VERSION/, contents
+    application_js_path = "#{app_path}/public/assets/application.js"
+
+    assert File.exists?(application_js_path) , 'application.js should be present'
+
+    contents = File.read(application_js_path)
+
+    assert_match /Ember\.VERSION/, contents, 'application.js should contain Ember.VERSION'
+    assert_match /Handlebars\.VERSION/, contents, 'applciation.js should contain Handlebars.VERSION'
   end
 
   def app_path
