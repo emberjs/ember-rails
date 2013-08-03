@@ -1,7 +1,7 @@
 PATH
-  remote: /Users/kurt/Workspace/ember-rails
+  remote: /Users/stefan/src/ember/ember-rails
   specs:
-    ember-rails (0.12.0)
+    ember-rails (0.13.0)
       active_model_serializers
       barber (>= 0.4.1)
       ember-data-source
