@@ -1,5 +1,13 @@
 require 'test_helper'
 
+if Rails.version >= "4.0.0"
+  ControllerTest  = ActionDispatch::Integration
+  IntegrationTest = ActionDispatch::IntegrationTest
+else
+  ControllerTest  = ActionController::TestCase
+  IntegrationTest = ActionController::IntegrationTest
+end
+
 class HomeControllerTest < ActionController::TestCase
 
   test "page header should include link to asset" do
@@ -10,7 +18,7 @@ class HomeControllerTest < ActionController::TestCase
 
 end
 
-class HjsTemplateTest < ActionController::IntegrationTest
+class HjsTemplateTest < IntegrationTest
 
   def handlebars
     Rails.configuration.handlebars
