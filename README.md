@@ -39,6 +39,12 @@ To install the latest builds of ember and ember-data:
 rails generate ember:install --head
 ```
 
+You'll probably need to clear out your cache after doing this with
+
+```shell
+rake tmp:clear
+```:
+
 ## For CoffeeScript support
 1. Add coffee-rails to the Gemfile
 ```ruby
