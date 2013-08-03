@@ -111,4 +111,5 @@ DEPENDENCIES
   ember-source (= 1.0.0.rc2.2)
   handlebars-source (= 1.0.0.rc3)
   rails (~> 4.0.0)
+  sprockets-rails
   tzinfo

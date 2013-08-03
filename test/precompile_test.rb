@@ -18,13 +18,13 @@ class PrecompileTest < TestCase
     ENV['RAILS_ENV'] = rails_env
 
     FileUtils.cd(app_path) do
-      output = `rake asserts:precompile 2>&1`
+      output = `rake assets:precompile 2>&1`
       assert $?.exitstatus == 0, "running: 'rake assets:precompile' failed.\n#{output}"
     end
 
-    application_js_path = "#{app_path}/public/assets/application.js"
+    application_js_path = Dir["#{app_path}/public/assets/application*.js"].first
 
-    assert File.exists?(application_js_path) , 'application.js should be present'
+    assert application_js_path, 'application.js should be present'
 
     contents = File.read(application_js_path)
 
