@@ -153,6 +153,37 @@ It will be translated as :
         <button {{action anActionName}}>OK</button>
     </script>
 
+### Note about ember components
+
+When necessary, ember-rails adheres to a conventional folder structure. To create an ember component you must define the handlebars file *inside* a *components* folder under the templates folder of your project to properly register your handlebars component file.
+
+*Example* 
+
+With the following folder structure:
+
+    controllers/
+    helpers/
+    models/
+    routes/
+    templates/
+      components/
+        my-component.handlebars
+    views/
+
+and a *my-component.handlebars* file with the following contents
+
+    <h1>My Component</h1>
+
+will produce the following handlebars output
+
+    <script type="text/x-handlebars" id="components/my-component">
+      <h1>My Component</h1>
+    </script>
+
+You can reference your component inside your other handlebars template files by the handlebars file name:
+
+     {{ my-component }}
+
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
 ![Ember Data Warning](ember-data-in-progress.png)
