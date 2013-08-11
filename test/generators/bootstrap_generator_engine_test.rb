@@ -21,26 +21,26 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     copy_directory "app/assets/javascripts"
   end
 
-  test "Assert folder layout and .gitkeep files are properly created" do
+  test "Assert folder layout and .gitkeep files are properly created in a rails engine" do
     run_generator
     assert_new_dirs(:skip_git => false)
   end
 
-  test "Assert folder layout is properly created without .gitkeep files" do
+  test "Assert folder layout is properly created without .gitkeep files in a rails engine" do
     run_generator %w(-g)
     assert_new_dirs(:skip_git => true)
   end
 
   %w(js coffee).each do |engine|
 
-    test "create bootstrap with #{engine}" do
+    test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/app.js.#{engine}".sub('.js.js','.js')
     end
 
-    test "create bootstrap with #{engine} engine and custom path" do
+    test "create bootstrap in a rails engine with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
       assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
@@ -48,7 +48,7 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
       assert_file "#{custom_path}/app.js.#{engine}".sub('.js.js','.js')
     end
 
-    test "create bootstrap with #{engine} and custom app name" do
+    test "create bootstrap in a rails engine with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Store/
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map/
