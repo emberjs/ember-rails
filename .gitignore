@@ -5,4 +5,7 @@ pkg/*
 *.rbc
 *.log
 test/dummy/tmp
+test/dummy_engine/tmp
 .DS_Store
+*.swp
+*.swo
