@@ -3,7 +3,19 @@ module Ember
     module GeneratorHelpers
 
       def ember_path
-        options[:ember_path] || "app/assets/javascripts"
+        if rails_engine?
+          options[:ember_path] || "app/assets/javascripts/#{engine_name}"
+        else
+          options[:ember_path] || "app/assets/javascripts"
+        end
+      end
+
+      def rails_engine?
+        defined?(ENGINE_PATH)
+      end
+
+      def engine_name
+        ENGINE_PATH.split('/')[-2]
       end
 
       def application_name
@@ -15,7 +27,6 @@ module Ember
           "App"
         end
       end
-
 
       def class_name
         (class_path + [file_name]).map!{ |m| m.camelize }.join()
