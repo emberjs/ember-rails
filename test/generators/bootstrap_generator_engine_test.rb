@@ -40,6 +40,14 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
       assert_file "#{ember_path}/app.js.#{engine}".sub('.js.js','.js')
     end
 
+    test "create bootstrap with #{engine} engine and custom path" do
+      custom_path = ember_path("custom")
+      run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
+      assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/app.js.#{engine}".sub('.js.js','.js')
+    end
+
     test "create bootstrap with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
       assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Store/
