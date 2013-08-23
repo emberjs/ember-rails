@@ -51,3 +51,9 @@ appraise "rails4_ember_rc6.4" do
   gem 'ember-source', "1.0.0.rc6.4"
   gem 'handlebars-source', '~> 1.0.0'
 end
+
+appraise "rails4_ember_rc7" do
+  gem 'rails', '~> 4.0.0'
+  gem 'ember-source', '1.0.0.rc7'
+  gem 'handlebars-source', '~> 1.0.0'
+end
