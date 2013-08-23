@@ -6,3 +6,5 @@ pkg/*
 *.log
 test/dummy/tmp
 .DS_Store
+*.swp
+*.swo
