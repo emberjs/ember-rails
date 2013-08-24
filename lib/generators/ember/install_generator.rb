@@ -2,6 +2,7 @@ require 'generators/ember/generator_helpers'
 require 'net/http'
 require 'uri'
 require 'fileutils'
+require 'zlib'
 
 module Ember
   module Generators
@@ -36,8 +37,19 @@ module Ember
         open(to, 'w+') do |output|
           output.puts "// Fetched from: " + uri.to_s
           output.puts "// Fetched on: " + Time.now.utc.iso8601.to_s
-          output.puts Net::HTTP.get(uri).force_encoding("UTF-8")
+          output.puts get_raw_data(uri)
         end
+      end
+
+      def get_raw_data(uri)
+        response = Net::HTTP.get_response(uri)
+        output   = if response["content-encoding"] == 'gzip'
+                     Zlib::GzipReader.new(StringIO.new(response.body), encoding: "ASCII-8BIT").read
+                   else
+                     response.body
+                   end
+
+        output.force_encoding("UTF-8")
       end
     end
   end
