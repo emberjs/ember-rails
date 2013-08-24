@@ -34,6 +34,8 @@ module Ember
         FileUtils.mkdir_p File.dirname(to)
 
         open(to, 'w+') do |output|
+          output.puts "// Fetched from: " + uri.to_s
+          output.puts "// Fetched on: " + Time.now.utc.iso8601.to_s
           output.puts Net::HTTP.get(uri).force_encoding("UTF-8")
         end
       end
