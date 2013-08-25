@@ -11,7 +11,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.0.0.rc6.4' # or the version you need
+gem 'ember-source', '1.0.0.rc7' # or the version you need
 
 # optional since Handlebars 1.0.0 was released
 #gem 'handlebars-source', '~> 1.0.12' # or the version you need
