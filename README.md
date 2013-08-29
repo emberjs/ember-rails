@@ -11,7 +11,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.0.0.rc6.4' # or the version you need
+gem 'ember-source', '1.0.0.rc8' # or the version you need
 
 # optional since Handlebars 1.0.0 was released
 #gem 'handlebars-source', '~> 1.0.12' # or the version you need
@@ -196,7 +196,7 @@ To specify a different version that'll be used for both template
 precompilation and serving to the browser, you can specify the desired
 version of one of the above-linked gems in the Gemfile, e.g.:
 
-    gem 'ember-source', '1.0.0.pre4.2'
+    gem 'ember-source', '1.0.0.rc7'
 
 You can also specify versions of 'handlebars-source' and
 'ember-data-source', but note that an appropriate 'handlebars-source'

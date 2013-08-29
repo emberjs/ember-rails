@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "json"
 gem "rails", "~> 4.0.0"
 gem "ember-source", "1.0.0.rc5"
 gem "handlebars-source", "1.0.0.rc4"
