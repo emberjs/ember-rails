@@ -10,6 +10,12 @@ appraise "rails31_ember_rc3" do
   gem 'handlebars-source', '1.0.0.rc4'
 end
 
+appraise "rails31_ember_rc8" do
+  gem 'rails', '~> 3.1'
+  gem 'ember-source', "1.0.0.rc8"
+  gem 'handlebars-source', '~>1.0.0'
+end
+
 appraise "rails32_ember_rc2" do
   gem 'rails', '~> 3.2'
   gem 'ember-source', "1.0.0.rc2.2"
@@ -20,6 +26,12 @@ appraise 'rails32_ember_rc3' do
   gem 'rails', '~> 3.2'
   gem 'ember-source', '1.0.0.rc3.4'
   gem 'handlebars-source', '1.0.0.rc4'
+end
+
+appraise 'rails32_ember_rc8' do
+  gem 'rails', '~> 3.2'
+  gem 'ember-source', '1.0.0.rc8'
+  gem 'handlebars-source', '~>1.0.0'
 end
 
 appraise "rails4_ember_rc2" do
@@ -55,5 +67,11 @@ end
 appraise "rails4_ember_rc7" do
   gem 'rails', '~> 4.0.0'
   gem 'ember-source', '1.0.0.rc7'
+  gem 'handlebars-source', '~> 1.0.0'
+end
+
+appraise "rails4_ember_rc8" do
+  gem 'rails', '~> 4.0.0'
+  gem 'ember-source', '1.0.0.rc8'
   gem 'handlebars-source', '~> 1.0.0'
 end
