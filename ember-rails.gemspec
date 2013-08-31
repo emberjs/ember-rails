@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.add_dependency "railties", [">= 3.1"]
   s.add_dependency "active_model_serializers"
   s.add_dependency "barber", [">= 0.4.1"]
+  s.add_dependency "json"
 
   s.add_dependency "ember-source"
   s.add_dependency "handlebars-source"
