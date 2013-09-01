@@ -1,5 +1,5 @@
 PATH
-  remote: /Users/rjackson/Dropbox/Source/ruby/ember-rails
+  remote: /Users/dug/OpenSource/ember/ember-rails
   specs:
     ember-rails (0.13.0)
       active_model_serializers
@@ -116,6 +116,7 @@ DEPENDENCIES
   ember-rails!
   ember-source (= 1.0.0.rc8)
   handlebars-source (~> 1.0.0)
+  json
   rails (~> 3.2)
   sprockets-rails
   tzinfo
