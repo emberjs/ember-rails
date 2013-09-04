@@ -68,6 +68,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def assert_invoked_generators_files(options = {})
     path = options[:in_path] || ember_path
 
+    assert_file "#{path}/application.js"
     assert_file "#{path}/#{application_name}.js"
     assert_file "#{path}/router.js"
     assert_file "#{path}/store.js"
