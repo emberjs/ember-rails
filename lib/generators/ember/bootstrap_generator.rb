@@ -24,7 +24,7 @@ module Ember
 
 
       def create_dir_layout
-        %W{models controllers views routes helpers templates mixins}.each do |dir|
+        %W{models controllers views routes helpers components templates 'templates/components' mixins}.each do |dir|
           empty_directory "#{ember_path}/#{dir}"
           create_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
         end

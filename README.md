@@ -74,9 +74,11 @@ to use `rails g ember:bootstrap` to create the following directory structure und
 
     controllers/
     helpers/
+    components/
     models/
     routes/
     templates/
+    templates/components
     views/
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
@@ -102,8 +104,12 @@ file to setup application namespace and initial requires:
       create  app/assets/javascripts/views/.gitkeep
       create  app/assets/javascripts/helpers
       create  app/assets/javascripts/helpers/.gitkeep
+      create  app/assets/javascripts/components
+      create  app/assets/javascripts/components/.gitkeep
       create  app/assets/javascripts/templates
       create  app/assets/javascripts/templates/.gitkeep
+      create  app/assets/javascripts/templates/components
+      create  app/assets/javascripts/templates/components/.gitkeep
       create  app/assets/javascripts/app.js
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
@@ -155,7 +161,7 @@ It will be translated as :
 
 ### Note about ember components
 
-When necessary, ember-rails adheres to a conventional folder structure. To create an ember component you must define the handlebars file *inside* a *components* folder under the templates folder of your project to properly register your handlebars component file.
+When necessary, ember-rails adheres to a conventional folder structure. To create an ember component you must define the handlebars file *inside* the *components* folder under the templates folder of your project to properly register your handlebars component file.
 
 *Example* 
 
