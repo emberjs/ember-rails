@@ -7,17 +7,18 @@ module Ember
 
       source_root File.expand_path("../../templates", __FILE__)
 
-      desc "Creates a new Ember.js component and component template"
+      desc "Creates a new Ember.js component and component template\nCustom Ember Components require at least two descriptive names separated by a dash. Use CamelCase or dash-case to name your component.\n\nExample,\n\trails generate ember:component PostChart [options]\n\trails generate ember:component post-chart [options]"
 
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
       class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
       class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_component_files
-        comp_path = File.join(ember_path, 'components', class_path, "#{file_name}_component.#{engine_extension}")
+        dashed_file_name = file_name.gsub(/_/, '-')
+        comp_path = File.join(ember_path, 'components', class_path, "#{dashed_file_name}_component.#{engine_extension}")
         template "component.#{engine_extension}", comp_path
 
-        templ_path = File.join(ember_path, 'templates/components', class_path, "#{file_name}.handlebars")
+        templ_path = File.join(ember_path, 'templates/components', class_path, "#{dashed_file_name}.handlebars")
         template "component.template.handlebars", templ_path
 
       end
