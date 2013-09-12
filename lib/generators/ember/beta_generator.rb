@@ -7,15 +7,14 @@ module Ember
       class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
 
       def copy_ember
-        if options.beta?
+        if options.head?
 
           git_root = File.expand_path "~/.ember"
           gem_file = File.join git_root, "Gemfile"
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            command = %{git clone -b beta git@github.com:emberjs/ember.js.git "#{git_root}"}
-           
+            command = %{git clone -b beta git@github.com:emberjs/ember.js.git "#{git_root}"} 
             say_status("downloading", command, :green)
 
             cmd command
@@ -44,14 +43,14 @@ module Ember
       end
 
       def copy_ember_data
-        if options.head?
+      if options.head?
 
           git_root = File.expand_path "~/.ember-data"
           gem_file = File.join git_root, "Gemfile"
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-          command = %{git clone -b beta git://github.com/emberjs/data.git "#{git_root}"}
+            command = %{git clone -b beta git://github.com/emberjs/data.git "#{git_root}"} 
             say_status("downloading", command, :green)
 
             cmd command
