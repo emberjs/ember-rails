@@ -2,9 +2,9 @@ require 'ember/version'
 
 module Ember
   module Generators
-    class StableGenerator < ::Rails::Generators::Base
+    class CanaryGenerator < ::Rails::Generators::Base
       desc "Install Ember.js into your vendor folder"
-      class_option :head, :type => :boolean, :default => false, :desc => "Download Ember.js Stable build and ember-data beta build from http://emberjs.com/builds/ and copy it into your project"
+      class_option :head, :type => :boolean, :default => false, :desc => "Download Ember.js Canary build from http://emberjs.com/builds/ and copy it into your project"
 
       def copy_ember
         if options.head?
@@ -14,13 +14,13 @@ module Ember
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            command = %{curl -O  http://builds.emberjs.com/release/ember.js}
+            command = %{curl -O  http://builds.emberjs.com/canary/ember.js}
             say_status("downloading", command, :green)
 
             cmd command
           else
             Dir.chdir git_root do
-              command = "curl -O  http://builds.emberjs.com/release/ember.js"
+              command = "curl -O  http://builds.emberjs.com/canary/ember.js"
               say_status("updating", command, :green)
 
               cmd command
@@ -42,13 +42,13 @@ module Ember
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            comand = %{curl -O  http://builds.emberjs.com/beta/ember-data.js}
+            comand = %{curl -O  http://builds.emberjs.com/canary/ember-data.js}
             say_status("downloading", command, :green)
 
             cmd command
           else
             Dir.chdir git_root do
-              command = "curl -O   http://builds.emberjs.com/beta/ember-data.js"
+              command = "curl -O   http://builds.emberjs.com/canary/ember-data.js"
               say_status("updating", command, :green)
 
               cmd command

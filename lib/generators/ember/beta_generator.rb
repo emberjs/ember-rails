@@ -4,7 +4,7 @@ module Ember
   module Generators
     class BetaGenerator < ::Rails::Generators::Base
       desc "Install Ember.js into your vendor folder"
-      class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and copy it into your project"
+      class_option :head, :type => :boolean, :default => false, :desc => "Download Ember.js Beta build from http://emberjs.com/builds/ and copy it into your project"
 
       def copy_ember
         if options.head?
@@ -14,24 +14,16 @@ module Ember
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            command = %{git clone -b beta git@github.com:emberjs/ember.js.git "#{git_root}"} 
+            command = %{curl -O  http://builds.emberjs.com/beta/ember.js}
             say_status("downloading", command, :green)
 
             cmd command
           else
             Dir.chdir git_root do
-            command = "git fetch origin && git reset origin/master --hard"
+              command = "curl -O  http://builds.emberjs.com/beta/ember.js"
               say_status("updating", command, :green)
 
               cmd command
-            end
-          end
-
-          Dir.chdir git_root do
-            say_status("building", "bundle && bundle exec rake", :green)
-            Bundler.with_clean_env do
-              cmd "bundle --gemfile #{gem_file}"
-              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake}
             end
           end
 
@@ -50,24 +42,16 @@ module Ember
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            command = %{git clone -b beta git://github.com/emberjs/data.git "#{git_root}"} 
+            comand = %{curl -O  http://builds.emberjs.com/beta/ember-data.js}
             say_status("downloading", command, :green)
 
             cmd command
           else
             Dir.chdir git_root do
-              command = "git fetch origin && git reset origin/master --hard"
+              command = "curl -O   http://builds.emberjs.com/beta/ember-data.js"
               say_status("updating", command, :green)
 
               cmd command
-            end
-          end
-
-          Dir.chdir git_root do
-            say_status("building", "bundle && bundle exec rake", :green)
-            Bundler.with_clean_env do
-              cmd "bundle --gemfile #{gem_file}"
-              cmd %{BUNDLE_GEMFILE="#{gem_file}" bundle exec rake}
             end
           end
 
