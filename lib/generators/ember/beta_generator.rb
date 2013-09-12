@@ -14,7 +14,8 @@ module Ember
 
           # If it doesn't exist yet
           unless File.exist?(git_root)
-            command = %{git clone -b beta git://github.com/emberjs/ember.js.git "#{git_root}"}
+            command = %{git clone -b beta git@github.com:emberjs/ember.js.git "#{git_root}"}
+           
             say_status("downloading", command, :green)
 
             cmd command

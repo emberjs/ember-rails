@@ -37,8 +37,8 @@ module Ember
 
           source_paths << File.join(git_root, "dist")
 
-          copy_file "ember.js", "vendor/assets/ember/development/ember.js"
-          copy_file "ember.min.js", "vendor/assets/ember/production/ember.js"
+          copy_file "ember.js", "app/assets/ember/development/ember.js"
+          copy_file "ember.min.js", "app/assets/ember/production/ember.js"
         end
       end
 
@@ -73,8 +73,8 @@ module Ember
 
           source_paths << File.join(git_root, "dist")
 
-          copy_file "ember-data.js", "vendor/assets/ember/development/ember-data.js"
-          copy_file "ember-data.min.js", "vendor/assets/ember/production/ember-data.js"
+          copy_file "ember-data.js", "app/assets/ember/development/ember-data.js"
+          copy_file "ember-data.min.js", "app/assets/ember/production/ember-data.js"
         end
       end
 
