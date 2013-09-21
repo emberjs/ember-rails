@@ -1,4 +1,4 @@
-# http://emberjs.com/guides/models/defining-a-store/
+# http://emberjs.com/guides/models/using-the-store/
 
 <%= application_name.camelize %>.Store = DS.Store.extend
   revision: 13
