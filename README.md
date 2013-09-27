@@ -195,7 +195,6 @@ You can reference your component inside your other handlebars template files by 
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
-![Ember Data Warning](ember-data-in-progress.png)
 By default, ember-rails ships with the latest version of
 [Ember](https://rubygems.org/gems/ember-source/versions),
 [Handlebars](https://rubygems.org/gems/handlebars-source/versions),
