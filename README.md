@@ -37,7 +37,11 @@ rails generate ember:bootstrap
 
 Notes:
 
-To install the latest builds of ember and ember-data:
+
+To install the latest builds of ember and ember-data. It should be noted that the 
+examples in the [getting started guide](http://emberjs.com/guides/getting-started/)
+have been designed to use the latest version of ember:
+
 ```shell
 rails generate ember:install --head
 ```
