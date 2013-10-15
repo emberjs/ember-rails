@@ -8,19 +8,31 @@ module Ember
     class InstallGenerator < ::Rails::Generators::Base
       desc "Install Ember.js into your vendor folder"
       class_option :head, :type => :boolean, :default => false, :desc => "Download latest Ember.js from GitHub and fetch it into your project"
+      class_option :release, :type => :string, :required => false, :desc => "Release type of ember. Choose between 'head', 'beta' or 'canary'"
+      attr_accessor :version
 
-      def fetch_ember
+
+      def release_type
+        version = ''
+        if options.head? && options.release
+          say_status('conflicting options', '--head prevailed over --release option' , :red)
+        end
         if options.head?
-          fetch 'http://builds.emberjs.com/ember-latest.js', 'vendor/assets/ember/development/ember.js'
-          fetch 'http://builds.emberjs.com/ember-latest.min.js', 'vendor/assets/ember/production/ember.js'
+          @version='-latest'
+          ''
+        else
+          options['release'] + '/'
         end
       end
 
+      def fetch_ember
+        fetch "http://builds.emberjs.com/#{release_type}ember#{version}.js", 'vendor/assets/ember/development/ember.js'
+        fetch "http://builds.emberjs.com/#{release_type}ember#{version}.min.js", 'vendor/assets/ember/production/ember.js'
+      end
+
       def fetch_ember_data
-        if options.head?
-          fetch 'http://builds.emberjs.com/ember-data-latest.js', 'vendor/assets/ember/development/ember-data.js'
-          fetch 'http://builds.emberjs.com/ember-data-latest.min.js', 'vendor/assets/ember/production/ember-data.js'
-        end
+        fetch "http://builds.emberjs.com/#{release_type}ember-data#{version}.js", 'vendor/assets/ember/development/ember-data.js'
+        fetch "http://builds.emberjs.com/#{release_type}ember-data#{version}.min.js", 'vendor/assets/ember/production/ember-data.js'
       end
 
     private
