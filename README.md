@@ -174,6 +174,7 @@ When necessary, ember-rails adheres to a conventional folder structure. To creat
 
 With the following folder structure:
 
+    components/
     controllers/
     helpers/
     models/
@@ -196,6 +197,33 @@ will produce the following handlebars output
 You can reference your component inside your other handlebars template files by the handlebars file name:
 
      {{ my-component }}
+
+### A note about upgrading ember-rails and components
+Generators for components has been been recently added to ember-rails. If you have an exisitng project and 
+you are upgrading, be sure to include the components folder as part of the asset pipeline. A typical project expects 
+two folders for *components* related code: 
+
+* one to hold the component javascript logic
+* another to hold the handlebars templates for your components.
+
+Your asset pipeline require statements should include reference to both e.g.
+
+RailsAppName.js
+```
+//= require_tree ./templates
+//= require_tree ./components
+```
+
+or 
+
+RailsAppName.js.coffee
+```
+#= require_tree ./templates
+#= require_tree ./components
+```
+
+These are automatically generated for you in new projects you when you run the `ember:bootstrap` generator.
+
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
