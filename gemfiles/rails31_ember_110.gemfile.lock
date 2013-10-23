@@ -53,7 +53,7 @@ GEM
     builder (3.0.4)
     ember-data-source (0.13)
       ember-source
-    ember-source (1.0.0)
+    ember-source (1.1.0)
       handlebars-source (= 1.0.12)
     erubis (2.7.0)
     execjs (2.0.2)
@@ -61,12 +61,12 @@ GEM
     hike (1.2.3)
     i18n (0.6.5)
     journey (1.0.4)
-    json (1.8.0)
+    json (1.8.1)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.25)
-    multi_json (1.7.9)
+    multi_json (1.8.2)
     polyglot (0.3.3)
     rack (1.4.5)
     rack-cache (1.2)
@@ -114,8 +114,8 @@ DEPENDENCIES
   appraisal
   bundler (>= 1.2.2)
   ember-rails!
-  ember-source (= 1.0.0)
+  ember-source (= 1.1.0)
   handlebars-source (~> 1.0.0)
-  rails (~> 3.2)
+  rails (~> 3.1)
   sprockets-rails
   tzinfo
