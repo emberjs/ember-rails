@@ -22,7 +22,7 @@ gem 'ember-source', '1.1.0' # or the version you need
 
 2. Run `bundle install`
 
-3. Configure the ember variant in your environment files (i.e. development.rb, production.rb). If you don't configure this, the version of Ember used defaults to development when the Rails environment is development, and similarly for production.
+3. Configure the ember variant in your environment files (i.e. development.rb, production.rb).
 ```ruby
   config.ember.variant = :development # or :production
 ```
