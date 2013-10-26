@@ -199,7 +199,7 @@ You can reference your component inside your other handlebars template files by 
      {{ my-component }}
 
 ### A note about upgrading ember-rails and components
-Generators for components has been been recently added to ember-rails. If you have an exisitng project and 
+Generators for components has been recently added to ember-rails. If you have an exisitng project and 
 you are upgrading, be sure to include the components folder as part of the asset pipeline. A typical project expects 
 two folders for *components* related code: 
 
