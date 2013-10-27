@@ -199,12 +199,12 @@ You can reference your component inside your other handlebars template files by 
      {{ my-component }}
 
 ### A note about upgrading ember-rails and components
-Generators for components has been recently added to ember-rails. If you have an exisitng project and 
-you are upgrading, be sure to include the components folder as part of the asset pipeline. A typical project expects 
-two folders for *components* related code: 
+The ember-rails project now includes generators for components. If you have an exisitng project and need 
+to compile component files you will need to include the components folder as part of the asset pipeline. 
+A typical project expects two folders for *components* related code: 
 
-* one to hold the component javascript logic
-* another to hold the handlebars templates for your components.
+* `assets/javascripts/components/` to hold the component javascript source
+* `assets/javascripts/templates/components/` to hold the handlebars templates for your components
 
 Your asset pipeline require statements should include reference to both e.g.
 
