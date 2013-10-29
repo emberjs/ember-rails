@@ -9,6 +9,7 @@ module Ember
       config.handlebars.precompile = true
       config.handlebars.templates_root = "templates"
       config.handlebars.templates_path_separator = '/'
+      config.handlebars.output_type = :global
 
       config.before_initialize do |app|
         Sprockets::Engines #force autoloading

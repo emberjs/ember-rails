@@ -74,6 +74,18 @@ Ember-rails include some flags options for bootstrap generator:
 --app-name or -n # custom ember app name
 ```
 
+## Configuration Options
+
+The following options are availabe for configuration in your application or environment level
+config files (`config/application.rb`, `config/environments/development.rb`, etc.):
+
+* `config.handlebars.precompile` - Used to enable or disable precompilation. Default value: `true`.
+* `config.handlebars.templates_root` - Set the root path (under `app/assets/javascripts`) for templates
+  to be looked up in. Default value: `"templates"`.
+* `config.handlebars.templates_path_separator` - The path separator to use for templates. Default value: `'/'`.
+* `config.handlebars.output_type` - Configures the style of output (options are `:amd` and `:global`).
+  Default value: `:global`.
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you

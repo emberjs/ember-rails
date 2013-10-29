@@ -12,7 +12,6 @@ module Ember
       def prepare; end
 
       def evaluate(scope, locals, &block)
-        target = template_target(scope)
         raw = handlebars?(scope)
 
         if raw
@@ -35,7 +34,15 @@ module Ember
           end
         end
 
-        "#{target} = #{template}\n"
+        if configuration.output_type == :amd
+          target = amd_template_target(scope)
+
+          "define('#{target}', [], function(){ return #{template} });"
+        else
+          target = global_template_target(scope)
+
+          "#{target} = #{template}\n"
+        end
       end
 
       private
@@ -44,7 +51,11 @@ module Ember
         scope.pathname.to_s =~ /\.raw\.(handlebars|hjs|hbs)/
       end
 
-      def template_target(scope)
+      def amd_template_target(scope)
+        "#{configuration.amd_namespace}/#{scope.logical_path.split(".").first}"
+      end
+
+      def global_template_target(scope)
         "Ember.TEMPLATES[#{template_path(scope.logical_path).inspect}]"
       end
 

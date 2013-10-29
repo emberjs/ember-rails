@@ -38,6 +38,16 @@ class HjsTemplateTest < IntegrationTest
     handlebars.templates_path_separator = old_sep if sep
   end
 
+  def with_amd_output
+    old, handlebars.output_type = handlebars.output_type, :amd
+    old_namespace, handlebars.amd_namespace = handlebars.amd_namespace, 'appkit'
+
+    yield
+  ensure
+    handlebars.output_type = old
+    handlebars.amd_namespace = old_namespace
+  end
+
   test "should replace separators with templates_path_separator" do
     with_template_root("", "-") do
       t = Ember::Handlebars::Template.new {}
@@ -83,6 +93,16 @@ class HjsTemplateTest < IntegrationTest
 
       path = t.send(:template_path, 'admin/templates/admin_example')
       assert_equal 'admin/admin_example', path
+    end
+  end
+
+  test "template with AMD output" do
+    with_amd_output do
+      template_path = ::Rails.root.join('app/assets/javascripts/templates/test.js.hjs')
+      template = Ember::Handlebars::Template.new template_path.to_s
+      asset = app.assets.attributes_for(template_path)
+
+      assert_match /define\('appkit\/templates\/test', \[\], function\(\)\{ return Ember\.Handlebars\.template\(function .*"test"/m, template.render(asset)
     end
   end
 
