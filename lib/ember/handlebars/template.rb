@@ -37,7 +37,7 @@ module Ember
         if configuration.output_type == :amd
           target = amd_template_target(scope)
 
-          "define('#{target}', [], function(){ return #{template} });"
+          "define('#{target}', ['exports'], function(__exports__){ __exports__.default = #{template} });"
         else
           target = global_template_target(scope)
 
