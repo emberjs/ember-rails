@@ -14,7 +14,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.1.0' # or the version you need
+gem 'ember-source', '1.1.2' # or the version you need
 
 # optional since Handlebars 1.0.0 was released
 #gem 'handlebars-source', '~> 1.0.12' # or the version you need
@@ -199,9 +199,9 @@ You can reference your component inside your other handlebars template files by 
      {{ my-component }}
 
 ### A note about upgrading ember-rails and components
-The ember-rails project now includes generators for components. If you have an exisitng project and need 
-to compile component files you will need to include the components folder as part of the asset pipeline. 
-A typical project expects two folders for *components* related code: 
+The ember-rails project now includes generators for components. If you have an exisitng project and need
+to compile component files you will need to include the components folder as part of the asset pipeline.
+A typical project expects two folders for *components* related code:
 
 * `assets/javascripts/components/` to hold the component javascript source
 * `assets/javascripts/templates/components/` to hold the handlebars templates for your components
@@ -214,7 +214,7 @@ RailsAppName.js
 //= require_tree ./components
 ```
 
-or 
+or
 
 RailsAppName.js.coffee
 ```
