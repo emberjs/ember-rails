@@ -22,17 +22,13 @@ gem 'ember-source', '1.1.2' # or the version you need
 
 2. Run `bundle install`
 
-3. Configure the ember variant in your environment files (i.e. development.rb, production.rb).
-```ruby
-  config.ember.variant = :development # or :production
-```
+3. Next, generate the application structure:
 
-4. Next, generate the application structure:
 ```shell
 rails generate ember:bootstrap
 ```
 
-5. Restart your server (if it's running)
+4. Restart your server (if it's running)
 
 
 Notes:
@@ -79,7 +75,7 @@ Ember-rails include some flags options for bootstrap generator:
 The following options are availabe for configuration in your application or environment level
 config files (`config/application.rb`, `config/environments/development.rb`, etc.):
 
-* `config.ember.variant` (**REQUIRED**) - Used to determine which Ember variant to use. Valid options: `:development`, `:production`.
+* `config.ember.variant` - Used to determine which Ember variant to use. Valid options: `:development`, `:production`.
 * `config.ember.app_name` - Used to specify a default application name for all generators.
 * `config.handlebars.precompile` - Used to enable or disable precompilation. Default value: `true`.
 * `config.handlebars.templates_root` - Set the root path (under `app/assets/javascripts`) for templates
