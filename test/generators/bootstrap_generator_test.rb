@@ -83,7 +83,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       run_generator
       assert_file "#{custom_path}/store.js"
       assert_file "#{custom_path}/router.js"
-      assert_file "#{custom_path}/#{application_name}.js"
+      assert_file "#{custom_path}/#{application_name.underscore}.js"
     ensure
       ::Rails.configuration.ember.ember_path = old
     end
