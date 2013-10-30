@@ -21,6 +21,8 @@ module Ember
       def application_name
         if options[:app_name]
           options[:app_name]
+        elsif configuration.app_name
+          configuration.app_name
         elsif rails_engine?
           engine_name
         elsif defined?(::Rails) && ::Rails.application
@@ -35,11 +37,15 @@ module Ember
       end
 
       def handlebars_template_path
-        File.join(class_path, file_name).gsub(/^\//, '') 
+        File.join(class_path, file_name).gsub(/^\//, '')
       end
 
       def engine_extension
         @engine_extension ||= "js.#{options[:javascript_engine]}".sub('js.js','js')
+      end
+
+      def configuration
+        ::Rails.configuration.ember
       end
     end
   end

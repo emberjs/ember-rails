@@ -69,6 +69,17 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
     assert_file "#{ember_path}/templates/components/post-chart.handlebars"
   end
 
+  test "Uses config.ember.app_name as the app name" do
+    begin
+      old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
+
+      run_generator %w(PostChart)
+      assert_file "#{ember_path}/components/post-chart_component.js", /MyApp\.PostChartComponent/
+    ensure
+      ::Rails.configuration.ember.app_name = old
+    end
+  end
+
   private
 
   def ember_path(custom_path = nil)

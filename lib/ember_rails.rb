@@ -25,7 +25,7 @@ module Ember
           # test environments should default to development
           variant ||= :development
           # Copy over the desired ember, ember-data, and handlebars bundled in
-          # ember-source, ember-data-source, and handlebars-source to a tmp folder. 
+          # ember-source, ember-data-source, and handlebars-source to a tmp folder.
           tmp_path = app.root.join("tmp/ember-rails")
           ext = variant == :production ? ".prod.js" : ".js"
           FileUtils.mkdir_p(tmp_path)

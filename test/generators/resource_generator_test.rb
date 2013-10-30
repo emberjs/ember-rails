@@ -40,8 +40,19 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
       assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostController/
       assert_file "app/assets/javascripts/routes/post_route.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostRoute/
     end
+  end
 
+  test "Uses config.ember.app_name as the app name" do
+    begin
+      old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
 
+      run_generator %w(post)
+      assert_file "app/assets/javascripts/views/post_view.js", /MyApp.PostView/
+      assert_file "app/assets/javascripts/controllers/post_controller.js", /MyApp\.PostController/
+      assert_file "app/assets/javascripts/routes/post_route.js", /MyApp\.PostRoute/
+    ensure
+      ::Rails.configuration.ember.app_name = old
+    end
   end
 end
 

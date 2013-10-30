@@ -65,6 +65,18 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     end
   end
 
+  test "Uses config.ember.app_name as the app name" do
+    begin
+      old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
+
+      run_generator %w(ember)
+      assert_file "#{ember_path}/store.js", /MyApp\.Store/
+      assert_file "#{ember_path}/router.js", /MyApp\.Router\.map/
+    ensure
+      ::Rails.configuration.ember.app_name = old
+    end
+  end
+
   private
 
   def ember_path(custom_path = nil)
