@@ -79,6 +79,8 @@ Ember-rails include some flags options for bootstrap generator:
 The following options are availabe for configuration in your application or environment level
 config files (`config/application.rb`, `config/environments/development.rb`, etc.):
 
+* `config.ember.variant` (**REQUIRED**) - Used to determine which Ember variant to use. Valid options: `:development`, `:production`.
+* `config.ember.app_name` - Used to specify a default application name for all generators.
 * `config.handlebars.precompile` - Used to enable or disable precompilation. Default value: `true`.
 * `config.handlebars.templates_root` - Set the root path (under `app/assets/javascripts`) for templates
   to be looked up in. Default value: `"templates"`.
