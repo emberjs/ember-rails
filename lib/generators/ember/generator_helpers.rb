@@ -3,10 +3,14 @@ module Ember
     module GeneratorHelpers
 
       def ember_path
-        if rails_engine?
-          options[:ember_path] || "app/assets/javascripts/#{engine_name}"
+        if options[:ember_path]
+          options[:ember_path]
+        elsif configuration.ember_path
+          configuration.ember_path
+        elsif rails_engine?
+          "app/assets/javascripts/#{engine_name}"
         else
-          options[:ember_path] || "app/assets/javascripts"
+          "app/assets/javascripts"
         end
       end
 

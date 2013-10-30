@@ -54,5 +54,25 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
       ::Rails.configuration.ember.app_name = old
     end
   end
+
+  test "Uses config.ember.ember_path" do
+    begin
+      custom_path = ember_path("custom")
+      old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
+
+      run_generator ["post"]
+      assert_file "#{custom_path}/views/post_view.js"
+      assert_file "#{custom_path}/controllers/post_controller.js"
+      assert_file "#{custom_path}/routes/post_route.js"
+    ensure
+      ::Rails.configuration.ember.ember_path = old
+    end
+  end
+
+  private
+
+  def ember_path(custom_path = nil)
+   "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
 end
 

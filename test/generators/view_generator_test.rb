@@ -71,6 +71,18 @@ class ViewGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "Uses config.ember.ember_path" do
+    begin
+      custom_path = ember_path("custom")
+      old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
+
+      run_generator [ "ember"]
+      assert_file "#{custom_path}/views/ember_view.js"
+    ensure
+      ::Rails.configuration.ember.ember_path = old
+    end
+  end
+
   private
 
   def ember_path(custom_path = nil)
