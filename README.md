@@ -10,7 +10,7 @@ The following functionalities are included in this gem:
 You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if you're just starting out with Rails and Ember.js
 
 ## Getting started
-1. Add the gem to your application Gemfile:
+* Add the gem to your application Gemfile:
 
 ```ruby
 gem 'ember-rails'
@@ -20,14 +20,14 @@ gem 'ember-source', '1.1.2' # or the version you need
 #gem 'handlebars-source', '~> 1.0.12' # or the version you need
 ```
 
-2. Run `bundle install`
-3. Next, generate the application structure:
+* Run `bundle install`
+* Next, generate the application structure:
 
 ```shell
 rails generate ember:bootstrap
 ```
 
-4. Restart your server (if it's running)
+* Restart your server (if it's running)
 
 
 Notes:
