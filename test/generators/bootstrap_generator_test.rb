@@ -75,6 +75,19 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "Uses config.ember.ember_path" do
+    begin
+      custom_path = ember_path("custom")
+      old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
+
+      run_generator
+      assert_file "#{custom_path}/store.js"
+      assert_file "#{custom_path}/router.js"
+      assert_file "#{custom_path}/#{application_name}.js"
+    ensure
+      ::Rails.configuration.ember.ember_path = old
+    end
+  end
   private
 
   def assert_invoked_generators_files(options = {})
