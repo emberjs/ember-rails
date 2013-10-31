@@ -35,10 +35,10 @@ Notes:
 
 To install the latest builds of ember and ember-data. It should be noted that the
 examples in the [getting started guide](http://emberjs.com/guides/getting-started/)
-have been designed to use the latest version of ember:
+have been designed to use the released version of ember:
 
 ```shell
-rails generate ember:install --head
+rails generate ember:install
 ```
 
 You'll probably need to clear out your cache after doing this with
@@ -264,11 +264,16 @@ you've specified in your app's configuration, e.g.:
 
 ## Updating Ember
 
-If at any point you need to update Ember.js from master, you can do that with
+If at any point you need to update Ember.js from any of the release channels, you can do that with
 
-    rails generate ember:install --head
+    rails generate ember:install --channel=<channel>
 
-This will fetch both Ember.js and Ember Data from [http://builds.emberjs.com/](http://builds.emberjs.com/) and copy to the right directory.
+This will fetch both Ember.js and Ember Data from [http://builds.emberjs.com/](http://builds.emberjs.com/) and copy to the right directory. You can choose between the following channels:
+* canary - This references the 'master' branch and is not recommended for production use.
+* beta - This references the 'beta' branch, and will ultimately become the next stable version. It is not recommended for production use.
+* release - This references the 'stable' branch, and is recommended for production use.
+
+When you don't specify a channel, the release channel is used.
 
 ## Note on Patches/Pull Requests
 
