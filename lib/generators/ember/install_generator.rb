@@ -11,22 +11,36 @@ module Ember
       class InvalidChannel < ::Thor::Error; end
       class ConflictingOptions < ::Thor::Error; end
       class Deprecated < ::Thor::Error; end
+      class InsufficientOptions < ::Thor::Error; end
 
       ::InvalidChannel = InvalidChannel
       ::ConflictingOptions = ConflictingOptions
       ::Deprecated = Deprecated
-
-      class EmberGenerator
-        def ember
-          super()
-        end
-      end
+      ::InsufficientOptions = InsufficientOptions
 
       desc "Install Ember.js into your vendor folder"
-      class_option :head, :type => :boolean, :default => false, :desc => "Download Ember.js & Ember data from canary channel. This is deprecated. Use channel instead."
-      class_option :channel, :type => :string, :required => false, :desc => "Ember release channel Choose between 'release', 'beta' or 'canary'"
-      class_option :ember_only, :type => :boolean, :required => false, :desc => "Only download Ember."
-      class_option :ember_data_only, :type => :boolean, :required => false, :desc => "Onky download ember-data"
+      class_option :head,
+        :type => :boolean, 
+        :default => false, 
+        :desc => "Download Ember.js & Ember data from canary channel. This is deprecated. Use channel instead."
+      class_option :channel,
+        :type => :string,
+        :required => false,
+        :desc => "Ember release channel Choose between 'release', 'beta' or 'canary'"
+      class_option :ember_only, 
+        :type => :boolean, 
+        :required => false, 
+        :desc => "Only download Ember.",
+        :aliases => '--ember'
+      class_option :ember_data_only,
+        :type => :boolean, 
+        :required => false, 
+        :desc => "Only download ember-data", 
+        :aliases => '--ember-data'
+      class_option :tag,
+        :type => :string,
+        :required => false, 
+        :desc => "Download taged release use syntax v1.0.0-beta.3/ember-data & v1.0.0-rc.8/ember"
 
       def initialize(args = [], options = {}, config = {})
         super(args, options, config)
@@ -36,9 +50,13 @@ module Ember
 
 
       def ember
-        unless options.ember_data_only?
-          get_ember_js_for(:development)
-          get_ember_js_for(:production)
+        begin
+          unless options.ember_data_only?
+            get_ember_js_for(:development)
+            get_ember_js_for(:production)
+          end
+        rescue Thor::Error
+          say('WARNING: no ember files on this channel or tag' , :yellow)
         end
       end
 
@@ -49,21 +67,32 @@ module Ember
             get_ember_data_for(:production)
           end
         rescue Thor::Error
-          say('WARNING: no ember-data files on this channel yet' , :yellow)
+          say('WARNING: no ember-data files on this channel or tag' , :yellow)
         end
       end
 
     private
 
+
       def get_ember_data_for(environment)
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
-          fetch "#{base_url}/#{channel}/ember-data.js", "vendor/assets/ember/#{environment}/ember-data.js"
+          fetch "#{base_url}/#{channel}/#{file_name_for('ember-data', environment)}", "vendor/assets/ember/#{environment}/ember-data.js"
         end
       end
 
       def get_ember_js_for(environment)
+
         create_file "vendor/assets/ember/#{environment}/ember.js" do
-          fetch "#{base_url}/#{channel}/ember.js", "vendor/assets/ember/#{environment}/ember.js"
+          fetch "#{base_url}/#{channel}/#{file_name_for('ember', environment)}", "vendor/assets/ember/#{environment}/ember.js"
+        end
+      end
+
+      def file_name_for(component,environment)
+        case environment
+        when :production
+          "#{component}.min.js"
+        when :development
+          "#{component}.js"
         end
       end
 
@@ -79,11 +108,26 @@ module Ember
           say 'ERROR: channel can either be release, beta or canary', :red
           raise InvalidChannel
         end
+        if options.channel? && options.tag?
+          say 'ERROR: conflicting options. --tag and --channel. --tag is incompatible with other options', :red
+          raise ConflictingOptions
+        end
+        if options.head? && options.tag?
+          say 'ERROR: conflicting options. --tag and --head. --tag is incompatible with other options', :red
+          raise ConflictingOptions
+        end
+        if options.tag? && !(options.ember_only? || options.ember_data_only?)
+          say 'ERROR: insufficient options. --tag needs to be combined with eithe --ember or --ember-data', :red
+          raise InsufficientOptions
+        end
       end
 
       def process_options
         if options.head? 
           @channel = :canary
+        end
+        if options.tag?
+          @channel = "tags/#{options.tag}"
         end
       end
 
