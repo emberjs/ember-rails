@@ -92,13 +92,14 @@ module Ember
           end
         else
           unless root.empty?
-            path.sub!(/#{Regexp.quote(root)}\/?/, '')
+            path.sub!(/#{Regexp.quote(root)}\//, '')
           end
         end
 
         path = path.split('/')
 
         path.join(configuration.templates_path_separator)
+
       end
 
       def configuration
