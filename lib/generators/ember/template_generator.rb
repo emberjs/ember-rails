@@ -9,10 +9,13 @@ module Ember
 
       desc "Creates a new Ember.js template"
       class_option :javascript_engine, :desc => "Engine for JavaScripts"
+      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
+
 
 
       def create_template_files
-        template 'template.handlebars', File.join('app/assets/javascripts/templates', class_path, "#{file_name}.handlebars")
+        file_path = File.join(ember_path, 'templates', class_path, "#{file_name}.handlebars")
+        template 'template.handlebars', file_path
       end
 
     end
