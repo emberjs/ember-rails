@@ -62,6 +62,27 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
   end
 
+  test "adds requires to `application.js`" do
+    run_generator
+
+    assert_application_file_modified
+  end
+
+  test "creates `application.js` if it doesn't exist" do
+    File.delete destination_root + '/app/assets/javascripts/application.js'
+
+    run_generator
+
+    assert_application_file_modified
+  end
+
+  test "modifies `application.js` if require_tree doesn't exist" do
+    File.write(destination_root + '/app/assets/javascripts/application.js', '')
+
+    run_generator
+
+    assert_application_file_modified
+  end
 
   test "Uses config.ember.app_name as the app name" do
     begin
@@ -88,7 +109,15 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       ::Rails.configuration.ember.ember_path = old
     end
   end
+
   private
+
+  def assert_application_file_modified(application_file = ember_path('application.js'))
+    assert_file application_file, %r{//= require handlebars}
+    assert_file application_file, %r{//= require ember}
+    assert_file application_file, %r{//= require ember-data}
+    assert_file application_file, %r{//= require #{application_name.underscore}}
+  end
 
   def assert_invoked_generators_files(options = {})
     path = options[:in_path] || ember_path

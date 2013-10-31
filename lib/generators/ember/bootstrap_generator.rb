@@ -43,18 +43,26 @@ module Ember
       end
 
       private
+
       def inject_into_application_file(safe_extension)
         application_file = "application.#{safe_extension}"
-        full_app_file = "#{ember_path}/#{application_file}"
+        full_path = Pathname.new(destination_root).join(ember_path, application_file)
 
-        if CreateFile.new(self, full_app_file, nil).exists?
-          inject_into_file(full_app_file, :before => /^.*require_tree.*$/) do
+        if full_path.exist?
+          contents = full_path.read
+          injection_options = if contents =~ regex = /^.*require_tree.*$/
+                                {:before => regex}
+                              elsif contents =~ regex = /^\s*$/
+                                {:before => regex}
+                              end
+
+          inject_into_file(full_path.to_s, injection_options) do
             context = instance_eval('binding')
             source  = File.expand_path(find_in_source_paths(application_file))
             ERB.new(::File.binread(source), nil, '-', '@output_buffer').result(context)
           end
         else
-          template application_file, full_app_file
+          template application_file, full_path
         end
       end
     end
