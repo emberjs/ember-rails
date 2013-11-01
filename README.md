@@ -70,7 +70,7 @@ Ember-rails include some flags options for bootstrap generator:
 --app-name or -n # custom ember app name
 ```
 
-### For EmberScript support
+## For EmberScript support
 
 [EmberScript](http://www.emberscript.com) is a dialect of CoffeeScript
 with extra support for computed properties (which do not have to be
