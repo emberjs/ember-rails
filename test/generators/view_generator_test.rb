@@ -23,7 +23,7 @@ class ViewGeneratorTest < Rails::Generators::TestCase
   end
 
 
-  %w(js coffee).each do |engine|
+  %w(js coffee em).each do |engine|
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]

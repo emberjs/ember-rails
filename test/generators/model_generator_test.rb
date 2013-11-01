@@ -23,7 +23,7 @@ class ModelGeneratorTest < Rails::Generators::TestCase
     copy_directory "config"
   end
 
-  %w(js coffee).each do |engine|
+  %w(js coffee em).each do |engine|
 
 
     test "create model with #{engine} engine" do
