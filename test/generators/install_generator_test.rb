@@ -22,6 +22,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     VCR.configure do |c|
       c.cassette_library_dir = 'test/fixtures/vcr_cassettes'
       c.hook_into :webmock # or :fakeweb
+      # c.default_cassette_options = { :record => :new_episodes}
     end
   end
 
@@ -86,7 +87,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "with options release set and options --head it should raise exception ConflictingOptions" do
+  test "with options channel set and options --head it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
       run_generator ['--channel=canary', '--head']
     end
@@ -94,7 +95,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_no_ember_data_files
   end
 
-  test "with unknown release option it should raise exception InvalidChannel" do
+  test "with unknown channel option it should raise exception InvalidChannel" do
     assert_raise ::InvalidChannel do
       run_generator ['--channel=unkown'] 
     end
@@ -110,6 +111,14 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_no_ember_data_files
   end
 
+  test "option --ember aliases --ember_only" do
+    VCR.use_cassette('fetch_ember_release') do
+      run_generator ['--ember']
+    end
+    assert_all_ember_files
+    assert_no_ember_data_files
+  end
+
   test "with option ember-data_only it should only load ember" do
     VCR.use_cassette('fetch_ember_beta') do
       run_generator ['--ember_data_only', '--channel=beta']
@@ -117,6 +126,59 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_no_ember_files
     assert_all_ember_data_files
   end
+
+
+  test "option --ember-data aliasses --ember_data_only" do
+    VCR.use_cassette('fetch_ember_beta') do
+      run_generator ['--ember-data', '--channel=beta']
+    end
+    assert_no_ember_files
+    assert_all_ember_data_files
+  end
+
+
+  test "with options --tag=v1.0.0-beta.1 --ember-data" do
+    VCR.use_cassette('fetch_ember_data_tagged') do
+      run_generator ['--tag=v1.0.0-beta.1', '--ember-data']
+    end
+    assert_no_ember_files
+    assert_all_ember_data_files
+  end
+
+
+  test "with option --tag=v1.2.0-beta.2 --ember" do
+    VCR.use_cassette('fetch_ember_tagged') do
+      run_generator ['--tag=v1.2.0-beta.2', '--ember']
+    end
+    assert_all_ember_files
+    assert_no_ember_data_files
+  end
+
+  test "with options --channel set and options --tag it should raise exception ConflictingOptions" do
+    assert_raise ::ConflictingOptions do
+      run_generator ['--channel=canary', '--tag=v1.2.0-beta.2/ember']
+    end
+    assert_no_ember_files
+    assert_no_ember_data_files
+  end
+
+
+  test "with options --head set and options --tag it should raise exception ConflictingOptions" do
+    assert_raise ::ConflictingOptions do
+      run_generator ['--head', '--tag=v1.2.0-beta.2/ember']
+    end
+    assert_no_ember_files
+    assert_no_ember_data_files
+  end
+
+  test "with options --tag without --ember or --ember-data it should raise exception InsufficientOptions" do
+    assert_raise ::InsufficientOptions do
+      run_generator ['--tag=v1.2.0-beta.2']
+    end
+    assert_no_ember_files
+    assert_no_ember_data_files
+  end
+
 
   def assert_all_ember_files
     assert_file "vendor/assets/ember/development/ember.js"

@@ -275,6 +275,15 @@ This will fetch both Ember.js and Ember Data from [http://builds.emberjs.com/](h
 
 When you don't specify a channel, the release channel is used.
 
+It is also possible to download a specific tagged release. To do this, use the following syntax:
+
+
+    rails generate ember:install --tag=v1.2.0-beta.2 --ember
+
+or for ember-data
+
+    rails generate ember:install --tag=v1.0.0-beta.2 --ember-data
+
 ## Note on Patches/Pull Requests
 
 1. Fork the project.
