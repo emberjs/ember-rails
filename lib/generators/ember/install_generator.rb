@@ -156,12 +156,12 @@ module Ember
         case response.code
         when '404'
           say "ERROR: Error reading the content from the channel with url #{from}. File not found" , :red
-          raise raise Thor::Error
+          raise Thor::Error
         when '200'
           output.puts response.body.force_encoding("UTF-8")
         else
           say "ERROR: Unexpected error with status #{response.code} reading the content from the channel with url #{from}." , :red
-          raise raise Thor::Error
+          raise Thor::Error
         end
         output.rewind
         content = output.read
