@@ -150,16 +150,21 @@ module Ember
 
         uri = URI(from)
         output = StringIO.new
-        output.puts "// Fetched from: " + uri.to_s
+        output.puts "// Fetched from channel: #{channel}, with url " + uri.to_s
         output.puts "// Fetched on: " + Time.now.utc.iso8601.to_s
-        output.puts Net::HTTP.get(uri).force_encoding("UTF-8")
-        output.rewind
-        content = output.read
-        if content.include?('404')
-          say "ERROR: Error reading the content from the channel with url #{from}." , :red
+        response = Net::HTTP.get_response(uri)
+        case response.code
+        when '404'
+          say "ERROR: Error reading the content from the channel with url #{from}. File not found" , :red
+          raise raise Thor::Error
+        when '200'
+          output.puts response.body.force_encoding("UTF-8")
+        else
+          say "ERROR: Unexpected error with status #{response.code} reading the content from the channel with url #{from}." , :red
           raise raise Thor::Error
         end
-        content
+        output.rewind
+        content = output.read
       end
     end
   end
