@@ -49,7 +49,9 @@ module Ember
       end
 
       def configuration
-        ::Rails.configuration.ember
+        if defined?(::Rails) && ::Rails.configuration
+          ::Rails.configuration.ember
+        end
       end
     end
   end
