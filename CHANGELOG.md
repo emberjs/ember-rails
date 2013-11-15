@@ -1,3 +1,22 @@
+## 0.14.0 (Nov 4, 2013)
+
+  - Added support for most recent stable releases of ember js and ember data.
+  - Added various fixes to better support Rails 4.0 projects out of the box
+  - Added generators for ember components
+  - Append source url and timestamp when manually fetching ember js source files via install command.
+  - Added support for DS.ActiveModelAdapter and support for underscore to camelCased model properties. 
+    For more info see issue #268
+  - Added support for selective downloading of ember source via channels: canary, beta, release
+  - Added support to selectively download tagged releases
+  - Added support for compilation of project code as AMD modules in addition to the default behavior of 
+    compiling a global AppName namespace. For more info on AMD modules see http://requirejs.org/docs/whyamd.html
+  - Added support for customizing ember generators output with custom ember_path. 
+    If your ember project source lives in a non standard directory
+  - Added additional configuration options for customizing some of the behavior of ember-rails.
+    For more info see Configuration Options section of readme.
+  - Added support for EmberScript in the generators
+  - Various bug fixes and improved test coverage
+
 ## 0.11.0 (Feb 28, 2013)
 
   - Use handlebars-source and ember-source gems
