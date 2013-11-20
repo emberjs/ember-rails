@@ -97,8 +97,8 @@ module Ember
       end
 
       def check_options
-        if options.head? 
-          say('WARNING: --head option is deprecated in favor of --channel=cannary' , :yellow)
+        if options.head?
+          say('WARNING: --head option is deprecated in favor of --channel=canary' , :yellow)
         end
         if options.head? && options.channel?
           say 'ERROR: conflicting options. --head and --channel. Use either --head or --channel=<channel>', :red

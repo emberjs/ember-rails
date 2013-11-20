@@ -57,7 +57,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "with options --head it should show a deprecation message" do
     VCR.use_cassette('fetch_ember_canary') do
       output = run_generator ['--head']
-      assert( output.include?('--head option is deprecated in favor of --channel=cannary'))
+      assert( output.include?('--head option is deprecated in favor of --channel=canary'))
     end
   end
 
