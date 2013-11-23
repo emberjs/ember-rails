@@ -25,8 +25,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "appraisal"
   s.add_development_dependency "tzinfo"
 
-  s.add_development_dependency "ember-source", '~> 1.1.0'
-  s.add_development_dependency "handlebars-source", '~> 1.0.0'
+  s.add_development_dependency "ember-source", '~> 1.2'
+  s.add_development_dependency "handlebars-source", '~> 1.1.2'
   s.add_development_dependency "sprockets-rails"
   s.add_development_dependency "vcr"
   s.add_development_dependency "webmock", "< 1.14.0"
