@@ -1,3 +1,7 @@
+## 0.15.0
+
+  - Rails resource generator only overrides if --ember option is given
+
 ## 0.14.0 (Nov 4, 2013)
 
   - Added support for most recent stable releases of ember js and ember data.
