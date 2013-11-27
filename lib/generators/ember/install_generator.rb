@@ -20,26 +20,26 @@ module Ember
 
       desc "Install Ember.js into your vendor folder"
       class_option :head,
-        :type => :boolean, 
-        :default => false, 
+        :type => :boolean,
+        :default => false,
         :desc => "Download Ember.js & Ember data from canary channel. This is deprecated. Use channel instead."
       class_option :channel,
         :type => :string,
         :required => false,
         :desc => "Ember release channel Choose between 'release', 'beta' or 'canary'"
-      class_option :ember_only, 
-        :type => :boolean, 
-        :required => false, 
+      class_option :ember_only,
+        :type => :boolean,
+        :required => false,
         :desc => "Only download Ember.",
         :aliases => '--ember'
       class_option :ember_data_only,
-        :type => :boolean, 
-        :required => false, 
-        :desc => "Only download ember-data", 
+        :type => :boolean,
+        :required => false,
+        :desc => "Only download ember-data",
         :aliases => '--ember-data'
       class_option :tag,
         :type => :string,
-        :required => false, 
+        :required => false,
         :desc => "Download taged release use syntax v1.0.0-beta.3/ember-data & v1.0.0-rc.8/ember"
 
       def initialize(args = [], options = {}, config = {})
@@ -79,7 +79,7 @@ module Ember
         # ember-data is released so that installing with ember-data
         # *just works*.
         chan = if channel == :release
-          say_status("downloading:", 'Ember Data is not available on the :release channel. Falling back to beta channel.' , :yellow)          
+          say_status("downloading:", 'Ember Data is not available on the :release channel. Falling back to beta channel.' , :yellow)
           :beta
         else
           channel
@@ -132,7 +132,7 @@ module Ember
       end
 
       def process_options
-        if options.head? 
+        if options.head?
           @channel = :canary
         end
         if options.tag?
