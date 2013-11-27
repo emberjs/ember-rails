@@ -75,8 +75,17 @@ module Ember
 
 
       def get_ember_data_for(environment)
+        # temporarily using a variable here until a stable release of
+        # ember-data is released so that installing with ember-data
+        # *just works*.
+        chan = if channel == :release
+          say_status("downloading:", 'Ember Data is not available on the :release channel. Falling back to beta channel.' , :yellow)          
+          :beta
+        else
+          channel
+        end
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
-          fetch "#{base_url}/#{channel}/#{file_name_for('ember-data', environment)}", "vendor/assets/ember/#{environment}/ember-data.js"
+          fetch "#{base_url}/#{chan}/#{file_name_for('ember-data', environment)}", "vendor/assets/ember/#{environment}/ember-data.js"
         end
       end
 
@@ -142,7 +151,6 @@ module Ember
           @channel ||= :release
         end
       end
-
 
       def fetch(from, to)
         message = "#{from} -> #{to}"
