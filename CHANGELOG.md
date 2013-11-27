@@ -1,3 +1,11 @@
+## 0.14.1 (Nov 27, 2013)
+
+  - Fixed 404 error detection in `ember:install` generator.
+  - Fixed bootstrap generator for Rails engines.
+  - Override channel to beta for Ember Data if `--channel=release` was specified. This is needed
+    because Ember Data does not have any builds in the release channel (since it has not hit 1.0).
+  - Fixed a few typos.
+
 ## 0.14.0 (Nov 4, 2013)
 
   - Added support for most recent stable releases of ember js and ember data.
