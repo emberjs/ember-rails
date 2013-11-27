@@ -40,7 +40,7 @@ module Ember
       class_option :tag,
         :type => :string,
         :required => false,
-        :desc => "Download taged release use syntax v1.0.0-beta.3/ember-data & v1.0.0-rc.8/ember"
+        :desc => "Download tagged release use syntax v1.0.0-beta.3/ember-data & v1.0.0-rc.8/ember"
 
       def initialize(args = [], options = {}, config = {})
         super(args, options, config)
