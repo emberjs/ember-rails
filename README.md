@@ -87,7 +87,7 @@ using an EmberScript variant first.
 
 ## Configuration Options
 
-The following options are availabe for configuration in your application or environment level
+The following options are available for configuration in your application or environment-level
 config files (`config/application.rb`, `config/environments/development.rb`, etc.):
 
 * `config.ember.variant` - Used to determine which Ember variant to use. Valid options: `:development`, `:production`.
@@ -116,7 +116,7 @@ to use `rails g ember:bootstrap` to create the following directory structure und
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
 By default, it uses the Rails Application's name and creates an `rails_app_name.js`
-file to setup application namespace and initial requires:
+file to set up application namespace and initial requires:
 
     //= require handlebars
     //= require ember
@@ -225,7 +225,7 @@ You can reference your component inside your other handlebars template files by 
      {{ my-component }}
 
 ### A note about upgrading ember-rails and components
-The ember-rails project now includes generators for components. If you have an exisitng project and need
+The ember-rails project now includes generators for components. If you have an existing project and need
 to compile component files you will need to include the components folder as part of the asset pipeline.
 A typical project expects two folders for *components* related code:
 
