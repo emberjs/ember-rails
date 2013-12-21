@@ -116,7 +116,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_file application_file, %r{//= require handlebars}
     assert_file application_file, %r{//= require ember}
     assert_file application_file, %r{//= require ember-data}
-    assert_file application_file, %r{//= require #{application_name.underscore}}
+    assert_file application_file, %r{//= require ./#{application_name.underscore}}
   end
 
   def assert_invoked_generators_files(options = {})
