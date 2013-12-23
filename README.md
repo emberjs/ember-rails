@@ -28,20 +28,15 @@ rails generate ember:bootstrap
 
 ## Building a new project from scratch
 
-Rails supports the the ability to build projects from a template source ruby file. 
+Rails supports the ability to build projects from a template source ruby file.
 
-To build a ember centric rails project you can simply type the following into your command line 
+To build an Ember centric Rails project you can simply type the following into your command line:
 
 ```
 rails new my_app -m http://emberjs.com/edge_template.rb
 ```
-More info Rails application templates
 
-http://edgeguides.rubyonrails.org/rails_application_templates.html
-
-The ember js template source code
-
-https://github.com/emberjs/website/blob/master/source/edge_template.rb 
+Read more about [Rails application templates](http://edgeguides.rubyonrails.org/rails_application_templates.html) and take a look at the edge_template.rb [source code](https://github.com/emberjs/website/blob/master/source/edge_template.rb).
 
 Notes:
 
@@ -53,7 +48,7 @@ have been designed to use the released version of ember:
 rails generate ember:install
 ```
 
-You'll probably need to clear out your cache after doing this with
+You'll probably need to clear out your cache after doing this with:
 
 ```shell
 rake tmp:clear
