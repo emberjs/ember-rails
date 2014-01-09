@@ -76,8 +76,16 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_application_file_modified
   end
 
-  test "modifies `application.js` if require_tree doesn't exist" do
+  test "modifies `application.js` it's empty" do
     File.write(destination_root + '/app/assets/javascripts/application.js', '')
+
+    run_generator
+
+    assert_application_file_modified
+  end
+
+  test "modifies `application.js` if require_tree doesn't exist and there's no new line" do
+    File.write(destination_root + '/app/assets/javascripts/application.js', '//= require jquery')
 
     run_generator
 

@@ -54,6 +54,9 @@ module Ember
                                 {:before => regex}
                               elsif contents =~ regex = /^\s*$/
                                 {:before => regex}
+                              else
+                                regex = /\z/
+                                {:after => regex}
                               end
 
           inject_into_file(full_path.to_s, injection_options) do
