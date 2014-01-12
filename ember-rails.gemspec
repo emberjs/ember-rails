@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency "barber", [">= 0.4.1"]
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
-  s.add_dependency "ember-source", "> 1.1.0"
+  s.add_dependency "ember-source", ">= 1.1.0"
   s.add_dependency "handlebars-source", "> 1.0.0"
   s.add_dependency "ember-data-source"
 
