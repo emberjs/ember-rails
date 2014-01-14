@@ -98,6 +98,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
       run_generator %w(ember)
       assert_file "#{ember_path}/store.js", /MyApp\.Store/
+      assert_file "#{ember_path}/store.js", /MyApp\.ApplicationAdapter = DS\.ActiveModelAdapter/
       assert_file "#{ember_path}/router.js", /MyApp\.Router\.map/
     ensure
       ::Rails.configuration.ember.app_name = old
