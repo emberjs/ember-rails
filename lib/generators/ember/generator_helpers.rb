@@ -5,10 +5,10 @@ module Ember
       def ember_path
         if options[:ember_path]
           options[:ember_path]
-        elsif configuration.ember_path
-          configuration.ember_path
         elsif rails_engine?
           "app/assets/javascripts/#{engine_name}"
+        elsif configuration.ember_path
+          configuration.ember_path
         else
           "app/assets/javascripts"
         end
@@ -25,10 +25,10 @@ module Ember
       def application_name
         if options[:app_name]
           options[:app_name]
-        elsif configuration.app_name
-          configuration.app_name
         elsif rails_engine?
           engine_name
+        elsif configuration.app_name
+          configuration.app_name
         elsif defined?(::Rails) && ::Rails.application
           ::Rails.application.class.name.split('::').first
         else
