@@ -15,6 +15,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 ```ruby
 gem 'ember-rails'
 gem 'ember-source', '1.4.0' # or the version you need
+gem 'ember-data-source', '1.0.0.beta.7' # or the version you need
 ```
 
 * Run `bundle install`
@@ -40,9 +41,14 @@ Read more about [Rails application templates](http://edgeguides.rubyonrails.org/
 
 Notes:
 
-To install the latest builds of ember and ember-data. It should be noted that the
+To install the correct/latest builds of ember and ember-data, make sure you specify the versions you want 
+in your gemfile using 'ember-source' and 'ember-data-source' dependencies.
+
+It should be noted that the
 examples in the [getting started guide](http://emberjs.com/guides/getting-started/)
-have been designed to use the released version of ember:
+have been designed to use specific versions of ember and ember-data.
+
+How to install the base application structure:
 
 ```shell
 rails generate ember:install
