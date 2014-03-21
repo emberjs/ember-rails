@@ -3,4 +3,3 @@
 <%= application_name.camelize %>.<%= class_name %>Component = Ember.Component.extend({
 
 })
-
