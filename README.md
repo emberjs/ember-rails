@@ -14,7 +14,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.4.0' # or the version you need
+gem 'ember-source', '1.5.0' # or the version you need
 ```
 
 * Run `bundle install`
