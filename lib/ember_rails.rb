@@ -22,23 +22,30 @@ module Ember
 
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
         variant = app.config.ember.variant || (::Rails.env.production? ? :production : :development)
-
-        # Copy over the desired ember, ember-data, and handlebars bundled in
-        # ember-source, ember-data-source, and handlebars-source to a tmp folder.
-        tmp_path = app.root.join("tmp/ember-rails")
         ext = variant == :production ? ".prod.js" : ".js"
-        FileUtils.mkdir_p(tmp_path)
-        FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ext}"), tmp_path.join("ember.js"))
-        FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ext}"), tmp_path.join("ember-data.js"))
-        app.assets.append_path(tmp_path)
+
+        #Allow for over-rides and updates, empty /bundler to avoid duplicate files
+        ember_path = app.root.join("vendor/assets/ember/#{variant}")
+        bundled_path = ember_path.join("bundler")
+        FileUtils.mkdir_p(bundled_path)
+        FileUtils.rm_rf(Dir.glob("#{bundled_path}/*"))
+
+        # Check for over-rides, else store the bundled ember and ember-data in /bundler
+        if !File.exist?(ember_path.join("ember.js"))
+          FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ext}"), 
+                       bundled_path.join("ember.js"))
+        end
+        if !File.exist?(ember_path.join("ember-data.js"))
+          FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ext}"), 
+                       bundled_path.join('ember-data.js'))
+        end
+
+        app.assets.prepend_path(ember_path)
+        app.assets.append_path(bundled_path)
 
         # Make the handlebars.js and handlebars.runtime.js bundled
         # in handlebars-source available.
         app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path))
-
-        # Allow a local variant override
-        ember_path = app.root.join("vendor/assets/ember/#{variant}")
-        app.assets.prepend_path(ember_path.to_s) if ember_path.exist?
       end
 
       initializer "ember_rails.es5_default", :group => :all do |app|
