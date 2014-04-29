@@ -288,6 +288,73 @@ you've specified in your app's configuration, e.g.:
     config.ember.variant = :production
     #config.ember.variant = :development
 
+## Ember Generators
+
+Ember generators are added to help with creating components, controllers, models, resources, routes, templates and views. Use `rails generate --help` to view all the installed generators. All generators support common options:
+
+```bash
+[--skip-namespace], [--no-skip-namespace]      # Skip namespace (affects only isolated applications)
+-je, [--javascript-engine=JAVASCRIPT_ENGINE]   # Engine for JavaScripts, default js
+-d, [--ember-path=EMBER_PATH]                  # Custom ember app path
+```
+
+### ember:component
+
+Creates a new Ember component and component template. Custom Ember Components require at least two descriptive names separated by a dash. Use CamelCase or dash-case to name your component.
+
+```bash
+rails generate ember:component PostChart [options]
+rails generate ember:component post-chart [options]
+```
+
+### ember:controller
+
+Creates a new Ember controller. Use `--array` to create an [Ember.ArrayController](http://emberjs.com/api/classes/Ember.ArrayController.html) or `--object` to create an [Ember.ObjectController](http://emberjs.com/api/classes/Ember.ObjectController.html)
+
+```bash
+rails generate ember:controller Posts --array
+```
+
+### ember:model
+
+Creates a new Ember model. Add fields as optional `[field[:type]]` arguments.
+
+```bash
+rails generate ember:model Post title:string body:string
+```
+
+### ember:resource
+
+Creates a new Ember router, controller, view and template. Use `--array` to create an [Ember.ArrayController](http://emberjs.com/api/classes/Ember.ArrayController.html) or `--object` to create an [Ember.ObjectController](http://emberjs.com/api/classes/Ember.ObjectController.html)
+
+```bash
+rails generate ember:resource Posts --array
+```
+
+### ember:route
+
+Creates a new Ember route.
+
+```bash
+rails generate ember:route posts
+```
+
+### ember:template
+
+Creates a new Ember template.
+
+```bash
+rails generate ember:template post
+```
+
+### ember:view
+
+Creates a new Ember view and an optional associated Handlebars template. Use `--with-template` or `--no-with-template` to control generation of associate template.
+
+```bash
+rails generate ember:view post
+```
+
 ## Updating Ember
 
 If at any point you need to update Ember.js from any of the release channels, you can do that with
