@@ -1,3 +1,11 @@
+## 0.15.0 (April 30, 2014)
+
+  - Load app.js with relative path.
+  - Bootstrap generator should add code at the end of application.js if there's no newline.
+  - coffee-script template should require jQuery.
+  - Ensure Ember Data 1.0.0-beta is used.
+  - Use App.ApplicationAdapter instead of using `_ams`.
+
 ## 0.14.1 (Nov 27, 2013)
 
   - Fixed 404 error detection in `ember:install` generator.
