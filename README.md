@@ -56,12 +56,12 @@ rake tmp:clear
 
 ## For CoffeeScript support
 
-1. Add coffee-rails to the Gemfile
+Add coffee-rails to the Gemfile
 ```ruby
 gem 'coffee-rails'
 ```
 
-2. Run the bootstrap generator in step 4 with an extra flag instead:
+Run the bootstrap generator in step 4 with an extra flag instead:
 ```sh
 rails g ember:bootstrap -g --javascript-engine coffee
 ```
