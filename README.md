@@ -1,4 +1,4 @@
-# ember-rails  [![Build Status](https://secure.travis-ci.org/emberjs/ember-rails.png?branch=master)](http://travis-ci.org/emberjs/ember-rails) [![Dependency Status](https://gemnasium.com/emberjs/ember-rails.png)](https://gemnasium.com/emberjs/ember-rails)
+# ember-rails  [![Build Status](https://secure.travis-ci.org/emberjs/ember-rails.svg?branch=master)](http://travis-ci.org/emberjs/ember-rails) [![Dependency Status](https://gemnasium.com/emberjs/ember-rails.png)](https://gemnasium.com/emberjs/ember-rails)
 
 ember-rails makes developing an [Ember.JS](http://emberjs.com/) application much easier in Rails 3.1+.
 
