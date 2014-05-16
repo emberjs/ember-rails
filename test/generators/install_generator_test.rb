@@ -18,7 +18,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   def set_test_environment
-    ENV['THOR_DEBUG'] = '1'
     VCR.configure do |c|
       c.cassette_library_dir = 'test/fixtures/vcr_cassettes'
       c.hook_into :webmock # or :fakeweb
@@ -89,7 +88,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with options channel set and options --head it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--channel=canary', '--head']
+      run_generator ['--channel=canary', '--head'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -97,7 +96,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with unknown channel option it should raise exception InvalidChannel" do
     assert_raise ::InvalidChannel do
-      run_generator ['--channel=unkown'] 
+      run_generator ['--channel=unkown'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -156,7 +155,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with options --channel set and options --tag it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--channel=canary', '--tag=v1.2.0-beta.2/ember']
+      run_generator ['--channel=canary', '--tag=v1.2.0-beta.2/ember'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -165,7 +164,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with options --head set and options --tag it should raise exception ConflictingOptions" do
     assert_raise ::ConflictingOptions do
-      run_generator ['--head', '--tag=v1.2.0-beta.2/ember']
+      run_generator ['--head', '--tag=v1.2.0-beta.2/ember'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
@@ -173,7 +172,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "with options --tag without --ember or --ember-data it should raise exception InsufficientOptions" do
     assert_raise ::InsufficientOptions do
-      run_generator ['--tag=v1.2.0-beta.2']
+      run_generator ['--tag=v1.2.0-beta.2'], debug: true
     end
     assert_no_ember_files
     assert_no_ember_data_files
