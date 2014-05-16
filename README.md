@@ -110,6 +110,11 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 * `config.handlebars.output_type` - Configures the style of output (options are `:amd` and `:global`).
   Default value: `:global`.
 
+Note:
+
+In a mountable engine, ember-rails couldn't recognize any configurations.
+Instead, you can use command line options.
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
