@@ -4,7 +4,7 @@
 <% attributes.each do |attribute| -%>
   <%= attribute[:name].camelize(:lower) %>: <%=
   if %w(references belongs_to).member?(attribute[:type])
-    "DS.belongsTo '%s.%s'" % [application_name.camelize, attribute[:name].camelize]
+    "DS.belongsTo '%s'" % attribute[:name].camelize(:lower)
   else
     "DS.attr '%s'" % attribute[:type]
   end

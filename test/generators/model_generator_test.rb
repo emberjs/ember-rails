@@ -24,8 +24,6 @@ class ModelGeneratorTest < Rails::Generators::TestCase
   end
 
   %w(js coffee em).each do |engine|
-
-
     test "create model with #{engine} engine" do
       run_generator ["post", "title:string", "--javascript-engine=#{engine}"]
       assert_file "app/assets/javascripts/models/post.js.#{engine}".sub('.js.js','.js')
@@ -34,6 +32,12 @@ class ModelGeneratorTest < Rails::Generators::TestCase
     test "create namespaced model with #{engine} engine" do
       run_generator ["post/doineedthis", "title:string", "--javascript-engine=#{engine}"]
       assert_file "app/assets/javascripts/models/post/doineedthis.js.#{engine}".sub('.js.js','.js'), /PostDoineedthis/
+    end
+
+    test "create attribute with #{engine} engine" do
+      run_generator ["comment", "post:references", "body:string", "--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/models/comment.js.#{engine}".sub('.js.js','.js'), /body: DS.attr/
+      assert_file "app/assets/javascripts/models/comment.js.#{engine}".sub('.js.js','.js'), /post: DS.belongsTo.+post/
     end
   end
 
