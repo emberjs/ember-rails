@@ -115,6 +115,20 @@ Note:
 In a mountable engine, ember-rails couldn't recognize any configurations.
 Instead, you can use command line options.
 
+### Important note for projects that render JSON responses
+
+ember-rails includes [active_model_serializers](https://github.com/rails-api/active_model_serializers), which affects how ActiveModel and ActiveRecord objects get serialized to JSON, such as when using `render json:` or `respond_with`. By default, active_model_serializers adds root elements to these responses (such as `{"posts": [...]}` for `render json: @posts`) which will affect the structure of your JSON responses.
+
+To disable this effect on your JSON responses, put this in an initializer:
+
+```Ruby
+# Stop active_model_serializers from adding root elements to JSON responses.
+ActiveModel::Serializer.root = false
+ActiveModel::ArraySerializer.root = false
+```
+
+See the [active_model_serializers](https://github.com/rails-api/active_model_serializers) documentation for a more complete understanding of other effects this dependency might have on your app.
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
@@ -264,7 +278,6 @@ RailsAppName.js.coffee
 ```
 
 These are automatically generated for you in new projects you when you run the `ember:bootstrap` generator.
-
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
