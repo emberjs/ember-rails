@@ -59,7 +59,7 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
 
     test "create bootstrap in a rails engine with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
-      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Store/
+      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js'), /MyEngine\.ApplicationStore/
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map/
       assert_file "#{ember_path}/my_engine.js.#{engine}".sub('.js.js','.js')
     end
