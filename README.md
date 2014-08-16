@@ -115,6 +115,9 @@ Note:
 In a mountable engine, ember-rails couldn't recognize any configurations.
 Instead, you can use command line options.
 
+## Feature Flags
+You can't use the guide's method for enabling feature flags (http://emberjs.com/guides/configuring-ember/feature-flags) with ember-rails. Either upgrade ember-source, or build it yourself and override the asset.
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
