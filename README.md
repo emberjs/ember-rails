@@ -115,8 +115,10 @@ Note:
 In a mountable engine, ember-rails couldn't recognize any configurations.
 Instead, you can use command line options.
 
-## Feature Flags
-You can't use the guide's method for enabling feature flags (http://emberjs.com/guides/configuring-ember/feature-flags) with ember-rails. Either upgrade ember-source, or build it yourself and override the asset.
+## Enabling Features with Feature Flags
+See [the guide](http://emberjs.com/guides/configuring-ember/feature-flags/#toc_flagging-details) and check [features.json](https://github.com/emberjs/ember.js/blob/master/features.json) for the version of Ember you're using.
+
+If a feature is set to false, you will need to compile ember from source yourself to include it.
 
 ## Architecture
 
