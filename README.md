@@ -4,17 +4,17 @@ ember-rails makes developing an [Ember.JS](http://emberjs.com/) application much
 
 The following functionalities are included in this gem:
 - Pre-compiling of your handlebars templates when building your asset pipeline.
-- Includes development and production copies of Ember, [Ember Data](https://github.com/emberjs/data) and [Handlebars](https://github.com/wycats/handlebars.js).
-- Includes [ActiveModel::Serializer](https://github.com/rails-api/active_model_serializers) for integration with Ember Data.
+- Inclusion of development and production copies of Ember, [Ember Data](https://github.com/emberjs/data) and [Handlebars](https://github.com/wycats/handlebars.js).
+- Inclusion of [ActiveModel::Serializer](https://github.com/rails-api/active_model_serializers) for integration with Ember Data.
 
-You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if you're just starting out with Rails and Ember.js
+You can see an example of how to use the gem [here](https://github.com/keithpitt/ember-rails-example). There is also a great tutorial by [Dan Gebhardt](https://twitter.com/#!/dgeb) called "[Beginning Ember.js on Rails](http://www.cerebris.com/blog/2012/01/24/beginning-ember-js-on-rails-part-1/)" which is a great read if you're just starting out with Rails and Ember.js.
 
 ## Getting started
 * Add the gem to your application Gemfile:
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '1.5.0' # or the version you need
+gem 'ember-source', '1.6.0' # or the version you need
 ```
 
 * Run `bundle install`
@@ -54,6 +54,16 @@ You'll probably need to clear out your cache after doing this with:
 rake tmp:clear
 ```
 
+Also, ember-rails include some flags for the bootstrap generator:
+
+```
+--ember-path or -d   # custom ember path
+--skip-git or -g     # skip git keeps
+--javascript-engine  # engine for javascript (js or coffee)
+--app-name or -n     # custom ember app name
+```
+
+
 ## For CoffeeScript support
 
 Add coffee-rails to the Gemfile
@@ -64,17 +74,6 @@ gem 'coffee-rails'
 Run the bootstrap generator in step 4 with an extra flag instead:
 ```sh
 rails g ember:bootstrap -g --javascript-engine coffee
-```
-
-Note:
-
-Ember-rails include some flags options for bootstrap generator:
-
-```
---ember-path or -d # custom ember path
---skip-git or -g # skip git keeps
---javascript-engine  # engine for javascript (js or coffee)
---app-name or -n # custom ember app name
 ```
 
 ## For EmberScript support
@@ -100,45 +99,53 @@ using an EmberScript variant first.
 The following options are available for configuration in your application or environment-level
 config files (`config/application.rb`, `config/environments/development.rb`, etc.):
 
-* `config.ember.variant` - Used to determine which Ember variant to use. Valid options: `:development`, `:production`.
-* `config.ember.app_name` - Used to specify a default application name for all generators.
-* `config.ember.ember_path` - Used to specify a default custom root path for all generators.
-* `config.handlebars.precompile` - Used to enable or disable precompilation. Default value: `true`.
-* `config.handlebars.templates_root` - Set the root path (under `app/assets/javascripts`) for templates
-  to be looked up in. Default value: `"templates"`.
-* `config.handlebars.templates_path_separator` - The path separator to use for templates. Default value: `'/'`.
-* `config.handlebars.output_type` - Configures the style of output (options are `:amd` and `:global`).
-  Default value: `:global`.
+| Configuration Option                         | Description                                                                                                         |
+|----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
+| `config.ember.variant`                       | Determines which Ember variant to use. Valid options: `:development`, `:production`.                                |
+| `config.ember.app_name`                      | Specificies a default application name for all generators.                                                          |
+| `config.ember.ember_path`                    | Specifies a default custom root path for all generators.                                                            |
+| `config.handlebars.precompile`               | Enables or disables precompilation. Default value: `true`.                                                          |
+| `config.handlebars.templates_root`           | Sets the root path (under `app/assets/javascripts`) for templates to be looked up in. Default value: `"templates"`. |
+| `config.handlebars.templates_path_separator` | The path separator to use for templates. Default value: `'/'`.                                                      |
+| `config.handlebars.output_type`              | Configures the style of output (options are `:amd` and `:global`). Default value: `:global`.                        |
 
 Note:
 
-In a mountable engine, ember-rails couldn't recognize any configurations.
-Instead, you can use command line options.
+In a mountable engine, ember-rails will not recognize any configurations.
+Instead, use command line options.
 
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
 to use `rails g ember:bootstrap` to create the following directory structure under `app/assets/javascripts`:
 
-    controllers/
-    helpers/
-    components/
-    models/
-    routes/
-    templates/
-    templates/components
-    views/
+```
+├── components
+├── controllers
+├── helpers
+├── mixins
+├── models
+├── practicality.js.coffee
+├── router.js.coffee
+├── routes
+├── store.js.coffee
+├── templates
+│   └── components
+└── views
+```
 
 Additionally, it will add the following lines to `app/assets/javascripts/application.js`.
 By default, it uses the Rails Application's name and creates an `rails_app_name.js`
 file to set up application namespace and initial requires:
 
-    //= require handlebars
-    //= require ember
-    //= require ember-data
-    //= require_self
-    //= require rails_app_name
-    RailsAppName = Ember.Application.create();
+```javascript
+//= require handlebars
+//= require ember
+//= require ember-data
+//= require_self
+//= require rails_app_name
+RailsAppName = Ember.Application.create();
+```
 
 *Example:*
 
@@ -170,8 +177,7 @@ and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
 
-If you want to strip template root from template names, add `templates_root` option to your application configuration block.
-By default, `templates_root` is `'templates'`.
+If you want to avoid the `templates` prefix, set the `templates_root` option in your application configuration block:
 
     config.handlebars.templates_root = 'ember_templates'
 
@@ -196,7 +202,7 @@ Now a single line in the layout loads everything:
 
     <%= javascript_include_tag "templates/all" %>
 
-If you use Slim or Haml templates, you can use handlebars filter :
+If you use Slim or Haml templates, you can use the handlebars filter :
 
     handlebars:
         <button {{action anActionName}}>OK</button>
@@ -213,23 +219,29 @@ When necessary, ember-rails adheres to a conventional folder structure. To creat
 
 *Example*
 
-With the following folder structure:
+Given the following folder structure:
 
-    components/
-    controllers/
-    helpers/
-    models/
-    routes/
-    templates/
-      components/
-        my-component.handlebars
-    views/
+```
+├── components
+├── controllers
+├── helpers
+├── mixins
+├── models
+├── practicality.js.coffee
+├── router.js.coffee
+├── routes
+├── store.js.coffee
+├── templates
+│   └── components
+│       └── my-component.handlebars
+└── views
+```
 
-and a *my-component.handlebars* file with the following contents
+and a `my-component.handlebars` file with the following contents:
 
     <h1>My Component</h1>
 
-will produce the following handlebars output
+It will produce the following handlebars output:
 
     <script type="text/x-handlebars" id="components/my-component">
       <h1>My Component</h1>
