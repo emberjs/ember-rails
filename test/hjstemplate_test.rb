@@ -102,7 +102,7 @@ class HjsTemplateTest < IntegrationTest
       template = Ember::Handlebars::Template.new template_path.to_s
       asset = app.assets.attributes_for(template_path)
 
-      assert_match /define\('appkit\/templates\/test', \['exports'\], function\(__exports__\)\{ __exports__.default = Ember\.Handlebars\.template\(function .*"test"/m, template.render(asset)
+      assert_match /define\('appkit\/templates\/test', \['exports'\], function\(__exports__\)\{ __exports__\['default'\] = Ember\.Handlebars\.template\(function .*"test"/m, template.render(asset)
     end
   end
 
