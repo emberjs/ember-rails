@@ -114,6 +114,11 @@ Note:
 In a mountable engine, ember-rails will not recognize any configurations.
 Instead, use command line options.
 
+## Enabling Features with Feature Flags
+See [the guide](http://emberjs.com/guides/configuring-ember/feature-flags/#toc_flagging-details) and check [features.json](https://github.com/emberjs/ember.js/blob/master/features.json) for the version of Ember you're using.
+
+If a feature is set to false, you will need to compile ember from source yourself to include it.
+
 ## Architecture
 
 Ember does not require an organized file structure. However, ember-rails allows you
