@@ -2,4 +2,3 @@
 
 <%= application_name.camelize %>.Router.map ->
   # @resource('posts')
-
