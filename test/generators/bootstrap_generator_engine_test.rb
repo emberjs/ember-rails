@@ -1,10 +1,9 @@
 require 'test_helper'
 require 'generators/ember/bootstrap_generator'
-require File.expand_path('../../dummy/config/engine', __FILE__)
 
 class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
   tests Ember::Generators::BootstrapGenerator
-  destination File.join(ENGINE_ROOT, "tmp", "generator_engine_test_output")
+  destination Rails.root.join('tmp', 'generator_engine_test_output')
 
   setup :prepare_destination
   teardown :cleanup
