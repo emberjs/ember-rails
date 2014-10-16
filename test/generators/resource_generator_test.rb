@@ -3,7 +3,7 @@ require 'generators/ember/resource_generator'
 
 class ResourceGeneratorTest < Rails::Generators::TestCase
   tests Ember::Generators::ResourceGenerator
-  destination File.join(Rails.root, "tmp")
+  destination File.join(Rails.root, "tmp", "generator_test_output")
   setup :prepare_destination
 
 
