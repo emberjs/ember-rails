@@ -73,7 +73,6 @@ module Ember
 
     private
 
-
       def get_ember_data_for(environment)
         # temporarily using a variable here until a stable release of
         # ember-data is released so that installing with ember-data
@@ -85,23 +84,28 @@ module Ember
           channel
         end
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
-          fetch "#{base_url}/#{chan}/#{file_name_for('ember-data', environment)}", "vendor/assets/ember/#{environment}/ember-data.js"
+          fetch url_for(channel, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
         end
       end
 
       def get_ember_js_for(environment)
-
         create_file "vendor/assets/ember/#{environment}/ember.js" do
-          fetch "#{base_url}/#{channel}/#{file_name_for('ember', environment)}", "vendor/assets/ember/#{environment}/ember.js"
+          fetch url_for(channel, 'ember', environment), "vendor/assets/ember/#{environment}/ember.js"
         end
       end
 
-      def file_name_for(component,environment)
+      def url_for(channel, component, environment)
+        base = "#{base_url}/#{channel}/#{component}"
+
         case environment
         when :production
-          "#{component}.min.js"
+          "#{base}.min.js"
         when :development
-          "#{component}.js"
+          if resource_exist?("#{base}.debug.js")
+            "#{base}.debug.js" # Ember.js 1.10.0.beta.1 or later
+          else
+            "#{base}.js"
+          end
         end
       end
 
@@ -173,6 +177,12 @@ module Ember
         end
         output.rewind
         content = output.read
+      end
+
+      def resource_exist?(target)
+        uri = URI(target)
+        response = Net::HTTP.new(uri.host, uri.port).head(uri.path)
+        response.code == '200'
       end
     end
   end
