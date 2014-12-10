@@ -78,7 +78,7 @@ module Ember
         # temporarily using a variable here until a stable release of
         # ember-data is released so that installing with ember-data
         # *just works*.
-        chan = if channel == :release
+        chan = if channel.to_s == 'release'
           say_status("warning:", 'Ember Data is not available on the :release channel. Falling back to beta channel.' , :yellow)
           :beta
         else

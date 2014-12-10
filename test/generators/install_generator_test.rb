@@ -37,20 +37,19 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "without any options it load the release channel" do
-
     VCR.use_cassette('fetch_ember_release') do
-      run_generator 
-      assert_all_ember_files
-      # assert_all_ember_data_files TODO: Remove after ember data is released
+      run_generator
     end
+    assert_all_ember_files
+    assert_all_ember_data_files
   end
 
   test "with options --head it should load the canary ember-data & ember files" do
     VCR.use_cassette('fetch_ember_canary') do
       run_generator ['--head']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_data_files
   end
 
   test "with options --head it should show a deprecation message" do
@@ -64,26 +63,26 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "with options channel=release it should load the release ember-data & ember files" do
     VCR.use_cassette('fetch_ember_release') do
       run_generator ['--channel=release']
-      assert_all_ember_files
-      # assert_all_ember_data_files TODO: Remove after ember data is released
     end
+    assert_all_ember_files
+    assert_all_ember_data_files
   end
 
 
   test "with options channel=beta it should load the beta ember-data & ember files" do
     VCR.use_cassette('fetch_ember_beta') do
       run_generator ['--channel=beta']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_data_files
   end
 
   test "with options channel=canary it should load the beta ember-data & ember files" do
     VCR.use_cassette('fetch_ember_canary') do
       run_generator ['--channel=canary']
-      assert_all_ember_files
-      assert_all_ember_data_files
     end
+    assert_all_ember_files
+    assert_all_ember_data_files
   end
 
   test "with options channel set and options --head it should raise exception ConflictingOptions" do
