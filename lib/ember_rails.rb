@@ -26,10 +26,18 @@ module Ember
         # Copy over the desired ember, ember-data, and handlebars bundled in
         # ember-source, ember-data-source, and handlebars-source to a tmp folder.
         tmp_path = app.root.join("tmp/ember-rails")
-        ext = variant == :production ? ".prod.js" : ".js"
         FileUtils.mkdir_p(tmp_path)
-        FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ext}"), tmp_path.join("ember.js"))
-        FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ext}"), tmp_path.join("ember-data.js"))
+
+        if variant == :production
+          ember_ext = ".prod.js"
+        else
+          ember_ext = ".debug.js"
+          ember_ext = ".js" unless File.exist?(::Ember::Source.bundled_path_for("ember#{ember_ext}")) # Ember.js 1.9.0 or earlier has no "ember.debug.js"
+        end
+        FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ember_ext}"), tmp_path.join("ember.js"))
+        ember_data_ext = variant == :production ? ".prod.js" : ".js"
+        FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ember_data_ext}"), tmp_path.join("ember-data.js"))
+
         app.assets.append_path(tmp_path)
 
         # Make the handlebars.js and handlebars.runtime.js bundled
