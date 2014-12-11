@@ -83,8 +83,9 @@ module Ember
         else
           channel
         end
+
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
-          fetch url_for(channel, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
+          fetch url_for(chan, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
         end
       end
 
