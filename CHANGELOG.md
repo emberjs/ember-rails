@@ -1,3 +1,10 @@
+## 0.15.1 (Dec 13, 2014)
+
+  - Fix `ember:install` for ember-data to work with `--channel=release`.
+  - Stop generation `App.Store`.
+  - Support for CSRF Token to DS.RESTAdapter in store
+  - Fix handlebars amd output compatibility with IE8
+
 ## 0.15.0 (April 30, 2014)
 
   - Load app.js with relative path.
