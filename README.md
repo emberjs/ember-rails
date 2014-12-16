@@ -112,7 +112,7 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 
 | Configuration Option                         | Description                                                                                                         |
 |----------------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-| `config.ember.variant`                       | Determines which Ember variant to use. Valid options: `:development`, `:production`.                                |
+| `config.ember.variant`                       | Determines which Ember variant to use. Valid options: `:development`, `:production`. Defaults to `:production` in production, and `:development` everywhere else.                               |
 | `config.ember.app_name`                      | Specificies a default application name for all generators.                                                          |
 | `config.ember.ember_path`                    | Specifies a default custom root path for all generators.                                                            |
 | `config.handlebars.precompile`               | Enables or disables precompilation. Default value: `true`.                                                          |
