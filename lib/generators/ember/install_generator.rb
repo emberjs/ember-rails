@@ -10,12 +10,10 @@ module Ember
 
       class InvalidChannel < ::Thor::Error; end
       class ConflictingOptions < ::Thor::Error; end
-      class Deprecated < ::Thor::Error; end
       class InsufficientOptions < ::Thor::Error; end
 
       ::InvalidChannel = InvalidChannel
       ::ConflictingOptions = ConflictingOptions
-      ::Deprecated = Deprecated
       ::InsufficientOptions = InsufficientOptions
 
       desc "Install Ember.js into your vendor folder"
