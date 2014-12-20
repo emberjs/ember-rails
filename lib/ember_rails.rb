@@ -94,6 +94,25 @@ module Ember
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
         end
       end
+
+      config.ember.module_prefix = 'ember-app'
+      config.ember.module_dir = %w(
+        models controllers views routes components helpers mixins serializers adapters
+        initializers
+        router store
+      )
+
+      initializer "ember_rails.setup_es6_module_transpiler" do |app|
+        app ||= ::Rails.application
+
+        if config.ember.module_prefix
+          Array(config.ember.module_dir).each do |dir|
+            path_pattern = Regexp.new("\\A#{app.root.join('app', 'assets', 'javascripts', dir)}")
+
+            ES6ModuleTranspiler.add_prefix_pattern path_pattern, config.ember.module_prefix
+          end
+        end
+      end
     end
   end
 end

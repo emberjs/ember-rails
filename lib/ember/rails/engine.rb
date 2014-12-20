@@ -1,5 +1,6 @@
 require 'ember/handlebars/template'
 require 'active_model_serializers'
+require 'es6_module_transpiler/rails'
 require 'sprockets/railtie'
 
 module Ember
