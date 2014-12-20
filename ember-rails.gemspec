@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "test-unit"
   s.add_development_dependency "safe_yaml", ">= 1.0.4"
 
-  s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
+  s.files = %w(README.md LICENSE) + Dir["app/**/*", "lib/**/*", "vendor/**/*"]
 
   s.require_paths = ["lib"]
 end
