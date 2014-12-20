@@ -39,7 +39,7 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]
@@ -58,8 +58,8 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
 
     test "create bootstrap in a rails engine with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
-      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map/
-      assert_file "#{ember_path}/adapters/application.js.#{engine}".sub('.js.js','.js'), /MyEngine\.ApplicationAdapter/
+      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map|Ember\.Router\.extend/
+      assert_file "#{ember_path}/adapters/application.js.#{engine}".sub('.js.js','.js'), /MyEngine\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
       assert_file "#{ember_path}/my_engine.js.#{engine}".sub('.js.js','.js')
     end
   end

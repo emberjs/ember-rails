@@ -22,7 +22,7 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
     copy_directory "config"
   end
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "default_component with #{engine} engine" do
       run_generator ["PostChart","--javascript-engine=#{engine}"]

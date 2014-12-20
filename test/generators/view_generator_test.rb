@@ -23,7 +23,7 @@ class ViewGeneratorTest < Rails::Generators::TestCase
   end
 
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
@@ -39,7 +39,7 @@ class ViewGeneratorTest < Rails::Generators::TestCase
 
     test "create namespaced view with #{engine} engine" do
       run_generator ["post/index", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/views/post/index.js.#{engine}".sub('.js.js','.js') , /PostIndexView/
+      assert_file "app/assets/javascripts/views/post/index.js.#{engine}".sub('.js.js','.js') , /PostIndexView|export default Ember\.View\.extend/
     end
 
   end

@@ -6,8 +6,7 @@ class TemplateGeneratorTest < Rails::Generators::TestCase
   destination File.join(Rails.root, "tmp", "generator_test_output")
   setup :prepare_destination
 
-
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
     test "template with #{engine} as current engine" do
       run_generator ["post", "--javascript-engine", engine]
       assert_file "app/assets/javascripts/templates/post.hbs"

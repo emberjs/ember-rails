@@ -6,8 +6,7 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
   destination File.join(Rails.root, "tmp", "generator_test_output")
   setup :prepare_destination
 
-
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
@@ -36,9 +35,9 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
 
     test "create all with #{engine} engine and custom name" do
       run_generator ["post", "--javascript-engine=#{engine}", "-n", "MyApp"]
-      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js'), /MyApp.PostView/
-      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostController/
-      assert_file "app/assets/javascripts/routes/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostRoute/
+      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js'), /MyApp.PostView|export default Ember\.View\.extend/
+      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostController|export default Ember\.Controller\.extend/
+      assert_file "app/assets/javascripts/routes/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostRoute|export default Ember\.Route\.extend/
     end
   end
 

@@ -23,7 +23,7 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
     copy_directory "config"
   end
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "array_controller with #{engine} engine" do
       run_generator ["posts", "--array", "--javascript-engine=#{engine}"]
@@ -42,7 +42,7 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
 
     test "default_controller namespaced with #{engine} engine" do
       run_generator ["post/index","--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/controllers/post/index.js.#{engine}".sub('.js.js','.js'), /PostIndexController/
+      assert_file "#{ember_path}/controllers/post/index.js.#{engine}".sub('.js.js','.js'), /PostIndexController|export default Ember\.Controller\.extend/
     end
   end
 
