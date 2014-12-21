@@ -25,19 +25,19 @@ class AdapterGeneratorTest < Rails::Generators::TestCase
   test "Assert files are properly created" do
     run_generator %w(ember)
 
-    assert_file "#{ember_path}/adapters/ember_adapter.js"
+    assert_file "#{ember_path}/adapters/ember.js"
   end
 
   test "Assert files are properly created with custom path" do
     custom_path = ember_path("custom")
     run_generator [ "ember", "-d", custom_path ]
 
-    assert_file "#{custom_path}/adapters/ember_adapter.js"
+    assert_file "#{custom_path}/adapters/ember.js"
   end
 
   test "Assert files are properly created with custom app name" do
     run_generator [ "ember", "-n", "MyApp" ]
-    assert_file "app/assets/javascripts/adapters/ember_adapter.js", /MyApp\.EmberAdapter/
+    assert_file "app/assets/javascripts/adapters/ember.js", /MyApp\.EmberAdapter/
   end
 
   test "Uses config.ember.app_name as the app name" do
@@ -45,7 +45,7 @@ class AdapterGeneratorTest < Rails::Generators::TestCase
       old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
 
       run_generator %w(ember)
-      assert_file "app/assets/javascripts/adapters/ember_adapter.js", /MyApp\.EmberAdapter/
+      assert_file "app/assets/javascripts/adapters/ember.js", /MyApp\.EmberAdapter/
     ensure
       ::Rails.configuration.ember.app_name = old
     end
@@ -57,7 +57,7 @@ class AdapterGeneratorTest < Rails::Generators::TestCase
       old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
 
       run_generator [ "ember"]
-      assert_file "#{custom_path}/adapters/ember_adapter.js"
+      assert_file "#{custom_path}/adapters/ember.js"
     ensure
       ::Rails.configuration.ember.ember_path = old
     end

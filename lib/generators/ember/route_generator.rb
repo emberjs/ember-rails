@@ -13,7 +13,7 @@ module Ember
       class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_route_files
-        file_path = File.join(ember_path, 'routes', class_path, "#{file_name}_route.#{engine_extension}")
+        file_path = File.join(ember_path, 'routes', class_path, "#{file_name}.#{engine_extension}")
         template "route.#{engine_extension}", file_path
       end
     end

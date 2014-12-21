@@ -17,7 +17,7 @@ module Ember
 
 
       def create_controller_files
-        file_path = File.join(ember_path, 'controllers', class_path, "#{file_name}_controller.#{engine_extension}")
+        file_path = File.join(ember_path, 'controllers', class_path, "#{file_name}.#{engine_extension}")
 
         if options.array?
           template "array_controller.#{engine_extension}", file_path

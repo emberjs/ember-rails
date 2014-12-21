@@ -39,7 +39,7 @@ module Ember
       end
 
       def create_adapter_file
-        template "application_adapter.#{engine_extension}", "#{ember_path}/adapters/application_adapter.#{engine_extension}"
+        template "application_adapter.#{engine_extension}", "#{ember_path}/adapters/application.#{engine_extension}"
       end
 
       private
