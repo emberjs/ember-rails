@@ -18,7 +18,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def prepare_destination
     super
 
-    copy_directory "app/assets/javascripts"
+    copy_directory "app/assets/javascripts/application.js"
     copy_directory "config"
   end
 
