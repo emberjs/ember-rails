@@ -149,6 +149,7 @@ Ember does not require an organized file structure. However, ember-rails allows 
 to use `rails g ember:bootstrap` to create the following directory structure under `app/assets/javascripts`:
 
 ```
+├── adapters
 ├── components
 ├── controllers
 ├── helpers
@@ -194,6 +195,10 @@ RailsAppName = Ember.Application.create();
       create  app/assets/javascripts/templates/.gitkeep
       create  app/assets/javascripts/templates/components
       create  app/assets/javascripts/templates/components/.gitkeep
+      create  app/assets/javascripts/mixins
+      create  app/assets/javascripts/mixins/.gitkeep
+      create  app/assets/javascripts/adapters
+      create  app/assets/javascripts/adapters/.gitkeep
       create  app/assets/javascripts/app.js
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
@@ -251,6 +256,7 @@ When necessary, ember-rails adheres to a conventional folder structure. To creat
 Given the following folder structure:
 
 ```
+├── adapters
 ├── components
 ├── controllers
 ├── helpers
