@@ -94,6 +94,48 @@ You can now use the flag `--javascript-engine=em` to specify EmberScript
 assets in your generators, but all of the generators will default to
 using an EmberScript variant first.
 
+## For ES6 Modules support
+
+Ember.js recommends using ES6 module syntax.
+It is supported by [es6_module_transpiler](https://github.com/dockyard/es6_module_transpiler-rails).
+
+Run the bootstrap generator with an extra flag:
+
+``` sh
+rails g ember:bootstrap --javascript-engine=es6
+```
+
+Note:
+
+To use ES6 module in your application, the following configuration is required:
+
+`my_app.js.es6`
+``` javascript
+//= require ember-rails/application
+// And require more modules...
+
+import Ember from 'ember-rails/application';
+
+var App = Ember.Application.extend();
+
+App.craete();
+```
+
+`require ember-rails/application` is important.
+It provides customized Ember application to resolve dependencies from ES6 modules.
+
+`application.js`
+``` javascript
+//= require jquery
+//= require handlebars
+//= require ember
+//= require ember-data
+//= require ./my_app
+//= require_self
+
+require('my_app'); // Run your Ember.js application
+```
+
 ## Configuration Options
 
 The following options are available for configuration in your application or environment-level
@@ -104,6 +146,8 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 | `config.ember.variant`                       | Determines which Ember variant to use. Valid options: `:development`, `:production`. Defaults to `:production` in production, and `:development` everywhere else.                               |
 | `config.ember.app_name`                      | Specificies a default application name for all generators.                                                          |
 | `config.ember.ember_path`                    | Specifies a default custom root path for all generators.                                                            |
+| `config.ember.module_prefix`                 | Sets module prefix for es6 module. This option is used for only `es6` scripts. Default value: `ember-app`. |
+| `config.ember.module_dir`                    | Determines which directories to use `module_prefix`. This option is used for only `es6` scripts. |
 | `config.handlebars.precompile`               | Enables or disables precompilation. Default value: `true`.                                                          |
 | `config.handlebars.templates_root`           | Sets the root path (under `app/assets/javascripts`) for templates to be looked up in. Default value: `"templates"`. |
 | `config.handlebars.templates_path_separator` | The path separator to use for templates. Default value: `'/'`.                                                      |
