@@ -23,8 +23,8 @@ module Ember
       initializer "ember_rails.setup_vendor", :after => "ember_rails.setup", :group => :all do |app|
         variant = app.config.ember.variant || (::Rails.env.production? ? :production : :development)
 
-        # Copy over the desired ember, ember-data, and handlebars bundled in
-        # ember-source, ember-data-source, and handlebars-source to a tmp folder.
+        # Copy over the desired ember and ember-data bundled in
+        # ember-source and ember-data-source to a tmp folder.
         tmp_path = app.root.join("tmp/ember-rails")
         FileUtils.mkdir_p(tmp_path)
 
