@@ -64,7 +64,7 @@ module Ember
       end
 
       def precompile_handlebars(string)
-        Barber::FilePrecompiler.call(string)
+        "Handlebars.template(#{Barber::Precompiler.compile(string)});"
       end
 
       def compile_ember_handlebars(string)
@@ -72,7 +72,7 @@ module Ember
       end
 
       def precompile_ember_handlebars(string)
-        Barber::Ember::FilePrecompiler.call(string)
+        "Ember.Handlebars.template(#{Barber::Ember::Precompiler.compile(string)});"
       end
 
       def mustache_to_handlebars(scope, template)
