@@ -1,3 +1,8 @@
+## 0.16.0 (Dec 28, 2014)
+
+  - Support HTMLBars compilation
+  - Add adapter generator
+
 ## 0.15.1 (Dec 13, 2014)
 
   - Fix `ember:install` for ember-data to work with `--channel=release`.
