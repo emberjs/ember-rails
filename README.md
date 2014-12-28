@@ -119,6 +119,7 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 | `config.handlebars.templates_root`           | Sets the root path (under `app/assets/javascripts`) for templates to be looked up in. Default value: `"templates"`. |
 | `config.handlebars.templates_path_separator` | The path separator to use for templates. Default value: `'/'`.                                                      |
 | `config.handlebars.output_type`              | Configures the style of output (options are `:amd` and `:global`). Default value: `:global`.                        |
+| `config.handlebars.ember_template`           | Default which Ember template type to compile. Valid options: `'Handlebars', `HTMLBars`. Defaults to 'Handlebars`' when `Ember::VERSION` is under 1.10.0, `HTMLBars` when `Ember::VERSION` is over 1.10.0. |
 
 Note:
 
