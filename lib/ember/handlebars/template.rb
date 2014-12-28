@@ -24,13 +24,13 @@ module Ember
           if raw
             template = precompile_handlebars(template)
           else
-            template = precompile_ember_handlebars(template)
+            template = precompile_ember_handlebars(template, configuration.ember_template)
           end
         else
           if raw
             template = compile_handlebars(data)
           else
-            template = compile_ember_handlebars(template)
+            template = compile_ember_handlebars(template, configuration.ember_template)
           end
         end
 
@@ -64,15 +64,15 @@ module Ember
       end
 
       def precompile_handlebars(string)
-        Barber::FilePrecompiler.call(string)
+        "Handlebars.template(#{Barber::Precompiler.compile(string)});"
       end
 
-      def compile_ember_handlebars(string)
-        "Ember.Handlebars.compile(#{indent(string).inspect});"
+      def compile_ember_handlebars(string, ember_template = 'Handlebars')
+        "Ember.#{ember_template}.compile(#{indent(string).inspect});"
       end
 
-      def precompile_ember_handlebars(string)
-        Barber::Ember::FilePrecompiler.call(string)
+      def precompile_ember_handlebars(string, ember_template = 'Handlebars')
+        "Ember.#{ember_template}.template(#{Barber::Ember::Precompiler.compile(string)});"
       end
 
       def mustache_to_handlebars(scope, template)

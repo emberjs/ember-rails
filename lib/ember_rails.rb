@@ -1,8 +1,8 @@
 require 'rails'
-require 'ember/rails/version'
-require 'ember/rails/engine'
 require 'ember/source'
 require 'ember/data/source'
+require 'ember/rails/version'
+require 'ember/rails/engine'
 require 'handlebars/source'
 
 module Ember
