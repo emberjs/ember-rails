@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.add_dependency "execjs", [">= 1.2"]
   s.add_dependency "railties", [">= 3.1"]
   s.add_dependency "active_model_serializers"
-  s.add_dependency "barber", [">= 0.4.1"]
+  s.add_dependency "barber", [">= 0.6.0"]
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
   s.add_dependency "ember-source", ">= 1.1.0"
