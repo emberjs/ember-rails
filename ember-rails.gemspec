@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["me@keithpitt.com", "paul@chavard.net"]
   s.homepage    = "https://github.com/emberjs/ember-rails"
   s.summary     = "Ember for Rails 3.1+"
+  s.license     = "MIT"
 
   s.add_dependency "execjs", [">= 1.2"]
   s.add_dependency "railties", [">= 3.1"]
