@@ -237,17 +237,6 @@ Now a single line in the layout loads everything:
 
     <%= javascript_include_tag "templates/all" %>
 
-If you use Slim or Haml templates, you can use the handlebars filter :
-
-    handlebars:
-        <button {{action anActionName}}>OK</button>
-
-It will be translated as :
-
-    <script type="text/x-handlebars">
-        <button {{action anActionName}}>OK</button>
-    </script>
-
 ### Note about ember components
 
 When necessary, ember-rails adheres to a conventional folder structure. To create an ember component you must define the handlebars file *inside* the *components* folder under the templates folder of your project to properly register your handlebars component file.
