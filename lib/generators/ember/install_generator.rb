@@ -85,6 +85,13 @@ module Ember
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
           fetch url_for(chan, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
         end
+
+        sourcemap_url = "#{base_url}/#{chan}/ember-data.js.map"
+        if resource_exist?(sourcemap_url)
+          create_file "vendor/assets/ember/#{environment}/ember-data.js.map" do
+            fetch sourcemap_url, "vendor/assets/ember/#{environment}/ember-data.js.map", false
+          end
+        end
       end
 
       def get_ember_js_for(environment)
@@ -155,14 +162,17 @@ module Ember
         end
       end
 
-      def fetch(from, to)
+      def fetch(from, to, prepend_verbose = true)
         message = "#{from} -> #{to}"
         say_status("downloading:", message , :green)
 
         uri = URI(from)
         output = StringIO.new
-        output.puts "// Fetched from channel: #{channel}, with url " + uri.to_s
-        output.puts "// Fetched on: " + Time.now.utc.iso8601.to_s
+        if prepend_verbose
+          output.puts "// Fetched from channel: #{channel}, with url " + uri.to_s
+          output.puts "// Fetched on: " + Time.now.utc.iso8601.to_s
+        end
+
         response = Net::HTTP.get_response(uri)
         case response.code
         when '404'
