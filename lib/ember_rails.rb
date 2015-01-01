@@ -39,7 +39,7 @@ module Ember
         FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ember_data_ext}"), tmp_path.join("ember-data.js"))
 
         # Copy ember-data source map to tmp folder.
-        if File.exist?(::Ember::Data::Source.bundled_path_for("ember-data.js.map")) # Source maps are present starting from version 1.0.0-beta.13
+        if File.exist?(::Ember::Data::Source.bundled_path_for("ember-data.js.map")) # Source maps are present in ember-data-source gem, starting from version 1.0.0-beta.14.1
           FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data.js.map"), tmp_path.join("ember-data.js.map"))
         end
         
