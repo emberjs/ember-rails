@@ -1,3 +1,7 @@
+## 0.16.1 (Jan 1, 2015)
+
+  - Fix to support ember-data.js.map
+
 ## 0.16.0 (Dec 28, 2014)
 
   - Support HTMLBars compilation
