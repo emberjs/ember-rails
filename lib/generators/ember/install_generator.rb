@@ -85,6 +85,13 @@ module Ember
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
           fetch url_for(chan, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
         end
+
+        sourcemap_url = "#{base_url}/#{chan}/ember-data.js.map"
+        if resource_exist?(sourcemap_url)
+          create_file "vendor/assets/ember/#{environment}/ember-data.js.map" do
+            fetch sourcemap_url, "vendor/assets/ember/#{environment}/ember-data.js.map"
+          end
+        end
       end
 
       def get_ember_js_for(environment)
