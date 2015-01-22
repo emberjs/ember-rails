@@ -276,32 +276,6 @@ You can reference your component inside your other handlebars template files by 
 
      {{ my-component }}
 
-### A note about upgrading ember-rails and components
-The ember-rails project now includes generators for components. If you have an existing project and need
-to compile component files you will need to include the components folder as part of the asset pipeline.
-A typical project expects two folders for *components* related code:
-
-* `assets/javascripts/components/` to hold the component javascript source
-* `assets/javascripts/templates/components/` to hold the handlebars templates for your components
-
-Your asset pipeline require statements should include reference to both e.g.
-
-RailsAppName.js
-```
-//= require_tree ./templates
-//= require_tree ./components
-```
-
-or
-
-RailsAppName.js.coffee
-```
-#= require_tree ./templates
-#= require_tree ./components
-```
-
-These are automatically generated for you in new projects you when you run the `ember:bootstrap` generator.
-
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
 By default, ember-rails ships with the latest version of
