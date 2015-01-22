@@ -43,7 +43,6 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
 
     test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')
@@ -52,7 +51,6 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     test "create bootstrap in a rails engine with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
-      assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')

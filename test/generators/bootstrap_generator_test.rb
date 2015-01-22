@@ -36,7 +36,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     test "create bootstrap with #{engine} engine" do
       run_generator ["--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{ember_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
@@ -47,7 +46,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     test "create bootstrap with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
-      assert_file "#{custom_path}/store.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
       assert_file "#{custom_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
@@ -112,7 +110,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       old, ::Rails.configuration.ember.ember_path = ::Rails.configuration.ember.ember_path, custom_path
 
       run_generator
-      assert_file "#{custom_path}/store.js"
       assert_file "#{custom_path}/router.js"
       assert_file "#{custom_path}/#{application_name.underscore}.js"
     ensure
@@ -135,7 +132,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_file "#{path}/application.js"
     assert_file "#{path}/#{application_name}.js"
     assert_file "#{path}/router.js"
-    assert_file "#{path}/store.js"
     assert_file "#{path}/adapters/application_adapter.js"
   end
 

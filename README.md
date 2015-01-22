@@ -325,6 +325,22 @@ or for ember-data
 
     rails generate ember:install --tag=v1.0.0-beta.2 --ember-data
 
+## CSRF Token
+
+Rails [`protect_from_forgery`](http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection/ClassMethods.html#method-i-protect_from_forgery) requires CSRF token for every XHR except GET.
+The CSRF token is normally found in `app/views/layouts/application.html.*` inserted with the rails helper: [`csrf_meta_tags`](http://api.rubyonrails.org/classes/ActionView/Helpers/CsrfHelper.html#method-i-csrf_meta_tags).
+
+When you use [jquery-ujs](https://github.com/rails/jquery-ujs),
+the CSRF token will be send to rails application on every XHR automatically.
+If not so, the following JavaScript is required in your code.
+
+``` javascript
+$.ajaxPrefilter(function(options, originalOptions, xhr) {
+  var token = $('meta[name="csrf-token"]').attr('content');
+  xhr.setRequestHeader('X-CSRF-Token', token);
+});
+```
+
 ## Note on Patches/Pull Requests
 
 1. Fork the project.
