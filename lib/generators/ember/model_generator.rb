@@ -13,7 +13,7 @@ module Ember
       class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_model_files
-        file_path = File.join(ember_path, 'models', class_path, "#{file_name}.#{engine_extension}")
+        file_path = File.join(ember_path, 'models', class_path, "#{file_name.dasherize}.#{engine_extension}")
         template "model.#{engine_extension}", file_path
       end
 

@@ -14,7 +14,7 @@ module Ember
       class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_view_files
-        file_path = File.join(ember_path, 'views', class_path, "#{file_name}.#{engine_extension}")
+        file_path = File.join(ember_path, 'views', class_path, "#{file_name.dasherize}.#{engine_extension}")
         template "view.#{engine_extension}", file_path
         invoke('ember:template', [ name ], options) if options[:with_template]
       end

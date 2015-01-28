@@ -31,7 +31,7 @@ module Ember
       end
 
       def create_app_file
-        template "app.#{engine_extension}", "#{ember_path}/#{application_name.underscore}.#{engine_extension}"
+        template "app.#{engine_extension}", "#{ember_path}/#{application_name.underscore.dasherize}.#{engine_extension}"
       end
 
       def create_router_file

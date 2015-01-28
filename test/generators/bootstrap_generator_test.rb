@@ -57,7 +57,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       run_generator ["--javascript-engine=#{engine}", "-n", "MyApp"]
       assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyApp\.Router\.map|Ember\.Router\.extend/
       assert_file "#{ember_path}/adapters/application.js.#{engine}".sub('.js.js','.js'), /MyApp\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
-      assert_file "#{ember_path}/my_app.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/my-app.js.#{engine}".sub('.js.js','.js')
     end
 
   end
