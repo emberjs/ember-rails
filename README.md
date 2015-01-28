@@ -193,7 +193,6 @@ to use `rails g ember:bootstrap` to create the following directory structure und
 ├── practicality.js.coffee
 ├── router.js.coffee
 ├── routes
-├── store.js.coffee
 ├── templates
 │   └── components
 └── views
@@ -289,7 +288,6 @@ Given the following folder structure:
 ├── practicality.js.coffee
 ├── router.js.coffee
 ├── routes
-├── store.js.coffee
 ├── templates
 │   └── components
 │       └── my-component.handlebars
