@@ -1,3 +1,8 @@
+## 0.16.2 (Feb 11, 2015)
+
+  - Restrict handlebars-source version < 3 because of precompilation failed.
+  - Update generator using `jquery_ujs` to deal with CSRF Token correctly.
+
 ## 0.16.1 (Jan 1, 2015)
 
   - Fix to support ember-data.js.map
