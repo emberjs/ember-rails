@@ -38,9 +38,9 @@ class HjsTemplateTest < IntegrationTest
     handlebars.templates_path_separator = old_sep if sep
   end
 
-  def with_amd_output
+  def with_amd_output(namespace)
     old, handlebars.output_type = handlebars.output_type, :amd
-    old_namespace, handlebars.amd_namespace = handlebars.amd_namespace, 'appkit'
+    old_namespace, handlebars.amd_namespace = handlebars.amd_namespace, namespace
 
     yield
   ensure
@@ -102,13 +102,23 @@ class HjsTemplateTest < IntegrationTest
     end
   end
 
-  test "template with AMD output" do
-    with_amd_output do
+  test "template with AMD output using 'appkit' namespace" do
+    with_amd_output('appkit') do
       template_path = ::Rails.root.join('app/assets/javascripts/templates/test.js.hjs')
       template = Ember::Handlebars::Template.new template_path.to_s
       asset = app.assets.attributes_for(template_path)
 
       assert_match /define\('appkit\/templates\/test', \['exports'\], function\(__exports__\)\{ __exports__\['default'\] = Ember\.(?:Handlebars|HTMLBars)\.template\(/m, template.render(asset)
+    end
+  end
+
+  test "template with AMD output using `nil` namespace" do
+    with_amd_output(nil) do
+      template_path = ::Rails.root.join('app/assets/javascripts/templates/test.js.hjs')
+      template = Ember::Handlebars::Template.new template_path.to_s
+      asset = app.assets.attributes_for(template_path)
+
+      assert_match /define\('templates\/test', \['exports'\], function\(__exports__\)\{ __exports__\['default'\] = Ember\.(?:Handlebars|HTMLBars)\.template\(/m, template.render(asset)
     end
   end
 
