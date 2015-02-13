@@ -52,7 +52,7 @@ module Ember
       end
 
       def amd_template_target(scope)
-        "#{configuration.amd_namespace}/#{scope.logical_path.split(".").first}"
+        [configuration.amd_namespace, scope.logical_path.split(".").first].compact.join('/')
       end
 
       def global_template_target(scope)
