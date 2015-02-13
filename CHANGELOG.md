@@ -1,3 +1,7 @@
+## 0.16.3 (Feb 13, 2015)
+
+  -  Remove extra heading `/` from AMD module name
+
 ## 0.16.2 (Feb 11, 2015)
 
   - Restrict handlebars-source version < 3 because of precompilation failed.
