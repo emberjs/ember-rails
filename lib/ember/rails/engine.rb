@@ -1,7 +1,8 @@
 require 'ember/handlebars/template'
 require 'active_model_serializers'
-require 'es6_module_transpiler/rails'
+require 'ember/es6_template'
 require 'ember/cli/assets'
+
 require 'sprockets/railtie'
 
 module Ember
@@ -21,6 +22,11 @@ module Ember
         Sprockets::Engines #force autoloading
 
         Ember::Handlebars::Template.setup Sprockets
+      end
+
+      config.before_initialize do |app|
+        Sprockets.register_engine '.es6', Ember::ES6Template::ES6
+        Sprockets.register_engine '.es6module', Ember::ES6Template::ES6Module
       end
 
       config.before_initialize do |app|

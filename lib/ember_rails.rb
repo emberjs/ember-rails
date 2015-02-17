@@ -102,17 +102,7 @@ module Ember
         router store
       )
 
-      initializer "ember_rails.setup_es6_module_transpiler" do |app|
-        app ||= ::Rails.application
-
-        if config.ember.module_prefix
-          Array(config.ember.module_dir).each do |dir|
-            path_pattern = Regexp.new("\\A#{app.root.join('app', 'assets', 'javascripts', dir)}")
-
-            ES6ModuleTranspiler.add_prefix_pattern path_pattern, config.ember.module_prefix
-          end
-        end
-      end
+      # TODO setup sprockets-es6module
     end
   end
 end

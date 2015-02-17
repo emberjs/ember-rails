@@ -94,10 +94,10 @@ You can now use the flag `--javascript-engine=em` to specify EmberScript
 assets in your generators, but all of the generators will default to
 using an EmberScript variant first.
 
-## For ES6 Modules support
+## For ES6 support
 
-Ember.js recommends using ES6 module syntax.
-It is supported by [es6_module_transpiler](https://github.com/dockyard/es6_module_transpiler-rails).
+Ember.js recommends using ES6 syntax.
+It is supported by [Babel](https://babeljs.io/) via [ember-es6_template](https://github.com/tricknotes/ember-es6_template).
 
 Run the bootstrap generator with an extra flag:
 
@@ -203,7 +203,6 @@ By default, it uses the Rails Application's name and creates an `rails_app_name.
 file to set up application namespace and initial requires:
 
 ```javascript
-//= require handlebars
 //= require ember
 //= require ember-data
 //= require_self
