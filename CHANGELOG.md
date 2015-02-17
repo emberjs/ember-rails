@@ -1,3 +1,7 @@
+## 0.16.4 (Feb 17, 2015)
+
+  -  Append all assets to sprockets path that bundled in ember-source & ember-data-source
+
 ## 0.16.3 (Feb 13, 2015)
 
   -  Remove extra heading `/` from AMD module name
