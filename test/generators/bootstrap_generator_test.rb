@@ -120,7 +120,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   private
 
   def assert_application_file_modified(application_file = ember_path('application.js'))
-    assert_file application_file, %r{//= require handlebars}
     assert_file application_file, %r{//= require ember}
     assert_file application_file, %r{//= require ember-data}
     assert_file application_file, %r{//= require ./#{application_name.underscore}}
@@ -152,6 +151,5 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
   end
-
 
 end
