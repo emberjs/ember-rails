@@ -27,7 +27,7 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
     test "default_component with #{engine} engine" do
       run_generator ["PostChart","--javascript-engine=#{engine}"]
       assert_file "app/assets/javascripts/components/post-chart_component.js.#{engine}".sub('.js.js','.js')
-      assert_file "app/assets/javascripts/templates/components/post-chart.handlebars"
+      assert_file "app/assets/javascripts/templates/components/post-chart.hbs"
     end
 
   end
@@ -35,38 +35,38 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
   test "Assert files are properly created (CamelCase)" do
     run_generator %w(PostChart)
     assert_file "#{ember_path}/components/post-chart_component.js"
-    assert_file "#{ember_path}/templates/components/post-chart.handlebars"
+    assert_file "#{ember_path}/templates/components/post-chart.hbs"
   end
 
   test "Assert object names are properly created with CamelCase name" do
     run_generator %w(PostChart)
     assert_file "#{ember_path}/components/post-chart_component.js", /Dummy\.PostChartComponent/
-    assert_file "#{ember_path}/templates/components/post-chart.handlebars"
+    assert_file "#{ember_path}/templates/components/post-chart.hbs"
   end
 
   test "Assert files are properly created (lower-case)" do
     run_generator %w(post-chart)
     assert_file "#{ember_path}/components/post-chart_component.js"
-    assert_file "#{ember_path}/templates/components/post-chart.handlebars"
+    assert_file "#{ember_path}/templates/components/post-chart.hbs"
   end
 
   test "Assert object names are properly created with lower-case name" do
     run_generator %w(post-chart)
     assert_file "#{ember_path}/components/post-chart_component.js", /Dummy\.PostChartComponent/
-    assert_file "#{ember_path}/templates/components/post-chart.handlebars"
+    assert_file "#{ember_path}/templates/components/post-chart.hbs"
   end
 
   test "Assert files are properly created with custom path" do
     custom_path = ember_path("custom")
     run_generator [ "PostChart", "-d", custom_path ]
     assert_file "#{custom_path}/components/post-chart_component.js"
-    assert_file "#{custom_path}/templates/components/post-chart.handlebars"
+    assert_file "#{custom_path}/templates/components/post-chart.hbs"
   end
 
   test "Assert files are properly created with custom app name" do
     run_generator [ "PostChart", "-n", "MyApp" ]
     assert_file "#{ember_path}/components/post-chart_component.js", /MyApp\.PostChartComponent/
-    assert_file "#{ember_path}/templates/components/post-chart.handlebars"
+    assert_file "#{ember_path}/templates/components/post-chart.hbs"
   end
 
   test "Uses config.ember.app_name as the app name" do
@@ -87,7 +87,7 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
 
       run_generator ["PostChart"]
       assert_file "#{custom_path}/components/post-chart_component.js"
-      assert_file "#{custom_path}/templates/components/post-chart.handlebars"
+      assert_file "#{custom_path}/templates/components/post-chart.hbs"
     ensure
       ::Rails.configuration.ember.ember_path = old
     end

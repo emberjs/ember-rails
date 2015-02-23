@@ -18,8 +18,8 @@ module Ember
         comp_path = File.join(ember_path, 'components', class_path, "#{dashed_file_name}_component.#{engine_extension}")
         template "component.#{engine_extension}", comp_path
 
-        templ_path = File.join(ember_path, 'templates/components', class_path, "#{dashed_file_name}.handlebars")
-        template "component.template.handlebars", templ_path
+        templ_path = File.join(ember_path, 'templates/components', class_path, "#{dashed_file_name}.hbs")
+        template "component.template.hbs", templ_path
 
       end
 
