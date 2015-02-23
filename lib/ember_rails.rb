@@ -3,7 +3,6 @@ require 'ember/source'
 require 'ember/data/source'
 require 'ember/rails/version'
 require 'ember/rails/engine'
-require 'handlebars/source'
 
 module Ember
   module Rails
@@ -52,7 +51,7 @@ module Ember
       initializer "ember_rails.setup_vendor", :after => "ember_rails.copy_vendor_to_local", :group => :all do |app|
         app.assets.append_path(::Ember::Source.bundled_path_for(nil))
         app.assets.append_path(::Ember::Data::Source.bundled_path_for(nil))
-        app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path))
+        app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path)) if defined?(::Handlebars::Source)
       end
 
       initializer "ember_rails.es5_default", :group => :all do |app|

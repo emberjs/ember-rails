@@ -6,6 +6,7 @@ require 'sprockets/railtie'
 
 Bundler.require
 require "ember-rails"
+require "handlebars/source" # Enable optional features related handlebars.
 
 module Dummy
   class Application < Rails::Application

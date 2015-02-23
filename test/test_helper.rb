@@ -19,6 +19,5 @@ rescue LoadError
 end
 
 require 'active_support/core_ext/kernel/reporting'
-require 'pathname'
 
 Rails.backtrace_cleaner.remove_silencers!

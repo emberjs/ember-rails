@@ -19,16 +19,16 @@ Gem::Specification.new do |s|
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
   s.add_dependency "ember-source", ">= 1.1.0"
-  s.add_dependency "handlebars-source", "> 1.0.0", "< 3"
   s.add_dependency "ember-data-source", '>= 1.0.0.beta.5'
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
   s.add_development_dependency "appraisal", ">= 1.0.0"
   s.add_development_dependency "tzinfo"
-
-  s.add_development_dependency "sprockets-rails"
   s.add_development_dependency "vcr"
   s.add_development_dependency "webmock", "< 1.14.0"
+
+  s.add_development_dependency "sprockets-rails"
+  s.add_development_dependency "handlebars-source", "> 1.0.0", "< 3"
 
   s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
 
