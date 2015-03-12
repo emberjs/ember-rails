@@ -331,7 +331,7 @@ Rails [`protect_from_forgery`](http://api.rubyonrails.org/classes/ActionControll
 The CSRF token is normally found in `app/views/layouts/application.html.*` inserted with the rails helper: [`csrf_meta_tags`](http://api.rubyonrails.org/classes/ActionView/Helpers/CsrfHelper.html#method-i-csrf_meta_tags).
 
 When you use [jquery-ujs](https://github.com/rails/jquery-ujs),
-the CSRF token will be send to rails application on every XHR automatically.
+the CSRF token will be sent to the rails application on every XHR automatically.
 If not so, the following JavaScript is required in your code.
 
 ``` javascript
