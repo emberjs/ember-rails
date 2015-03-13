@@ -1,5 +1,5 @@
 module Ember
   module Rails
-    VERSION = '0.16.4'
+    VERSION = '0.17.0'
   end
 end

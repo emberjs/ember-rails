@@ -1,3 +1,8 @@
+## 0.17.0 (Mar 14, 2015)
+
+  -  Remove Handlebars dependency (It becomes an optional feature.)
+
+
 ## 0.16.4 (Feb 17, 2015)
 
   -  Append all assets to sprockets path that bundled in ember-source & ember-data-source
