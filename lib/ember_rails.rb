@@ -4,6 +4,13 @@ require 'ember/data/source'
 require 'ember/rails/version'
 require 'ember/rails/engine'
 
+# Use handlebars if it possible. Because it is an optional feature.
+begin
+  require 'handlebars/source'
+rescue LoadError => e
+  raise e unless e.message == 'cannot load such file -- handlebars/source'
+end
+
 module Ember
   module Rails
     class Railtie < ::Rails::Railtie
