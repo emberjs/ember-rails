@@ -5,13 +5,15 @@ require 'sprockets/railtie'
 module Ember
   module Rails
     class Engine < ::Rails::Engine
-      config.handlebars = ActiveSupport::OrderedOptions.new
+      Ember::Handlebars::Template.configure do |handlebars_config|
+        config.handlebars = handlebars_config
 
-      config.handlebars.precompile = true
-      config.handlebars.templates_root = "templates"
-      config.handlebars.templates_path_separator = '/'
-      config.handlebars.output_type = :global
-      config.handlebars.ember_template = Ember::VERSION =~ /\A1.[0-9]\./ ? 'Handlebars' : 'HTMLBars'
+        config.handlebars.precompile = true
+        config.handlebars.templates_root = 'templates'
+        config.handlebars.templates_path_separator = '/'
+        config.handlebars.output_type = :global
+        config.handlebars.ember_template = Ember::VERSION =~ /\A1.[0-9]\./ ? 'Handlebars' : 'HTMLBars'
+      end
 
       config.before_initialize do |app|
         Sprockets::Engines #force autoloading
