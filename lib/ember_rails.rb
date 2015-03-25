@@ -101,8 +101,6 @@ module Ember
         initializers
         router store
       )
-
-      # TODO setup sprockets-es6module
     end
   end
 end

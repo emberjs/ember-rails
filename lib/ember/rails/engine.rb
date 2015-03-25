@@ -25,8 +25,7 @@ module Ember
       end
 
       config.before_initialize do |app|
-        Sprockets.register_engine '.es6', Ember::ES6Template::ES6
-        Sprockets.register_engine '.es6module', Ember::ES6Template::ES6Module
+        Ember::ES6Template.setup Sprockets
       end
 
       config.before_initialize do |app|
