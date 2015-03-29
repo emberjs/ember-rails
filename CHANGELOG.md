@@ -1,15 +1,19 @@
+## 0.18.0 (Mar 30, 2015)
+
+  - Extract `Ember::Handlebars::Template` to [ember-handlebars-template](https://github.com/tricknotes/ember-handlebars-template) gem.
+  - Support sprockets 3 beta
+
 ## 0.17.0 (Mar 14, 2015)
 
-  -  Remove Handlebars dependency (It becomes an optional feature.)
-
+  - Remove Handlebars dependency (It becomes an optional feature.)
 
 ## 0.16.4 (Feb 17, 2015)
 
-  -  Append all assets to sprockets path that bundled in ember-source & ember-data-source
+  - Append all assets to sprockets path that bundled in ember-source & ember-data-source
 
 ## 0.16.3 (Feb 13, 2015)
 
-  -  Remove extra heading `/` from AMD module name
+  - Remove extra heading `/` from AMD module name
 
 ## 0.16.2 (Feb 11, 2015)
 
