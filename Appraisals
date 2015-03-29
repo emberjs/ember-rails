@@ -65,3 +65,9 @@ appraise 'rails42_ember_latest' do
   gem 'rails', '~> 4.2.0'
   gem 'ember-source', '~> 1.11.0'
 end
+
+appraise 'sprockets-3' do
+  gem 'rails', '~> 4.2.0'
+  gem 'ember-source', '~> 1.11.0'
+  gem 'sprockets', '~> 3.0.0.beta.10'
+end
