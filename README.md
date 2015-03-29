@@ -54,7 +54,7 @@ You'll probably need to clear out your cache after doing this with:
 rake tmp:clear
 ```
 
-Also, ember-rails include some flags for the bootstrap generator:
+Also, ember-rails includes some flags for the bootstrap generator:
 
 ```
 --ember-path or -d   # custom ember path
