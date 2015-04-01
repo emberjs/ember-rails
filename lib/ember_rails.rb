@@ -61,6 +61,10 @@ module Ember
         app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path)) if defined?(::Handlebars::Source)
       end
 
+      initializer "ember_rails.setup_ember_template_compiler", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        Ember::Handlebars::Template.setup_ember_template_compiler(app.assets.resolve('ember-template-compiler.js'))
+      end
+
       initializer "ember_rails.es5_default", :group => :all do |app|
         if defined?(Closure::Compiler) && app.config.assets.js_compressor == :closure
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
