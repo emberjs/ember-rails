@@ -3,7 +3,6 @@ require 'net/http'
 require 'uri'
 require 'fileutils'
 
-
 module Ember
   module Generators
     class InstallGenerator < ::Rails::Generators::Base
@@ -46,7 +45,6 @@ module Ember
         process_options
       end
 
-
       def ember
         begin
           unless options.ember_data_only?
@@ -69,7 +67,7 @@ module Ember
         end
       end
 
-    private
+      private
 
       def get_ember_data_for(environment)
         # temporarily using a variable here until a stable release of
@@ -97,6 +95,13 @@ module Ember
       def get_ember_js_for(environment)
         create_file "vendor/assets/ember/#{environment}/ember.js" do
           fetch url_for(channel, 'ember', environment), "vendor/assets/ember/#{environment}/ember.js"
+        end
+
+        compiler_url = "#{base_url}/#{channel}/ember-template-compiler.js"
+        if resource_exist?(compiler_url)
+          create_file "vendor/assets/ember/#{environment}/ember-template-compiler.js" do
+            fetch "#{base_url}/#{channel}/ember-template-compiler.js", "vendor/assets/ember/#{environment}/ember-template-compiler.js"
+          end
         end
       end
 
