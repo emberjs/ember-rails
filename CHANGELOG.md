@@ -1,3 +1,7 @@
+## 0.18.1 (April 2, 2015)
+
+  - Support to precompile handlebars with vendored ember-template-compiler.js
+
 ## 0.18.0 (Mar 30, 2015)
 
   - Extract `Ember::Handlebars::Template` to [ember-handlebars-template](https://github.com/tricknotes/ember-handlebars-template) gem.
