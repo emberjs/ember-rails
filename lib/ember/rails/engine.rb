@@ -21,15 +21,15 @@ module Ember
       config.before_initialize do |app|
         Sprockets::Engines #force autoloading
 
-        Ember::Handlebars::Template.setup Sprockets
+        app.assets = Sprockets if app.assets.nil? # Compatible with Rails 3.2
       end
 
       config.before_initialize do |app|
-        Ember::ES6Template.setup Sprockets
+        Ember::Handlebars::Template.setup app.assets
       end
 
       config.before_initialize do |app|
-        Sprockets.append_path Ember::CLI::Assets.root
+        Ember::ES6Template.setup app.assets
       end
 
       config.after_initialize do |app|

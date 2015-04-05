@@ -90,6 +90,12 @@ module Ember
         end
       end
 
+      initializer "ember_rails.setup_ember_cli_assets", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          env.append_path Ember::CLI::Assets.root
+        end
+      end
+
       initializer "ember_rails.es5_default", :group => :all do |app|
         if defined?(Closure::Compiler) && app.config.assets.js_compressor == :closure
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
