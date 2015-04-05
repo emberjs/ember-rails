@@ -147,7 +147,6 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 | `config.ember.app_name`                      | Specificies a default application name for all generators.                                                          |
 | `config.ember.ember_path`                    | Specifies a default custom root path for all generators.                                                            |
 | `config.ember.module_prefix`                 | Sets module prefix for es6 module. This option is used for only `es6` scripts. Default value: `ember-app`. |
-| `config.ember.module_dir`                    | Determines which directories to use `module_prefix`. This option is used for only `es6` scripts. |
 | `config.handlebars.precompile`               | Enables or disables precompilation. Default value: `true`.                                                          |
 | `config.handlebars.templates_root`           | Sets the root path (under `app/assets/javascripts`) for templates to be looked up in. Default value: `"templates"`. |
 | `config.handlebars.templates_path_separator` | The path separator to use for templates. Default value: `'/'`.                                                      |

@@ -6,7 +6,7 @@ class Es6ModuleTest < IntegrationTest
     test "#{type} type module should be registerd with module_prefix" do
       get "/assets/#{type}/user.js"
       assert_response :success
-      assert_match %r{define\("ember-app/#{type}/user"}, @response.body
+      assert_match %r{define\('ember-app/#{type}/user'}, @response.body
     end
   end
 
@@ -14,7 +14,7 @@ class Es6ModuleTest < IntegrationTest
     test "#{type} type module should be registerd with module_prefix" do
       get "/assets/#{type}.js"
       assert_response :success
-      assert_match %r{define\("ember-app/#{type}"}, @response.body
+      assert_match %r{define\('ember-app/#{type}'}, @response.body
     end
   end
 

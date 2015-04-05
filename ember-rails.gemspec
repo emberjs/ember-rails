@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-data-source", '>= 1.13.0'
   s.add_dependency "active-model-adapter-source", ">= 1.13.0"
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
-  s.add_dependency "ember-es6_template", "~> 0.2.0"
+  s.add_dependency "ember-es6_template", "~> 0.2.5"
   s.add_dependency "ember-cli-assets", "~> 0.0.1"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]

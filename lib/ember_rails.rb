@@ -16,6 +16,7 @@ module Ember
   module Rails
     class Railtie < ::Rails::Railtie
       config.ember = ActiveSupport::OrderedOptions.new
+      config.ember.module_prefix = 'ember-app'
 
       generators do |app|
         app ||= ::Rails.application # Rails 3.0.x does not yield `app`
@@ -94,13 +95,6 @@ module Ember
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
         end
       end
-
-      config.ember.module_prefix = 'ember-app'
-      config.ember.module_dir = %w(
-        models controllers views routes components helpers mixins serializers adapters
-        initializers
-        router store
-      )
     end
   end
 end
