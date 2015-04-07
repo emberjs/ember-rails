@@ -27,19 +27,19 @@ class ViewGeneratorTest < Rails::Generators::TestCase
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js'), /templateName: 'post'/
+      assert_file "app/assets/javascripts/views/post.#{engine_to_extension(engine)}", /templateName: 'post'/
       assert_no_file "app/assets/javascripts/templates/post.hbs"
     end
 
     test "create view and template with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}", "--with-template"]
-      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/views/post.#{engine_to_extension(engine)}"
       assert_file "app/assets/javascripts/templates/post.hbs"
     end
 
     test "create namespaced view with #{engine} engine" do
       run_generator ["post/index", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/views/post/index.js.#{engine}".sub('.js.js','.js') , /PostIndexView|export default Ember\.View\.extend/
+      assert_file "app/assets/javascripts/views/post/index.#{engine_to_extension(engine)}", /PostIndexView|export default Ember\.View\.extend/
     end
 
   end
@@ -87,6 +87,11 @@ class ViewGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

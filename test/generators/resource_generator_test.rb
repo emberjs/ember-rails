@@ -10,7 +10,7 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
 
     test "create view with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js'), /templateName: 'post'/
+      assert_file "app/assets/javascripts/views/post.#{engine_to_extension(engine)}", /templateName: 'post'/
     end
 
     test "create template with #{engine} engine" do
@@ -20,24 +20,24 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
 
     test "create controller with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}"
     end
 
     test "create route with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/routes/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/routes/post.#{engine_to_extension(engine)}"
     end
 
     test "skip route with #{engine} engine" do
       run_generator ["post", "--javascript-engine=#{engine}", "--skip-route"]
-      assert_no_file "app/assets/javascripts/routes/post.js.#{engine}".sub('.js.js','.js')
+      assert_no_file "app/assets/javascripts/routes/post.#{engine_to_extension(engine)}"
     end
 
     test "create all with #{engine} engine and custom name" do
       run_generator ["post", "--javascript-engine=#{engine}", "-n", "MyApp"]
-      assert_file "app/assets/javascripts/views/post.js.#{engine}".sub('.js.js','.js'), /MyApp.PostView|export default Ember\.View\.extend/
-      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostController|export default Ember\.Controller\.extend/
-      assert_file "app/assets/javascripts/routes/post.js.#{engine}".sub('.js.js','.js'), /MyApp\.PostRoute|export default Ember\.Route\.extend/
+      assert_file "app/assets/javascripts/views/post.#{engine_to_extension(engine)}", /MyApp.PostView|export default Ember\.View\.extend/
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}", /MyApp\.PostController|export default Ember\.Controller\.extend/
+      assert_file "app/assets/javascripts/routes/post.#{engine_to_extension(engine)}", /MyApp\.PostRoute|export default Ember\.Route\.extend/
     end
   end
 
@@ -73,5 +73,11 @@ class ResourceGeneratorTest < Rails::Generators::TestCase
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
   end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
+  end
+
 end
 

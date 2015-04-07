@@ -27,22 +27,22 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
 
     test "array_controller with #{engine} engine" do
       run_generator ["posts", "--array", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/posts.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/posts.#{engine_to_extension(engine)}"
     end
 
     test "object_controller with #{engine} engine" do
       run_generator ["post", "--object", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}"
     end
 
     test "default_controller with #{engine} engine" do
       run_generator ["post","--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}"
     end
 
     test "default_controller namespaced with #{engine} engine" do
       run_generator ["post/index","--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/controllers/post/index.js.#{engine}".sub('.js.js','.js'), /PostIndexController|export default Ember\.Controller\.extend/
+      assert_file "#{ember_path}/controllers/post/index.#{engine_to_extension(engine)}", /PostIndexController|export default Ember\.Controller\.extend/
     end
   end
 
@@ -77,6 +77,11 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

@@ -109,7 +109,7 @@ Note:
 
 To use ES6 module in your application, the following configuration is required:
 
-`my-app.js.es6`
+`my-app.es6`
 ``` javascript
 //= require ember-rails/application
 // And require more modules...
@@ -189,8 +189,8 @@ to use `rails g ember:bootstrap` to create the following directory structure und
 ├── helpers
 ├── mixins
 ├── models
-├── practicality.js.coffee
-├── router.js.coffee
+├── practicality.coffee
+├── router.coffee
 ├── routes
 ├── templates
 │   └── components
@@ -237,8 +237,8 @@ If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
-by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
-(e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
+by putting each template in a dedicated ".hbs", ".js.hjs" or ".handlebars" file
+(e.g. `app/assets/javascripts/templates/admin_panel.hbs`)
 and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
@@ -247,7 +247,7 @@ If you want to avoid the `templates` prefix, set the `templates_root` option in 
 
     config.handlebars.templates_root = 'ember_templates'
 
-If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.handlebars` after setting the above config,
+If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.hbs` after setting the above config,
 it will be made available to Ember as the `admin_panel` template.
 
 _(Note: you must clear the local sprockets cache after modifying `templates_root`, stored by default in `tmp/cache/assets`)_
@@ -283,16 +283,16 @@ Given the following folder structure:
 ├── helpers
 ├── mixins
 ├── models
-├── practicality.js.coffee
-├── router.js.coffee
+├── practicality.coffee
+├── router.coffee
 ├── routes
 ├── templates
 │   └── components
-│       └── my-component.handlebars
+│       └── my-component.hbs
 └── views
 ```
 
-and a `my-component.handlebars` file with the following contents:
+and a `my-component.hbs` file with the following contents:
 
     <h1>My Component</h1>
 

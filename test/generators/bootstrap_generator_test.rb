@@ -36,28 +36,24 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
     test "create bootstrap with #{engine} engine" do
       run_generator ["--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{ember_path}/adapters/application.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{ember_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
-      #assert_file "#{ember_path}/application.js.#{engine}".sub('.js.js','.js'),
-      #  /Dummy = Ember.Application.create()/
+      assert_file "#{ember_path}/router.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/#{application_name.underscore}.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
-      assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{custom_path}/adapters/application.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{custom_path}/#{application_name.underscore}.js.#{engine}".sub('.js.js','.js')
-      #assert_file "#{custom_path}/application.js.#{engine}".sub('.js.js','.js'),
-      #  /Dummy = Ember.Application.create()/
+      assert_file "#{custom_path}/router.#{engine_to_extension(engine)}"
+      assert_file "#{custom_path}/adapters/application.#{engine_to_extension(engine)}"
+      assert_file "#{custom_path}/#{application_name.underscore}.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyApp"]
-      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyApp\.Router\.map|Ember\.Router\.extend/
-      assert_file "#{ember_path}/adapters/application.js.#{engine}".sub('.js.js','.js'), /MyApp\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
-      assert_file "#{ember_path}/my-app.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/router.#{engine_to_extension(engine)}", /MyApp\.Router\.map|Ember\.Router\.extend/
+      assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}", /MyApp\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
+      assert_file "#{ember_path}/my-app.#{engine_to_extension(engine)}"
     end
 
   end
@@ -150,6 +146,11 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

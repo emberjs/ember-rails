@@ -26,24 +26,24 @@ class ModelGeneratorTest < Rails::Generators::TestCase
   %w(js coffee em es6).each do |engine|
     test "create model with #{engine} engine" do
       run_generator ["post", "title:string", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/models/post.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/models/post.#{engine_to_extension(engine)}"
     end
 
     test "create namespaced model with #{engine} engine" do
       run_generator ["post/doineedthis", "title:string", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/models/post/doineedthis.js.#{engine}".sub('.js.js','.js'), /PostDoineedthis|export default DS\.Model\.extend/
+      assert_file "app/assets/javascripts/models/post/doineedthis.#{engine_to_extension(engine)}", /PostDoineedthis|export default DS\.Model\.extend/
     end
 
     test "create attribute with #{engine} engine" do
       run_generator ["comment", "post:references", "body:string", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/models/comment.js.#{engine}".sub('.js.js','.js'), /body: DS.attr/
-      assert_file "app/assets/javascripts/models/comment.js.#{engine}".sub('.js.js','.js'), /post: DS.belongsTo.+post/
+      assert_file "app/assets/javascripts/models/comment.#{engine_to_extension(engine)}", /body: DS.attr/
+      assert_file "app/assets/javascripts/models/comment.#{engine_to_extension(engine)}", /post: DS.belongsTo.+post/
     end
   end
 
   test "leave parentheses when create model w/o attributes (with coffee engine)" do
     run_generator ["post", "--javascript-engine=coffee"]
-    assert_file "app/assets/javascripts/models/post.js.coffee", /DS.Model.extend\(\)/
+    assert_file "app/assets/javascripts/models/post.coffee", /DS.Model.extend\(\)/
   end
 
   test "Assert files are properly created" do
@@ -90,6 +90,11 @@ class ModelGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

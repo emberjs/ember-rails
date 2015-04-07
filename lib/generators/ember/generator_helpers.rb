@@ -45,7 +45,20 @@ module Ember
       end
 
       def engine_extension
-        @engine_extension ||= "js.#{options[:javascript_engine]}".sub('js.js','js')
+        @engine_extension ||= begin
+          extension_table = {
+            'js' => 'js',
+            'coffee' => 'coffee',
+            'em' => 'em',
+            'es6' => 'module.es6'
+          }
+
+          extension = extension_table[options[:javascript_engine].to_s]
+
+          raise "Unsupported javascript engine: `#{options[:javascript_engine]}` (Supported engines are: [#{extension_table.keys.join(', ')}])" if extension.nil?
+
+          extension
+        end
       end
 
       def configuration

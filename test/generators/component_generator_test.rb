@@ -26,7 +26,7 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
 
     test "default_component with #{engine} engine" do
       run_generator ["PostChart","--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/components/post-chart.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/components/post-chart.#{engine_to_extension(engine)}"
       assert_file "app/assets/javascripts/templates/components/post-chart.hbs"
     end
 
@@ -97,6 +97,11 @@ class ComponentGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end
