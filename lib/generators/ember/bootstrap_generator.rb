@@ -16,12 +16,15 @@ module Ember
 
       def inject_ember
         begin
-          inject_into_application_file(engine_extension)
+          if javascript_engine == 'es6'
+            inject_into_application_file('es6') # Don't use `.module.es6`.
+          else
+            inject_into_application_file(engine_extension)
+          end
         rescue Exception => e
           inject_into_application_file('js')
         end
       end
-
 
       def create_dir_layout
         %W{models controllers views routes helpers components templates templates/components mixins adapters}.each do |dir|

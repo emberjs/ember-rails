@@ -14,4 +14,4 @@
 import Application from 'ember-rails/application';
 
 // for more details see: http://emberjs.com/guides/application/
-Application.create();
+export default Application;
