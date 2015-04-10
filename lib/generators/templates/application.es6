@@ -8,6 +8,6 @@
 //= require ./<%= application_name.underscore.dasherize %>
 //= require_self
 
-import <%= application_name.camelize %> from '<%= configuration.module_prefix %>/<%= application_name.underscore.dasherize %>';
+import <%= application_name.camelize %> from '<%= application_name.underscore.dasherize %>';
 
 <%= application_name.camelize %>.create();

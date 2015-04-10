@@ -17,6 +17,8 @@ module Ember
     class Railtie < ::Rails::Railtie
       config.ember = ActiveSupport::OrderedOptions.new
       config.ember.module_prefix = 'ember-app'
+      config.ember.prefix_files = %w(store router)
+      config.ember.prefix_dirs = %w(models controllers views routes components helpers mixins serializers adapters)
 
       generators do |app|
         app ||= ::Rails.application # Rails 3.0.x does not yield `app`

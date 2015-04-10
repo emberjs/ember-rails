@@ -18,4 +18,10 @@ class Es6ModuleTest < IntegrationTest
     end
   end
 
+  test "non specofied with emebr module should be registerd without module_prefix" do
+    get "/assets/non-ember.js"
+    assert_response :success
+    assert_match %r{define\('non-ember'}, @response.body
+  end
+
 end
