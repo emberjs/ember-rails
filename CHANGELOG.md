@@ -1,3 +1,7 @@
+## 0.18.2 (April 11, 2015)
+
+  - Update generator using `Ember.Controller` instead of `Ember.ObjectController`
+
 ## 0.18.1 (April 2, 2015)
 
   - Support to precompile handlebars with vendored ember-template-compiler.js
