@@ -49,15 +49,7 @@ module Ember
         full_path = Pathname.new(destination_root).join(ember_path, application_file)
 
         if full_path.exist?
-          contents = full_path.read
-          injection_options = if contents =~ regex = /^.*require_tree.*$/
-                                {:before => regex}
-                              elsif contents =~ regex = /^\s*$/
-                                {:before => regex}
-                              else
-                                regex = /\z/
-                                {:after => regex}
-                              end
+          injection_options = get_options_from_contents(full_path.read)
 
           inject_into_file(full_path.to_s, injection_options) do
             context = instance_eval('binding')
@@ -67,6 +59,17 @@ module Ember
         else
           template application_file, full_path
         end
+      end
+
+      def get_options_from_contents(contents)
+        if contents =~ regex = /^.*require_tree.*$/
+                                {:before => regex}
+                              elsif contents =~ regex = /^\s*$/
+                                {:before => regex}
+                              else
+                                regex = /\z/
+                                {:after => regex}
+                              end
       end
     end
   end
