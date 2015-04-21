@@ -94,16 +94,6 @@ You can now use the flag `--javascript-engine=em` to specify EmberScript
 assets in your generators, but all of the generators will default to
 using an EmberScript variant first.
 
-Note:
-
-Ember-rails include some flags options for bootstrap generator:
-
-```
---ember-path or -d # custom ember path
---skip-git or -g # skip git keeps
---javascript-engine  # engine for javascript (js, coffee or em)
---app-name or -n # custom ember app name
-```
 
 ## Configuration Options
 
