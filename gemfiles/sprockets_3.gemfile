@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "ember-handlebars-template", :github => "tricknotes/ember-handlebars-template"
 gem "rails", "~> 4.2.0"
 gem "ember-source", "~> 1.11.0"
 gem "sprockets", "~> 3.0.0.beta.10"
