@@ -10,7 +10,11 @@ Dummy::Application.configure do
   config.eager_load = false
 
   # Configure static asset server for tests with Cache-Control for performance
-  config.serve_static_assets = true
+  if Rails.version >= '4.2.0'
+    config.serve_static_files = true
+  else
+    config.serve_static_assets = true
+  end
   config.static_cache_control = "public, max-age=3600"
 
   # Log error messages when you accidentally call methods on nil
