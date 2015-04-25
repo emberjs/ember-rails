@@ -8,7 +8,7 @@ http_interactions:
       string: ''
     headers:
       Accept:
-      - ! '*/*'
+      - "*/*"
       User-Agent:
       - Ruby
   response:
@@ -25,7 +25,7 @@ http_interactions:
       Last-Modified:
       - Sun, 01 Sep 2013 07:45:26 GMT
       Etag:
-      - ! '"5829a6a7e731efc80e1d5677513e2d24"'
+      - '"5829a6a7e731efc80e1d5677513e2d24"'
       Content-Type:
       - text/javascript
       Content-Length:
@@ -4153,40 +4153,30 @@ http_interactions:
       string: ''
     headers:
       Accept:
-      - ! '*/*'
+      - "*/*"
       User-Agent:
       - Ruby
   response:
     status:
       code: 200
-      message: !binary |-
-        T0s=
+      message: OK
     headers:
-      !binary "WC1BbXotSWQtMg==":
-      - !binary |-
-        MC9GRk5OeDE1ZXBuOWxzaENSdmxaZUFOakJ5OVc3Q3BReGhqOGJXMCtJVThu
-        SjJzdWE1Y1BZY1F5a3p2RHYxTw==
-      !binary "WC1BbXotUmVxdWVzdC1JZA==":
-      - !binary |-
-        ODdGNjM4RDY1QjBCM0U5Mw==
-      !binary "RGF0ZQ==":
-      - !binary |-
-        VGh1LCAzMSBPY3QgMjAxMyAyMDoyNzoyMCBHTVQ=
-      !binary "TGFzdC1Nb2RpZmllZA==":
-      - !binary |-
-        U3VuLCAwMSBTZXAgMjAxMyAwNzo0NToyNyBHTVQ=
-      !binary "RXRhZw==":
-      - !binary |-
-        IjcwNjZhMTc0YzhlZjEyMWZiY2M3MzRjMTkwODdkMjcxIg==
-      !binary "Q29udGVudC1UeXBl":
-      - !binary |-
-        dGV4dC9qYXZhc2NyaXB0
-      !binary "Q29udGVudC1MZW5ndGg=":
-      - !binary |-
-        NDAwOA==
-      !binary "U2VydmVy":
-      - !binary |-
-        QW1hem9uUzM=
+      X-Amz-Id-2:
+      - 0/FFNNx15epn9lshCRvlZeANjBy9W7CpQxhj8bW0+IU8nJ2sua5cPYcQykzvDv1O
+      X-Amz-Request-Id:
+      - 87F638D65B0B3E93
+      Date:
+      - Thu, 31 Oct 2013 20:27:20 GMT
+      Last-Modified:
+      - Sun, 01 Sep 2013 07:45:27 GMT
+      Etag:
+      - '"7066a174c8ef121fbcc734c19087d271"'
+      Content-Type:
+      - text/javascript
+      Content-Length:
+      - '4008'
+      Server:
+      - AmazonS3
     body:
       encoding: ASCII-8BIT
       string: !binary |-
@@ -4282,4 +4272,115 @@ http_interactions:
         Iik7
     http_version: 
   recorded_at: Thu, 31 Oct 2013 20:27:18 GMT
-recorded_with: VCR 2.6.0
+- request:
+    method: head
+    uri: http://builds.emberjs.com/tags/v1.0.0-beta.1/ember-data.debug.js
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amz-Error-Code:
+      - NoSuchKey
+      X-Amz-Error-Message:
+      - The specified key does not exist.
+      X-Amz-Error-Detail-Key:
+      - tags/v1.0.0-beta.1/ember-data.debug.js
+      X-Amz-Request-Id:
+      - E3ADE66E14296789
+      X-Amz-Id-2:
+      - kQjBchdyhKd3eb02XAm+ESStHY6mYMcvKa+0BCRXkb6DsW9tgPeM82d0ft3Fg6aJBI+zHKELlVY=
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sat, 25 Apr 2015 07:28:40 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 25 Apr 2015 07:28:41 GMT
+- request:
+    method: head
+    uri: http://builds.emberjs.com/tags/v1.0.0-beta.1/ember-data.js.map
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amz-Error-Code:
+      - NoSuchKey
+      X-Amz-Error-Message:
+      - The specified key does not exist.
+      X-Amz-Error-Detail-Key:
+      - tags/v1.0.0-beta.1/ember-data.js.map
+      X-Amz-Request-Id:
+      - 0C78D313F6D78DB8
+      X-Amz-Id-2:
+      - xdfU2tiQIv51CA0riaAfHA4tqWY5JaRJUxMF0/TlVts8+leKr3J7+CmChbUFZPiqEdZOzB1SFeY=
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sat, 25 Apr 2015 07:28:41 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 25 Apr 2015 07:28:42 GMT
+- request:
+    method: head
+    uri: http://builds.emberjs.com/tags/v1.0.0-beta.1/ember-data.js.map
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      X-Amz-Error-Code:
+      - NoSuchKey
+      X-Amz-Error-Message:
+      - The specified key does not exist.
+      X-Amz-Error-Detail-Key:
+      - tags/v1.0.0-beta.1/ember-data.js.map
+      X-Amz-Request-Id:
+      - 0D017660E0D258EB
+      X-Amz-Id-2:
+      - E0RkjoCI/PFjijnz9/OY1wxYJ30aZImdoI2zoHGLpV4z13ZlmMGmqnlmvkxnGejZICkmLt7qxhI=
+      Transfer-Encoding:
+      - chunked
+      Date:
+      - Sat, 25 Apr 2015 07:28:41 GMT
+      Server:
+      - AmazonS3
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 25 Apr 2015 07:28:42 GMT
+recorded_with: VCR 2.9.3
