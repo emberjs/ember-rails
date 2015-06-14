@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-source", ">= 1.1.0"
   s.add_dependency "ember-data-source", '>= 1.0.0.beta.5'
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
+  s.add_dependency "active-model-adapter-source", ">= 1.13.0"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
   s.add_development_dependency "appraisal", ">= 1.0.0"
