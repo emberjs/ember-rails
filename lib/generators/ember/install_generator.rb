@@ -70,21 +70,12 @@ module Ember
       private
 
       def get_ember_data_for(environment)
-        # temporarily using a variable here until a stable release of
-        # ember-data is released so that installing with ember-data
-        # *just works*.
-        chan = if channel.to_s == 'release'
-          say_status("warning:", 'Ember Data is not available on the :release channel. Falling back to beta channel.' , :yellow)
-          :beta
-        else
-          channel
-        end
 
         create_file "vendor/assets/ember/#{environment}/ember-data.js" do
-          fetch url_for(chan, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
+          fetch url_for(channel, 'ember-data', environment), "vendor/assets/ember/#{environment}/ember-data.js"
         end
 
-        sourcemap_url = "#{base_url}/#{chan}/ember-data.js.map"
+        sourcemap_url = "#{base_url}/#{channel}/ember-data.js.map"
         if resource_exist?(sourcemap_url)
           create_file "vendor/assets/ember/#{environment}/ember-data.js.map" do
             fetch sourcemap_url, "vendor/assets/ember/#{environment}/ember-data.js.map", false
