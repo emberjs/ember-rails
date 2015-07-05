@@ -1,3 +1,7 @@
+## 0.18.3 (July 5, 2015)
+
+  - Fix to support jRuby without handlebars-source
+
 ## 0.18.2 (April 11, 2015)
 
   - Update generator using `Ember.Controller` instead of `Ember.ObjectController`
