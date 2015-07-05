@@ -8,7 +8,7 @@ require 'ember/rails/engine'
 begin
   require 'handlebars/source'
 rescue LoadError => e
-  raise e unless e.message == 'cannot load such file -- handlebars/source'
+  raise e unless ['cannot load such file -- handlebars/source', 'no such file to load -- handlebars/source'].include?(e.message)
 end
 
 module Ember
