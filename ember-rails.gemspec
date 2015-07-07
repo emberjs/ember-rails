@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.add_dependency "railties", [">= 3.1"]
-  s.add_dependency "active_model_serializers"
+  s.add_dependency "active_model_serializers", '0.9.0'
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
   s.add_dependency "ember-source", ">= 1.1.0"
