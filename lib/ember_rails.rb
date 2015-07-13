@@ -3,6 +3,7 @@ require 'ember/source'
 require 'ember/data/source'
 require 'ember/rails/version'
 require 'ember/rails/engine'
+require 'ember/data/active_model/adapter/source'
 
 # Use handlebars if it possible. Because it is an optional feature.
 begin
@@ -51,6 +52,7 @@ module Ember
         FileUtils.cp(::Ember::Source.bundled_path_for("ember#{ember_ext}"), tmp_path.join("ember.js"))
         ember_data_ext = variant == :production ? ".prod.js" : ".js"
         FileUtils.cp(::Ember::Data::Source.bundled_path_for("ember-data#{ember_data_ext}"), tmp_path.join("ember-data.js"))
+        FileUtils.cp(::Ember::Data::ActiveModel::Adapter::Source.bundled_path_for("active-model-adapter.js"), tmp_path.join("active-model-adapter.js"))
 
         app.assets.append_path(tmp_path)
       end
@@ -58,6 +60,7 @@ module Ember
       initializer "ember_rails.setup_vendor", :after => "ember_rails.copy_vendor_to_local", :group => :all do |app|
         app.assets.append_path(::Ember::Source.bundled_path_for(nil))
         app.assets.append_path(::Ember::Data::Source.bundled_path_for(nil))
+        app.assets.append_path(::Ember::Data::ActiveModel::Adapter::Source.bundled_path_for(nil))
         app.assets.append_path(File.expand_path('../', ::Handlebars::Source.bundled_path)) if defined?(::Handlebars::Source)
       end
 
