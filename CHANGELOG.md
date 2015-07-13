@@ -1,3 +1,7 @@
+## 0.19.0 (July 13, 2015)
+
+  - Add support for the active-model-adapter as a gem
+
 ## 0.18.3 (July 5, 2015)
 
   - Fix to support jRuby without handlebars-source
