@@ -98,6 +98,18 @@ module Ember
         end
       end
 
+      initializer "ember_rails.setup_ember_handlebars_template", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          Ember::Handlebars::Template.setup env
+        end
+      end
+
+      initializer "ember_rails.setup_ember_es6_template", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          Ember::ES6Template.setup env
+        end
+      end
+
       initializer "ember_rails.es5_default", :group => :all do |app|
         if defined?(Closure::Compiler) && app.config.assets.js_compressor == :closure
           Closure::Compiler::DEFAULT_OPTIONS[:language_in] = 'ECMASCRIPT5'
