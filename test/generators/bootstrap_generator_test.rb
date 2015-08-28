@@ -39,6 +39,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_file "#{ember_path}/router.#{engine_to_extension(engine)}"
       assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}"
       assert_file "#{ember_path}/#{application_name.underscore}.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/environment.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap with #{engine} engine and custom path" do
@@ -47,6 +48,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_file "#{custom_path}/router.#{engine_to_extension(engine)}"
       assert_file "#{custom_path}/adapters/application.#{engine_to_extension(engine)}"
       assert_file "#{custom_path}/#{application_name.underscore}.#{engine_to_extension(engine)}"
+      assert_file "#{custom_path}/environment.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap with #{engine} and custom app name" do
@@ -54,6 +56,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_file "#{ember_path}/router.#{engine_to_extension(engine)}", /MyApp\.Router\.map|Ember\.Router\.extend/
       assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}", /MyApp\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
       assert_file "#{ember_path}/my-app.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/environment.#{engine_to_extension(engine)}"
     end
 
   end

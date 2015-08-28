@@ -45,6 +45,10 @@ module Ember
         template "application_adapter.#{engine_extension}", "#{ember_path}/adapters/application.#{engine_extension}"
       end
 
+      def create_env_file
+        template "environment.#{engine_extension}", "#{ember_path}/environment.#{engine_extension}"
+      end
+
       private
 
       def inject_into_application_file(safe_extension)
