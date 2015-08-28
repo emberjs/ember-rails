@@ -2,8 +2,7 @@
 
 source "https://rubygems.org"
 
-gem "rails", "~> 4.2.0"
-gem "ember-source", "~> 1.9.1"
-gem "handlebars-source"
+gem "rails", "~> 4.1.0"
+gem "ember-source", "~> 1.13.0"
 
 gemspec :path => "../"
