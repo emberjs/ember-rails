@@ -1,3 +1,11 @@
+## 0.19.2 (Aug 28, 2015)
+
+  - Support sprockets-rails 3.0.0
+
+## 0.19.1 (Aug 14, 2015)
+
+  - Fix to be compatible with Sprockets 2 and 3
+
 ## 0.19.0 (July 13, 2015)
 
   - Add support for the active-model-adapter as a gem
