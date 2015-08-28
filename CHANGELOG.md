@@ -1,3 +1,15 @@
+## 0.18.5 (Aug 28, 2015)
+
+  - Support sprockets-rails 3.0.0
+
+## 0.18.4 (Aug 14, 2015)
+
+  - Fix to be compatible with Sprockets 2 and 3
+
+## 0.18.3 (July 5, 2015)
+
+  - Fix to support jRuby without handlebars-source
+
 ## 0.18.2 (April 11, 2015)
 
   - Update generator using `Ember.Controller` instead of `Ember.ObjectController`
