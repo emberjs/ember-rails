@@ -21,8 +21,6 @@ module Ember
       config.ember.prefix_dirs = %w(models controllers views routes components helpers mixins serializers adapters)
 
       generators do |app|
-        app ||= ::Rails.application # Rails 3.0.x does not yield `app`
-
         app.config.generators.assets = false
 
         ::Rails::Generators.configure!(app.config.generators)
