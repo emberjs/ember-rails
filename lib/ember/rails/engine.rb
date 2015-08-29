@@ -20,8 +20,6 @@ module Ember
 
       config.before_initialize do |app|
         Sprockets::Engines #force autoloading
-
-        app.assets = Sprockets if app.assets.nil? # Compatible with Rails 3.2
       end
 
       config.before_initialize do |app|
