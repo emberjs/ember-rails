@@ -109,30 +109,67 @@ Note:
 
 To use ES6 module in your application, the following configuration is required:
 
+### Single Ember Application
+
+This is the case for single Ember application in `app/assets/javascripts` (not under the sub directiry).
+
 `my-app.es6`
 ``` javascript
-//= require ember-rails/application
-// And require more modules...
+import Application from 'ember-rails/application';
 
-import Ember from 'ember-rails/application';
+const App = Application.extend({
+  // Configure your application.
+});
 
-var App = Ember.Application.extend();
-
-App.craete();
+App.create();
 ```
 
-`require ember-rails/application` is important.
-It provides customized Ember application to resolve dependencies from ES6 modules.
+`import Application from 'ember-rails/application';` and `Application.extend()` is important.
+It provides customized Ember application to resolve dependencies from ES6 modules instead of `Ember.Application.extend()`.
 
 `application.js`
 ``` javascript
 //= require jquery
-//= require handlebars
 //= require ember
 //= require ember-data
+//= require ember-rails/application
 //= require ./my-app
 //= require_self
 
+require('my-app'); // Run your Ember.js application
+```
+
+### Multiple Ember Application
+
+This is the case for multiple Ember application in your Rails application.
+(Or your Ember application is placed in sub directories of `app/assets/javascripts`.)
+
+First, you should configure `config.ember.module_prefix` to `nil`.
+To disable prepending the module prefix to you modules.
+
+`config/application.rb`
+``` ruby
+config.ember.module_prefix = nil
+```
+
+Second, please specify `modulePrefix` to your Ember application.
+
+`my-app/application.module.es6`
+``` javascript
+import Application from 'ember-rails/application';
+import loadInitializers from 'ember/load-initializers';
+
+const App = Application.extend({
+  modulePrefix: 'my-app' // This value should be the same as directory name.
+});
+
+loadInitializers(App, 'my-app');
+
+App.create();
+```
+
+Last, add your endpoint to where you want to run your Ember application.
+``` javascript
 require('my-app'); // Run your Ember.js application
 ```
 
