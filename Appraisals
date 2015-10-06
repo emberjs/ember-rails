@@ -11,7 +11,7 @@ end
 
 appraise 'rails32_ember_latest' do
   gem 'rails', '~> 3.2'
-  gem 'ember-source', '~> 2.0.0'
+  gem 'ember-source', '~> 2.1.0'
 end
 
 appraise 'rails4_ember_18' do
@@ -27,7 +27,7 @@ end
 
 appraise 'rails4_ember_latest' do
   gem 'rails', '~> 4.0.0'
-  gem 'ember-source', '~> 2.0.0'
+  gem 'ember-source', '~> 2.1.0'
 end
 
 appraise 'rails41_ember_18' do
@@ -43,7 +43,7 @@ end
 
 appraise 'rails41_ember_latest' do
   gem 'rails', '~> 4.1.0'
-  gem 'ember-source', '~> 2.0.0'
+  gem 'ember-source', '~> 2.1.0'
 end
 
 appraise 'rails42_ember_18' do
@@ -59,7 +59,7 @@ end
 
 appraise 'rails42_ember_latest' do
   gem 'rails', '~> 4.2.0'
-  gem 'ember-source', '~> 2.0.0'
+  gem 'ember-source', '~> 2.1.0'
 end
 
 appraise 'sprockets-3' do
