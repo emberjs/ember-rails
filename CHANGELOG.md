@@ -1,3 +1,7 @@
+## 0.19.3 (Dec 9, 2015)
+
+  - Use the 'prod' variant when downloading ember
+
 ## 0.19.2 (Aug 28, 2015)
 
   - Support sprockets-rails 3.0.0
