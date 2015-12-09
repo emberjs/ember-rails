@@ -101,7 +101,7 @@ module Ember
 
         case environment
         when :production
-          "#{base}.min.js"
+          "#{base}.prod.js"
         when :development
           if resource_exist?("#{base}.debug.js")
             "#{base}.debug.js" # Ember.js 1.10.0.beta.1 or later
