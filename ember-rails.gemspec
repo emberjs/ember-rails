@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
-  s.add_development_dependency "appraisal", ">= 1.0.0"
   s.add_development_dependency "tzinfo"
   s.add_development_dependency "vcr"
   s.add_development_dependency "webmock", "< 1.14.0"
