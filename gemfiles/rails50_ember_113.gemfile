@@ -1,0 +1,6 @@
+source 'https://rubygems.org'
+
+gem 'rails', '~> 5.0.0.beta1'
+gem 'ember-source', '~> 1.13.0'
+
+gemspec path: '../'
