@@ -11,13 +11,16 @@ gemfile:
   - gemfiles/rails40_ember_113.gemfile
   - gemfiles/rails41_ember_113.gemfile
   - gemfiles/rails42_ember_113.gemfile
+  - gemfiles/rails50_ember_113.gemfile
   - gemfiles/rails32_ember_18.gemfile
   - gemfiles/rails40_ember_18.gemfile
   - gemfiles/rails41_ember_18.gemfile
   - gemfiles/rails42_ember_18.gemfile
+  - gemfiles/rails50_ember_18.gemfile
   - gemfiles/rails32_ember_latest.gemfile
   - gemfiles/rails40_ember_latest.gemfile
   - gemfiles/rails41_ember_latest.gemfile
   - gemfiles/rails42_ember_latest.gemfile
+  - gemfiles/rails50_ember_latest.gemfile
   - gemfiles/sprockets_3.gemfile
   - gemfiles/sprockets_rails_3.gemfile
