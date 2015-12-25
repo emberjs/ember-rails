@@ -3,7 +3,7 @@ rvm:
   - 2.0.0
   - 2.1
   - 2.2.4
-  - jruby-19mode
+  - jruby-9.0.4.0
 before_script:
   - gem install bundler # To use bundler 1.10 or later
 gemfile:
@@ -38,9 +38,9 @@ matrix:
       gemfile: gemfiles/rails50_ember_18.gemfile
     - rvm: 2.1
       gemfile: gemfiles/rails50_ember_latest.gemfile
-    - rvm: jruby-19mode
+    - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_113.gemfile
-    - rvm: jruby-19mode
+    - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_18.gemfile
-    - rvm: jruby-19mode
+    - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_latest.gemfile
