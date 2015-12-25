@@ -39,8 +39,14 @@ matrix:
     - rvm: 2.1
       gemfile: gemfiles/rails50_ember_latest.gemfile
     - rvm: jruby-9.0.4.0
+      gemfile: gemfiles/rails40_ember_113.gemfile
+    - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_113.gemfile
     - rvm: jruby-9.0.4.0
+      gemfile: gemfiles/rails40_ember_18.gemfile
+    - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_18.gemfile
+    - rvm: jruby-9.0.4.0
+      gemfile: gemfiles/rails40_ember_latest.gemfile
     - rvm: jruby-9.0.4.0
       gemfile: gemfiles/rails50_ember_latest.gemfile
