@@ -51,3 +51,5 @@ matrix:
       gemfile: gemfiles/rails40_ember_latest.gemfile
     - rvm: jruby-9.0.5.0
       gemfile: gemfiles/rails50_ember_latest.gemfile
+env:
+  - JRUBY_OPTS="--server -J-Xms1500m -J-Xmx1500m -J-XX:+UseConcMarkSweepGC -J-XX:-UseGCOverheadLimit -J-XX:+CMSClassUnloadingEnabled" # see: https://github.com/jruby/jruby/issues/1320
