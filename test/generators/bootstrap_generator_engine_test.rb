@@ -39,28 +39,28 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "create bootstrap in a rails engine with #{engine}" do
       run_generator ["--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{ember_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/router.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}"
+      assert_file "#{ember_path}/#{engine_name}.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap in a rails engine with #{engine} engine and custom path" do
       custom_path = ember_path("custom")
       run_generator ["--javascript-engine=#{engine}", "-d", custom_path]
-      assert_file "#{custom_path}/router.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{custom_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js')
-      assert_file "#{custom_path}/#{engine_name}.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{custom_path}/router.#{engine_to_extension(engine)}"
+      assert_file "#{custom_path}/adapters/application.#{engine_to_extension(engine)}"
+      assert_file "#{custom_path}/#{engine_name}.#{engine_to_extension(engine)}"
     end
 
     test "create bootstrap in a rails engine with #{engine} and custom app name" do
       run_generator ["--javascript-engine=#{engine}", "-n", "MyEngine"]
-      assert_file "#{ember_path}/router.js.#{engine}".sub('.js.js','.js'), /MyEngine\.Router\.map/
-      assert_file "#{ember_path}/adapters/application_adapter.js.#{engine}".sub('.js.js','.js'), /MyEngine\.ApplicationAdapter/
-      assert_file "#{ember_path}/my_engine.js.#{engine}".sub('.js.js','.js')
+      assert_file "#{ember_path}/router.#{engine_to_extension(engine)}", /MyEngine\.Router\.map|Ember\.Router\.extend/
+      assert_file "#{ember_path}/adapters/application.#{engine_to_extension(engine)}", /MyEngine\.ApplicationAdapter|DS\.ActiveModelAdapter\.extend/
+      assert_file "#{ember_path}/my-engine.#{engine_to_extension(engine)}"
     end
   end
 
@@ -81,6 +81,11 @@ class BootstrapGeneratorEngineTest < Rails::Generators::TestCase
 
   def engine_name
     "dummy"
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

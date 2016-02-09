@@ -17,11 +17,10 @@ module Ember
 
 
       def create_resource_files
-
         invoke('ember:route', [ name ], options) unless options[:skip_route]
         invoke('ember:controller', [ name ], options)
         invoke('ember:view', [ name ], options)
-        invoke('ember:template', [ name ], options) 
+        invoke('ember:template', [ name ], options)
       end
 
     end

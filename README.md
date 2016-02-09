@@ -33,7 +33,7 @@ Rails supports the ability to build projects from a template source ruby file.
 To build an Ember centric Rails project you can simply type the following into your command line:
 
 ```
-rails new my_app -m http://emberjs.com/edge_template.rb
+rails new my-app -m http://emberjs.com/edge_template.rb
 ```
 
 Read more about [Rails application templates](http://edgeguides.rubyonrails.org/rails_application_templates.html) and take a look at the edge_template.rb [source code](https://github.com/emberjs/website/blob/master/source/edge_template.rb).
@@ -59,7 +59,7 @@ Also, ember-rails includes some flags for the bootstrap generator:
 ```
 --ember-path or -d   # custom ember path
 --skip-git or -g     # skip git keeps
---javascript-engine  # engine for javascript (js, coffee or em)
+--javascript-engine  # engine for javascript (js, coffee, em or es6)
 --app-name or -n     # custom ember app name
 ```
 
@@ -94,6 +94,84 @@ You can now use the flag `--javascript-engine=em` to specify EmberScript
 assets in your generators, but all of the generators will default to
 using an EmberScript variant first.
 
+## For ES6 support
+
+Ember.js recommends using ES6 syntax.
+It is supported by [Babel](https://babeljs.io/) via [ember-es6_template](https://github.com/tricknotes/ember-es6_template).
+
+Run the bootstrap generator with an extra flag:
+
+``` sh
+rails g ember:bootstrap --javascript-engine=es6
+```
+
+Note:
+
+To use ES6 module in your application, the following configuration is required:
+
+### Single Ember Application
+
+This is the case for single Ember application in `app/assets/javascripts` (not under the sub directiry).
+
+`my-app.es6`
+``` javascript
+import Application from 'ember-rails/application';
+
+const App = Application.extend({
+  // Configure your application.
+});
+
+App.create();
+```
+
+`import Application from 'ember-rails/application';` and `Application.extend()` is important.
+It provides customized Ember application to resolve dependencies from ES6 modules instead of `Ember.Application.extend()`.
+
+`application.js`
+``` javascript
+//= require jquery
+//= require ember
+//= require ember-data
+//= require ember-rails/application
+//= require ./my-app
+//= require_self
+
+require('my-app'); // Run your Ember.js application
+```
+
+### Multiple Ember Application
+
+This is the case for multiple Ember application in your Rails application.
+(Or your Ember application is placed in sub directories of `app/assets/javascripts`.)
+
+First, you should configure `config.ember.module_prefix` to `nil`.
+To disable prepending the module prefix to you modules.
+
+`config/application.rb`
+``` ruby
+config.ember.module_prefix = nil
+```
+
+Second, please specify `modulePrefix` to your Ember application.
+
+`my-app/application.module.es6`
+``` javascript
+import Application from 'ember-rails/application';
+import loadInitializers from 'ember/load-initializers';
+
+const App = Application.extend({
+  modulePrefix: 'my-app' // This value should be the same as directory name.
+});
+
+loadInitializers(App, 'my-app');
+
+App.create();
+```
+
+Last, add your endpoint to where you want to run your Ember application.
+``` javascript
+require('my-app'); // Run your Ember.js application
+```
 
 ## Configuration Options
 
@@ -105,6 +183,7 @@ config files (`config/application.rb`, `config/environments/development.rb`, etc
 | `config.ember.variant`                       | Determines which Ember variant to use. Valid options: `:development`, `:production`. Defaults to `:production` in production, and `:development` everywhere else.                               |
 | `config.ember.app_name`                      | Specificies a default application name for all generators.                                                          |
 | `config.ember.ember_path`                    | Specifies a default custom root path for all generators.                                                            |
+| `config.ember.module_prefix`                 | Sets module prefix for es6 module. This option is used for only `es6` scripts. Default value: `ember-app`. |
 | `config.handlebars.precompile`               | Enables or disables precompilation. Default value: `true`.                                                          |
 | `config.handlebars.templates_root`           | Sets the root path (under `app/assets/javascripts`) for templates to be looked up in. Default value: `"templates"`. |
 | `config.handlebars.templates_path_separator` | The path separator to use for templates. Default value: `'/'`.                                                      |
@@ -147,10 +226,9 @@ to use `rails g ember:bootstrap` to create the following directory structure und
 ├── helpers
 ├── mixins
 ├── models
-├── practicality.js.coffee
-├── router.js.coffee
+├── practicality.coffee
+├── router.coffee
 ├── routes
-├── store.js.coffee
 ├── templates
 │   └── components
 └── views
@@ -161,7 +239,6 @@ By default, it uses the Rails Application's name and creates an `rails_app_name.
 file to set up application namespace and initial requires:
 
 ```javascript
-//= require handlebars
 //= require ember
 //= require ember-data
 //= require_self
@@ -197,8 +274,8 @@ If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
 
 Ask Rails to serve HandlebarsJS and pre-compile templates to Ember
-by putting each template in a dedicated ".js.hjs", ".hbs" or ".handlebars" file
-(e.g. `app/assets/javascripts/templates/admin_panel.handlebars`)
+by putting each template in a dedicated ".hbs", ".js.hjs" or ".handlebars" file
+(e.g. `app/assets/javascripts/templates/admin_panel.hbs`)
 and including the assets in your layout:
 
     <%= javascript_include_tag "templates/admin_panel" %>
@@ -207,7 +284,7 @@ If you want to avoid the `templates` prefix, set the `templates_root` option in 
 
     config.handlebars.templates_root = 'ember_templates'
 
-If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.handlebars` after setting the above config,
+If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.hbs` after setting the above config,
 it will be made available to Ember as the `admin_panel` template.
 
 _(Note: you must clear the local sprockets cache after modifying `templates_root`, stored by default in `tmp/cache/assets`)_
@@ -243,17 +320,16 @@ Given the following folder structure:
 ├── helpers
 ├── mixins
 ├── models
-├── practicality.js.coffee
-├── router.js.coffee
+├── practicality.coffee
+├── router.coffee
 ├── routes
-├── store.js.coffee
 ├── templates
 │   └── components
-│       └── my-component.handlebars
+│       └── my-component.hbs
 └── views
 ```
 
-and a `my-component.handlebars` file with the following contents:
+and a `my-component.hbs` file with the following contents:
 
     <h1>My Component</h1>
 

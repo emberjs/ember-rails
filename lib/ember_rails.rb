@@ -16,10 +16,11 @@ module Ember
   module Rails
     class Railtie < ::Rails::Railtie
       config.ember = ActiveSupport::OrderedOptions.new
+      config.ember.module_prefix = 'ember-app'
+      config.ember.prefix_files = %w(store router)
+      config.ember.prefix_dirs = %w(models controllers views routes components helpers mixins serializers adapters)
 
       generators do |app|
-        app ||= ::Rails.application # Rails 3.0.x does not yield `app`
-
         app.config.generators.assets = false
 
         ::Rails::Generators.configure!(app.config.generators)
@@ -86,6 +87,24 @@ module Ember
       initializer "ember_rails.setup_ember_template_compiler", :after => "ember_rails.setup_vendor", :group => :all do |app|
         configure_assets app do |env|
           Ember::Handlebars::Template.setup_ember_template_compiler(env.resolve('ember-template-compiler.js'))
+        end
+      end
+
+      initializer "ember_rails.setup_ember_cli_assets", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          env.append_path Ember::CLI::Assets.root
+        end
+      end
+
+      initializer "ember_rails.setup_ember_handlebars_template", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          Ember::Handlebars::Template.setup env
+        end
+      end
+
+      initializer "ember_rails.setup_ember_es6_template", :after => "ember_rails.setup_vendor", :group => :all do |app|
+        configure_assets app do |env|
+          Ember::ES6Template.setup env
         end
       end
 

@@ -16,12 +16,15 @@ module Ember
 
       def inject_ember
         begin
-          inject_into_application_file(engine_extension)
+          if javascript_engine == 'es6'
+            inject_into_application_file('es6') # Don't use `.module.es6`.
+          else
+            inject_into_application_file(engine_extension)
+          end
         rescue Exception => e
           inject_into_application_file('js')
         end
       end
-
 
       def create_dir_layout
         %W{models controllers views routes helpers components templates templates/components mixins adapters}.each do |dir|
@@ -31,7 +34,7 @@ module Ember
       end
 
       def create_app_file
-        template "app.#{engine_extension}", "#{ember_path}/#{application_name.underscore}.#{engine_extension}"
+        template "app.#{engine_extension}", "#{ember_path}/#{application_name.underscore.dasherize}.#{engine_extension}"
       end
 
       def create_router_file
@@ -39,7 +42,11 @@ module Ember
       end
 
       def create_adapter_file
-        template "application_adapter.#{engine_extension}", "#{ember_path}/adapters/application_adapter.#{engine_extension}"
+        template "application_adapter.#{engine_extension}", "#{ember_path}/adapters/application.#{engine_extension}"
+      end
+
+      def create_env_file
+        template "environment.#{engine_extension}", "#{ember_path}/environment.#{engine_extension}"
       end
 
       private

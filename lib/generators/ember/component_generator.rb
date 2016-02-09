@@ -14,8 +14,8 @@ module Ember
       class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
 
       def create_component_files
-        dashed_file_name = file_name.gsub(/_/, '-')
-        comp_path = File.join(ember_path, 'components', class_path, "#{dashed_file_name}_component.#{engine_extension}")
+        dashed_file_name = file_name.dasherize
+        comp_path = File.join(ember_path, 'components', class_path, "#{dashed_file_name}.#{engine_extension}")
         template "component.#{engine_extension}", comp_path
 
         templ_path = File.join(ember_path, 'templates/components', class_path, "#{dashed_file_name}.hbs")

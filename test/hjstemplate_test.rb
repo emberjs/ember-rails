@@ -1,11 +1,5 @@
 require 'test_helper'
 
-if Rails.version >= "4.0.0"
-  IntegrationTest = ActionDispatch::IntegrationTest
-else
-  IntegrationTest = ActionController::IntegrationTest
-end
-
 class HomeControllerTest < ActionController::TestCase
 
   test "page header should include link to asset" do

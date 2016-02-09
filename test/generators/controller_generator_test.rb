@@ -23,44 +23,43 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
     copy_directory "config"
   end
 
-  %w(js coffee em).each do |engine|
+  %w(js coffee em es6).each do |engine|
 
     test "array_controller with #{engine} engine" do
-
-      run_generator ["post", "--array", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
+      run_generator ["posts", "--array", "--javascript-engine=#{engine}"]
+      assert_file "app/assets/javascripts/controllers/posts.#{engine_to_extension(engine)}"
     end
 
     test "object_controller with #{engine} engine" do
       run_generator ["post", "--object", "--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}"
     end
 
     test "default_controller with #{engine} engine" do
       run_generator ["post","--javascript-engine=#{engine}"]
-      assert_file "app/assets/javascripts/controllers/post_controller.js.#{engine}".sub('.js.js','.js')
+      assert_file "app/assets/javascripts/controllers/post.#{engine_to_extension(engine)}"
     end
 
     test "default_controller namespaced with #{engine} engine" do
       run_generator ["post/index","--javascript-engine=#{engine}"]
-      assert_file "#{ember_path}/controllers/post/index_controller.js.#{engine}".sub('.js.js','.js'), /PostIndexController/
+      assert_file "#{ember_path}/controllers/post/index.#{engine_to_extension(engine)}", /PostIndexController|export default Ember\.Controller\.extend/
     end
   end
 
   test "Assert files are properly created" do
     run_generator %w(ember)
-    assert_file "#{ember_path}/controllers/ember_controller.js"
+    assert_file "#{ember_path}/controllers/ember.js"
   end
 
   test "Assert files are properly created with custom path" do
     custom_path = ember_path("custom")
     run_generator [ "ember", "-d", custom_path ]
-    assert_file "#{custom_path}/controllers/ember_controller.js"
+    assert_file "#{custom_path}/controllers/ember.js"
   end
 
   test "Assert files are properly created with custom app name" do
     run_generator [ "ember", "-n", "MyApp" ]
-    assert_file "#{ember_path}/controllers/ember_controller.js", /MyApp\.EmberController/
+    assert_file "#{ember_path}/controllers/ember.js", /MyApp\.EmberController/
   end
 
   test "Uses config.ember.app_name as the app name" do
@@ -68,7 +67,7 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
       old, ::Rails.configuration.ember.app_name = ::Rails.configuration.ember.app_name, 'MyApp'
 
       run_generator %w(ember)
-      assert_file "#{ember_path}/controllers/ember_controller.js", /MyApp\.EmberController/
+      assert_file "#{ember_path}/controllers/ember.js", /MyApp\.EmberController/
     ensure
       ::Rails.configuration.ember.app_name = old
     end
@@ -78,6 +77,11 @@ class ControllerGeneratorTest < Rails::Generators::TestCase
 
   def ember_path(custom_path = nil)
    "app/assets/javascripts/#{custom_path}".chomp('/')
+  end
+
+  def engine_to_extension(engine)
+    engine = "module.#{engine}" if engine == 'es6'
+    engine
   end
 
 end

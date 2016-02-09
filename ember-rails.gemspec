@@ -20,17 +20,20 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-data-source", '>= 1.13.0'
   s.add_dependency "active-model-adapter-source", ">= 1.13.0"
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
+  s.add_dependency "ember-es6_template", "~> 0.4.0"
+  s.add_dependency "ember-cli-assets", "~> 0.0.1"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
   s.add_development_dependency "tzinfo"
   s.add_development_dependency "vcr"
   s.add_development_dependency "webmock", "< 1.14.0"
+
   s.add_development_dependency "sprockets-rails"
   s.add_development_dependency "handlebars-source", "> 1.0.0", "< 3"
   s.add_development_dependency "test-unit"
   s.add_development_dependency "safe_yaml", ">= 1.0.4"
 
-  s.files = %w(README.md LICENSE) + Dir["lib/**/*", "vendor/**/*"]
+  s.files = %w(README.md LICENSE) + Dir["app/**/*", "lib/**/*", "vendor/**/*"]
 
   s.require_paths = ["lib"]
 end
