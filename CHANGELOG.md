@@ -1,3 +1,7 @@
+## 0.20.0 (Feb 9, 2016)
+
+  - Support ES6 syntax
+
 ## 0.19.3 (Dec 9, 2015)
 
   - Use the 'prod' variant when downloading ember
