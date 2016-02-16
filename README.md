@@ -14,7 +14,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '~> 1.9.0' # or the version you need
+gem 'ember-source', '~> 1.13.0' # or the version you need
 ```
 
 * Run `bundle install`
@@ -354,7 +354,7 @@ To specify a different version that'll be used for both template
 precompilation and serving to the browser, you can specify the desired
 version of one of the above-linked gems in the Gemfile, e.g.:
 
-    gem 'ember-source', '1.7.0'
+    gem 'ember-source', '~> 1.13.0'
 
 You can also specify versions of 'handlebars-source' and
 'ember-data-source', but note that an appropriate 'handlebars-source'
@@ -385,12 +385,11 @@ When you don't specify a channel, the release channel is used.
 
 It is also possible to download a specific tagged release. To do this, use the following syntax:
 
-
-    rails generate ember:install --tag=v1.2.0-beta.2 --ember
+    rails generate ember:install --tag=v1.13.0 --ember
 
 or for ember-data
 
-    rails generate ember:install --tag=v1.0.0-beta.2 --ember-data
+    rails generate ember:install --tag=v1.13.0 --ember-data
 
 ## CSRF Token
 
