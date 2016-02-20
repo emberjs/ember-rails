@@ -1,3 +1,7 @@
+## 0.20.1 (Feb 20, 2016)
+
+  - Fix environment.coffee/em generator typo
+
 ## 0.20.0 (Feb 9, 2016)
 
   - Support ES6 syntax
