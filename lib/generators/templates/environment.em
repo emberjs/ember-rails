@@ -1,4 +1,4 @@
-wondow.EmberENV = {
+window.EmberENV = {
   # FEATURES: {},
   # EXTEND_PROTOTYPES: {
   #    Function: false,
