@@ -7,6 +7,7 @@ class HomeControllerTest < ActionController::TestCase
     assert_response :success
     assert_select 'head script[src^="/assets/templates/test"]', true, @response.body
   end
+
 end
 
 class HjsTemplateTest < IntegrationTest
@@ -24,7 +25,7 @@ class HjsTemplateTest < IntegrationTest
   end
 
   test "should unbind mustache templates" do
-    get "/assets/templates/hairy.mustache"
+    get "/assets/templates/hairy.js"
     assert_response :success
     assert_match /Ember\.TEMPLATES\["hairy(\.mustache)?"\] = Ember\.(?:Handlebars|HTMLBars)\.template\(/m, @response.body
     assert_match /function .*unbound|"name":"unbound"/m, @response.body
