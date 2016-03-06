@@ -1,3 +1,8 @@
+## 0.20.2 (Mar 6, 2016)
+
+  - Fix to generated app file path for coffee & em
+  - Allow `transforms` directory as an module compilation target
+
 ## 0.20.1 (Feb 20, 2016)
 
   - Fix environment.coffee/em generator typo
