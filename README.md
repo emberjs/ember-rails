@@ -21,7 +21,7 @@ gem 'ember-source', '~> 1.13.0' # or the version you need
 * Next, generate the application structure:
 
 ```shell
-rails generate ember:bootstrap
+$ rails generate ember:bootstrap
 ```
 
 * Restart your server (if it's running)
@@ -32,8 +32,8 @@ Rails supports the ability to build projects from a template source ruby file.
 
 To build an Ember centric Rails project you can simply type the following into your command line:
 
-```
-rails new my-app -m http://emberjs.com/edge_template.rb
+```shell
+$ rails new my-app -m http://emberjs.com/edge_template.rb
 ```
 
 Read more about [Rails application templates](http://edgeguides.rubyonrails.org/rails_application_templates.html) and take a look at the edge_template.rb [source code](https://github.com/emberjs/website/blob/master/source/edge_template.rb).
@@ -45,13 +45,13 @@ examples in the [getting started guide](http://emberjs.com/guides/getting-starte
 have been designed to use the released version of ember:
 
 ```shell
-rails generate ember:install
+$ rails generate ember:install
 ```
 
 You'll probably need to clear out your cache after doing this with:
 
 ```shell
-rake tmp:clear
+$ rake tmp:clear
 ```
 
 Also, ember-rails includes some flags for the bootstrap generator:
@@ -72,8 +72,8 @@ gem 'coffee-rails'
 ```
 
 Run the bootstrap generator in step 4 with an extra flag instead:
-```sh
-rails g ember:bootstrap -g --javascript-engine coffee
+```shell
+$ rails g ember:bootstrap -g --javascript-engine coffee
 ```
 
 ## For EmberScript support
@@ -101,8 +101,8 @@ It is supported by [Babel](https://babeljs.io/) via [ember-es6_template](https:/
 
 Run the bootstrap generator with an extra flag:
 
-``` sh
-rails g ember:bootstrap --javascript-engine=es6
+```shell
+$ rails g ember:bootstrap --javascript-engine=es6
 ```
 
 Note:
@@ -248,27 +248,29 @@ RailsAppName = Ember.Application.create();
 
 *Example:*
 
-    rails g ember:bootstrap
-      insert  app/assets/javascripts/application.js
-      create  app/assets/javascripts/models
-      create  app/assets/javascripts/models/.gitkeep
-      create  app/assets/javascripts/controllers
-      create  app/assets/javascripts/controllers/.gitkeep
-      create  app/assets/javascripts/views
-      create  app/assets/javascripts/views/.gitkeep
-      create  app/assets/javascripts/helpers
-      create  app/assets/javascripts/helpers/.gitkeep
-      create  app/assets/javascripts/components
-      create  app/assets/javascripts/components/.gitkeep
-      create  app/assets/javascripts/templates
-      create  app/assets/javascripts/templates/.gitkeep
-      create  app/assets/javascripts/templates/components
-      create  app/assets/javascripts/templates/components/.gitkeep
-      create  app/assets/javascripts/mixins
-      create  app/assets/javascripts/mixins/.gitkeep
-      create  app/assets/javascripts/adapters
-      create  app/assets/javascripts/adapters/.gitkeep
-      create  app/assets/javascripts/app.js
+```shell
+$ rails g ember:bootstrap
+  insert  app/assets/javascripts/application.js
+  create  app/assets/javascripts/models
+  create  app/assets/javascripts/models/.gitkeep
+  create  app/assets/javascripts/controllers
+  create  app/assets/javascripts/controllers/.gitkeep
+  create  app/assets/javascripts/views
+  create  app/assets/javascripts/views/.gitkeep
+  create  app/assets/javascripts/helpers
+  create  app/assets/javascripts/helpers/.gitkeep
+  create  app/assets/javascripts/components
+  create  app/assets/javascripts/components/.gitkeep
+  create  app/assets/javascripts/templates
+  create  app/assets/javascripts/templates/.gitkeep
+  create  app/assets/javascripts/templates/components
+  create  app/assets/javascripts/templates/components/.gitkeep
+  create  app/assets/javascripts/mixins
+  create  app/assets/javascripts/mixins/.gitkeep
+  create  app/assets/javascripts/adapters
+  create  app/assets/javascripts/adapters/.gitkeep
+  create  app/assets/javascripts/app.js
+```
 
 If you want to avoid `.gitkeep` files, use the `skip git` option like
 this: `rails g ember:bootstrap -g`.
@@ -278,11 +280,15 @@ by putting each template in a dedicated ".hbs", ".js.hjs" or ".handlebars" file
 (e.g. `app/assets/javascripts/templates/admin_panel.hbs`)
 and including the assets in your layout:
 
-    <%= javascript_include_tag "templates/admin_panel" %>
+```erb
+<%= javascript_include_tag "templates/admin_panel" %>
+```
 
 If you want to avoid the `templates` prefix, set the `templates_root` option in your application configuration block:
 
-    config.handlebars.templates_root = 'ember_templates'
+```ruby
+config.handlebars.templates_root = 'ember_templates'
+```
 
 If you store templates in a file like `app/assets/javascripts/ember_templates/admin_panel.hbs` after setting the above config,
 it will be made available to Ember as the `admin_panel` template.
@@ -292,18 +298,24 @@ _(Note: you must clear the local sprockets cache after modifying `templates_root
 Default behavior for ember-rails is to precompile handlebars templates.
 If you don't want this behavior you can turn it off in your application configuration (or per environment in: `config/environments/development.rb`) block:
 
-    config.handlebars.precompile = false
+```ruby
+config.handlebars.precompile = false
+```
 
 _(Note: you must clear the local sprockets cache if you disable precompilation, stored by default in `tmp/cache/assets`)_
 
 Bundle all templates together thanks to Sprockets,
 e.g create `app/assets/javascripts/templates/all.js` with:
 
-    //= require_tree .
+```js
+//= require_tree .
+```
 
 Now a single line in the layout loads everything:
 
-    <%= javascript_include_tag "templates/all" %>
+```erb
+<%= javascript_include_tag "templates/all" %>
+```
 
 ### Note about ember components
 
@@ -331,17 +343,23 @@ Given the following folder structure:
 
 and a `my-component.hbs` file with the following contents:
 
-    <h1>My Component</h1>
+```hbs
+<h1>My Component</h1>
+```
 
 It will produce the following handlebars output:
 
-    <script type="text/x-handlebars" id="components/my-component">
-      <h1>My Component</h1>
-    </script>
+```html
+<script type="text/x-handlebars" id="components/my-component">
+  <h1>My Component</h1>
+</script>
+```
 
 You can reference your component inside your other handlebars template files by the handlebars file name:
 
-     {{ my-component }}
+```hbs
+{{ my-component }}
+```
 
 ## Specifying Different Versions of Ember/Handlebars/Ember-Data
 
@@ -354,7 +372,9 @@ To specify a different version that'll be used for both template
 precompilation and serving to the browser, you can specify the desired
 version of one of the above-linked gems in the Gemfile, e.g.:
 
-    gem 'ember-source', '~> 1.13.0'
+```ruby
+gem 'ember-source', '~> 1.13.0'
+```
 
 You can also specify versions of 'handlebars-source' and
 'ember-data-source', but note that an appropriate 'handlebars-source'
@@ -367,14 +387,18 @@ placing these files in `vendor/assets/ember/development` and
 `vendor/assets/ember/production`, depending on the `config.ember.variant`
 you've specified in your app's configuration, e.g.:
 
-    config.ember.variant = :production
-    #config.ember.variant = :development
+```ruby
+config.ember.variant = :production
+# config.ember.variant = :development
+```
 
 ## Updating Ember
 
 If at any point you need to update Ember.js from any of the release channels, you can do that with
 
-    rails generate ember:install --channel=<channel>
+```shell
+$ rails generate ember:install --channel=<channel>
+```
 
 This will fetch both Ember.js and Ember Data from [http://builds.emberjs.com/](http://builds.emberjs.com/) and copy to the right directory. You can choose between the following channels:
 * canary - This references the 'master' branch and is not recommended for production use.
@@ -385,11 +409,15 @@ When you don't specify a channel, the release channel is used.
 
 It is also possible to download a specific tagged release. To do this, use the following syntax:
 
-    rails generate ember:install --tag=v1.13.0 --ember
+```shell
+$ rails generate ember:install --tag=v1.13.0 --ember
+```
 
 or for ember-data
 
-    rails generate ember:install --tag=v1.13.0 --ember-data
+```shell
+$ rails generate ember:install --tag=v1.13.0 --ember-data
+```
 
 ## CSRF Token
 
