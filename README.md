@@ -14,7 +14,7 @@ You can see an example of how to use the gem [here](https://github.com/keithpitt
 
 ```ruby
 gem 'ember-rails'
-gem 'ember-source', '~> 1.13.0' # or the version you need
+# gem 'ember-source' # You can specify the Ember.js version you want to use.(such as '~> 1.13.0')
 ```
 
 * Run `bundle install`
