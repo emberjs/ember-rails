@@ -1,3 +1,7 @@
+## 0.20.3 (Mar 7, 2016)
+
+  - Don't depend on `Rails.configuration` in generator template for Rails Engine
+
 ## 0.20.2 (Mar 6, 2016)
 
   - Fix to generated app file path for coffee & em
