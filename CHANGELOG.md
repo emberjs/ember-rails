@@ -1,3 +1,7 @@
+## 0.20.4 (Mar 20, 2016)
+
+  - Support `Ember.Service` as ES6 module syntax
+
 ## 0.20.3 (Mar 7, 2016)
 
   - Don't depend on `Rails.configuration` in generator template for Rails Engine
