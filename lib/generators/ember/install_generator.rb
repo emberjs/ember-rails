@@ -181,7 +181,7 @@ module Ember
           raise Thor::Error
         end
         output.rewind
-        content = output.read
+        output.read
       end
 
       def resource_exist?(target)

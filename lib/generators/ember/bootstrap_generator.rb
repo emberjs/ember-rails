@@ -21,7 +21,7 @@ module Ember
           else
             inject_into_application_file(engine_extension)
           end
-        rescue Exception => e
+        rescue Exception
           inject_into_application_file('js')
         end
       end
@@ -69,14 +69,14 @@ module Ember
       end
 
       def get_options_from_contents(contents)
-        if contents =~ regex = /^.*require_tree.*$/
-                                {:before => regex}
-                              elsif contents =~ regex = /^\s*$/
-                                {:before => regex}
-                              else
-                                regex = /\z/
-                                {:after => regex}
-                              end
+        regex = /^.*require_tree.*$/
+        return {:before => regex} if contents =~ regex
+
+        regex = /^\s*$/
+        return {:before => regex} if contents =~ regex
+
+        regex = /\z/
+        {:after => regex}
       end
     end
   end

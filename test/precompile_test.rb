@@ -28,8 +28,8 @@ class PrecompileTest < TestCase
 
     contents = File.read(application_js_path)
 
-    assert_match /Ember\.VERSION/, contents, 'application.js should contain Ember.VERSION'
-    assert_match /Handlebars\.VERSION|COMPILER_REVISION/, contents, 'applciation.js should contain Handlebars.VERSION'
+    assert_match %r{Ember\.VERSION}, contents, 'application.js should contain Ember.VERSION'
+    assert_match %r{Handlebars\.VERSION|COMPILER_REVISION}, contents, 'applciation.js should contain Handlebars.VERSION'
   end
 
   def app_path
