@@ -21,7 +21,7 @@ module Ember
           else
             inject_into_application_file(engine_extension)
           end
-        rescue Exception => e
+        rescue Exception
           inject_into_application_file('js')
         end
       end
