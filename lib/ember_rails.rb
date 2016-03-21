@@ -27,6 +27,7 @@ module Ember
         helpers
         mixins
         services
+        initializers
         serializers
         adapters
         transforms

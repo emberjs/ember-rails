@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Es6ModuleTest < IntegrationTest
 
-  %w(models controllers views routes components helpers mixins services serializers adapters transforms).each do |type|
+  %w(models controllers views routes components helpers mixins services initializers serializers adapters transforms).each do |type|
     test "#{type} type module should be registered with module_prefix" do
       get "/assets/#{type}/user.js"
       assert_response :success
