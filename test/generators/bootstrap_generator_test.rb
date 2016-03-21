@@ -32,6 +32,20 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
     assert_new_dirs(:skip_git => true)
   end
 
+  test "Assert folder layout with `ember.prefix_dirs`" do
+    begin
+      old, ::Rails.configuration.ember.prefix_dirs = ::Rails.configuration.ember.prefix_dirs, %w(foo)
+
+      run_generator %w(-g)
+
+      %w{foo templates templates/components}.each do |dir|
+        assert_directory ember_path(dir)
+      end
+    ensure
+      ::Rails.configuration.ember.prefix_dirs = old
+    end
+  end
+
   %w(js coffee em es6).each do |engine|
 
     test "create bootstrap with #{engine} engine" do
@@ -152,7 +166,6 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
       assert_directory "#{path}/#{dir}"
       assert_file "#{path}/#{dir}/.gitkeep" unless options[:skip_git]
     end
-
   end
 
   def application_name

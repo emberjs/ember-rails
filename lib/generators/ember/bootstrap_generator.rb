@@ -27,7 +27,7 @@ module Ember
       end
 
       def create_dir_layout
-        %W{models controllers views routes helpers components templates templates/components mixins adapters}.each do |dir|
+        ember_prefix_dirs.each do |dir|
           empty_directory "#{ember_path}/#{dir}"
           create_file "#{ember_path}/#{dir}/.gitkeep" unless options[:skip_git]
         end
@@ -77,6 +77,17 @@ module Ember
 
         regex = /\z/
         {:after => regex}
+      end
+
+      def ember_prefix_dirs
+        dirs =
+          if configuration
+            Array(configuration.prefix_dirs)
+          else
+            %w(models controllers views routes components helpers mixins serializers adapters transforms)
+          end
+
+        dirs + %w(templates templates/components)
       end
     end
   end
