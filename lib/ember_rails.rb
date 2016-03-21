@@ -18,7 +18,19 @@ module Ember
       config.ember = ActiveSupport::OrderedOptions.new
       config.ember.module_prefix = 'ember-app'
       config.ember.prefix_files = %w(store router)
-      config.ember.prefix_dirs = %w(models controllers views routes components helpers mixins services serializers adapters transforms)
+      config.ember.prefix_dirs = %w(
+        models
+        controllers
+        views
+        routes
+        components
+        helpers
+        mixins
+        services
+        serializers
+        adapters
+        transforms
+      )
 
       generators do |app|
         app.config.generators.assets = false
