@@ -1,3 +1,9 @@
+## 0.20.5 (Mar 23, 2016)
+
+  - Support initializer as ES6 module syntax
+  - Support instance initializer as ES6 module syntax
+  - Generate bootstrap files using `config.ember.prefix_dirs`
+
 ## 0.20.4 (Mar 20, 2016)
 
   - Support `Ember.Service` as ES6 module syntax
