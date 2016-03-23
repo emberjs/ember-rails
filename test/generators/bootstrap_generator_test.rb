@@ -162,7 +162,7 @@ class BootstrapGeneratorTest < Rails::Generators::TestCase
   def assert_new_dirs(options = {})
     path = options[:in_path] || ember_path
 
-    %W{models controllers views helpers components templates templates/components routes mixins adapters}.each do |dir|
+    %W{models controllers views helpers components templates templates/components routes mixins services initializers serializers adapters transforms}.each do |dir|
       assert_directory "#{path}/#{dir}"
       assert_file "#{path}/#{dir}/.gitkeep" unless options[:skip_git]
     end
