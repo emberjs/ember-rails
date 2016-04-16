@@ -111,7 +111,7 @@ To use ES6 module in your application, the following configuration is required:
 
 ### Single Ember Application
 
-This is the case for single Ember application in `app/assets/javascripts` (not under the sub directiry).
+This is the case for single Ember application in `app/assets/javascripts` (not under the subdirectory).
 
 `my-app.es6`
 ``` javascript
