@@ -1,9 +1,10 @@
+language: ruby
 sudo: false
 rvm:
   - 2.1
-  - 2.2.4
-  - 2.3.0
-  - jruby-9.0.5.0
+  - 2.2.5
+  - 2.3.1
+  - jruby-9.1.0.0
 cache:
   - bundler
 before_script:
@@ -34,17 +35,17 @@ matrix:
       gemfile: gemfiles/rails50_ember_18.gemfile
     - rvm: 2.1
       gemfile: gemfiles/rails50_ember_latest.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails40_ember_113.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails50_ember_113.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails40_ember_18.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails50_ember_18.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails40_ember_latest.gemfile
-    - rvm: jruby-9.0.5.0
+    - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails50_ember_latest.gemfile
 env:
   - JRUBY_OPTS="--server -J-Xms1500m -J-Xmx1500m -J-XX:+UseConcMarkSweepGC -J-XX:-UseGCOverheadLimit -J-XX:+CMSClassUnloadingEnabled" # see: https://github.com/jruby/jruby/issues/1320
