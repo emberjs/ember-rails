@@ -19,7 +19,9 @@ module Ember
       end
 
       config.before_initialize do |app|
-        Sprockets::Engines #force autoloading
+        if Sprockets::VERSION =~ /\A[0-3]\./
+          Sprockets::Engines #force autoloading
+        end
       end
 
       config.before_initialize do |app|

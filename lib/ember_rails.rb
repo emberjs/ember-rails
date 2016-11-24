@@ -100,7 +100,11 @@ module Ember
 
       initializer "ember_rails.setup_ember_template_compiler", :after => "ember_rails.setup_vendor", :group => :all do |app|
         configure_assets app do |env|
-          Ember::Handlebars::Template.setup_ember_template_compiler(env.resolve('ember-template-compiler.js'))
+          ember_template_compiler, _ = env.resolve('ember-template-compiler.js')
+          if env.valid_asset_uri?(ember_template_compiler)
+            ember_template_compiler, _ = env.parse_asset_uri(ember_template_compiler)
+          end
+          Ember::Handlebars::Template.setup_ember_template_compiler(ember_template_compiler)
         end
       end
 
