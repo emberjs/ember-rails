@@ -7,8 +7,8 @@ rvm:
   - jruby-9.1.0.0
 cache:
   - bundler
-before_script:
-  - gem install bundler # To use bundler 1.10 or later
+before_install:
+  - gem update bundler # To use bundler 1.10 or later
 gemfile:
   - gemfiles/rails32_ember_113.gemfile
   - gemfiles/rails40_ember_113.gemfile
