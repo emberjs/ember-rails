@@ -28,7 +28,7 @@ class HjsTemplateTest < IntegrationTest
     get "/assets/templates/hairy.js"
     assert_response :success
     assert_match %r{Ember\.TEMPLATES\["hairy(\.mustache)?"\] = Ember\.(?:Handlebars|HTMLBars)\.template\(}m, @response.body
-    assert_match %r{function .*unbound|"name":"unbound"}m, @response.body
+    assert_match %r{function .*unbound|"name":"unbound"|\[\\"unbound\\"\]}m, @response.body
   end
 
   test "ensure new lines inside the anon function are persisted" do
