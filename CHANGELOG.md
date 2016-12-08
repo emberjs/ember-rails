@@ -1,3 +1,7 @@
+## 0.20.6 (Dec 8, 2016)
+
+  - Fix CLI's default option to suppress warning from thor ~>0.19.3.
+
 ## 0.20.5 (Mar 23, 2016)
 
   - Support initializer as ES6 module syntax
