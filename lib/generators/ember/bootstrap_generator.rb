@@ -9,10 +9,10 @@ module Ember
 
       desc "Creates a default Ember.js folder layout in app/assets/javascripts"
 
-      class_option :ember_path, :type => :string, :aliases => "-d", :default => false, :desc => "Custom ember app path"
+      class_option :ember_path, :type => :string, :aliases => "-d", :desc => "Custom ember app path"
       class_option :skip_git, :type => :boolean, :aliases => "-g", :default => false, :desc => "Skip Git keeps"
       class_option :javascript_engine, :desc => "Engine for JavaScripts (js for JavaScript, coffee for CoffeeScript, etc)"
-      class_option :app_name, :type => :string, :aliases => "-n", :default => false, :desc => "Custom ember app name"
+      class_option :app_name, :type => :string, :aliases => "-n", :desc => "Custom ember app name"
 
       def inject_ember
         begin
