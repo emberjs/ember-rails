@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = "Ember for Rails 3.1+"
   s.license     = "MIT"
 
-  s.add_dependency "railties", [">= 3.1"]
+  s.add_dependency "railties", [">= 4.2"]
   s.add_dependency "active_model_serializers"
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
