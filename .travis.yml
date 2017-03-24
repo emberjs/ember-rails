@@ -18,6 +18,7 @@ gemfile:
   - gemfiles/rails50_ember_latest.gemfile
   - gemfiles/rails51_ember_latest.gemfile
   - gemfiles/sprockets_3.gemfile
+  - gemfiles/sprockets_4.gemfile
   - gemfiles/sprockets_rails_3.gemfile
 matrix:
   exclude:
@@ -29,6 +30,8 @@ matrix:
       gemfile: gemfiles/rails50_ember_latest.gemfile
     - rvm: 2.1
       gemfile: gemfiles/rails51_ember_latest.gemfile
+    - rvm: 2.1
+      gemfile: gemfiles/sprockets_4.gemfile
     - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails50_ember_113.gemfile
     - rvm: jruby-9.1.0.0
@@ -37,5 +40,7 @@ matrix:
       gemfile: gemfiles/rails50_ember_latest.gemfile
     - rvm: jruby-9.1.0.0
       gemfile: gemfiles/rails51_ember_latest.gemfile
+    - rvm: jruby-9.1.0.0
+      gemfile: gemfiles/sprockets_4.gemfile
 env:
   - JRUBY_OPTS="--server -J-Xms1500m -J-Xmx1500m -J-XX:+UseConcMarkSweepGC -J-XX:-UseGCOverheadLimit -J-XX:+CMSClassUnloadingEnabled" # see: https://github.com/jruby/jruby/issues/1320
