@@ -1,3 +1,9 @@
+## 0.21.0 (Mar 25, 2017)
+
+  - Drop Rails < 4.2 support
+  - Support Sprockets 4
+  - Support Rails 5.1
+
 ## 0.20.6 (Dec 8, 2016)
 
   - Fix CLI's default option to suppress warning from thor ~>0.19.3.
