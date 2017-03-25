@@ -19,10 +19,6 @@ module Ember
       end
 
       config.before_initialize do |app|
-        Sprockets::Engines #force autoloading
-      end
-
-      config.before_initialize do |app|
         Ember::ES6Template.configure do |ember_config|
           ember_config.module_prefix = config.ember.module_prefix
           ember_config.prefix_files = config.ember.prefix_files

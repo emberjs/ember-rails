@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = "Ember for Rails 3.1+"
   s.license     = "MIT"
 
-  s.add_dependency "railties", [">= 3.1"]
+  s.add_dependency "railties", [">= 4.2"]
   s.add_dependency "active_model_serializers"
 
   s.add_dependency "jquery-rails", ">= 1.0.17"
@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-data-source", '>= 1.13.0'
   s.add_dependency "active-model-adapter-source", ">= 1.13.0"
   s.add_dependency "ember-handlebars-template", ">= 0.1.1", "< 1.0"
-  s.add_dependency "ember-es6_template", "~> 0.4.0"
+  s.add_dependency "ember-es6_template", ">= 0.4.0", "< 0.7"
   s.add_dependency "ember-cli-assets", "~> 0.0.1"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
