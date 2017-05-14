@@ -33,7 +33,7 @@ Rails supports the ability to build projects from a template source ruby file.
 To build an Ember centric Rails project you can simply type the following into your command line:
 
 ```shell
-$ rails new my-app -m http://emberjs.com/edge_template.rb
+$ rails new my-app -m https://emberjs.com/edge_template.rb
 ```
 
 Read more about [Rails application templates](http://edgeguides.rubyonrails.org/rails_application_templates.html) and take a look at the edge_template.rb [source code](https://github.com/emberjs/website/blob/master/source/edge_template.rb).
