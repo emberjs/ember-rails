@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency "ember-cli-assets", "~> 0.0.1"
 
   s.add_development_dependency "bundler", [">= 1.2.2"]
+  s.add_development_dependency "faraday"
   s.add_development_dependency "tzinfo"
   s.add_development_dependency "vcr"
   s.add_development_dependency "webmock"
