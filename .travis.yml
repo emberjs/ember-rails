@@ -1,11 +1,11 @@
 language: ruby
 sudo: false
 rvm:
-  - 2.1.10
   - 2.2.10
   - 2.3.7
   - 2.4.3
-  - jruby-9.1.5.0
+  - 2.5.1
+  - jruby-9.2.0.0
 cache:
   - bundler
 before_install:
@@ -23,25 +23,16 @@ gemfile:
   - gemfiles/sprockets_rails_3.gemfile
 matrix:
   exclude:
-    - rvm: 2.1.10
-      gemfile: gemfiles/rails50_ember_113.gemfile
-    - rvm: 2.1.10
-      gemfile: gemfiles/rails50_ember_18.gemfile
-    - rvm: 2.1.10
-      gemfile: gemfiles/rails50_ember_latest.gemfile
-    - rvm: 2.1.10
-      gemfile: gemfiles/rails51_ember_latest.gemfile
-    - rvm: 2.1.10
       gemfile: gemfiles/sprockets_4.gemfile
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.2.0.0
       gemfile: gemfiles/rails50_ember_113.gemfile
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.2.0.0
       gemfile: gemfiles/rails50_ember_18.gemfile
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.2.0.0
       gemfile: gemfiles/rails50_ember_latest.gemfile
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.2.0.0
       gemfile: gemfiles/rails51_ember_latest.gemfile
-    - rvm: jruby-9.1.5.0
+    - rvm: jruby-9.2.0.0
       gemfile: gemfiles/sprockets_4.gemfile
 env:
   - JRUBY_OPTS="--server -J-Xms1500m -J-Xmx1500m -J-XX:+UseConcMarkSweepGC -J-XX:-UseGCOverheadLimit -J-XX:+CMSClassUnloadingEnabled" # see: https://github.com/jruby/jruby/issues/1320
